@@ -27,8 +27,10 @@ class Camera:
         ret, frame = self.cap.read()
 
         if ret:
+            # Flip the frame horizontally (mirror effect)
+            mirrored_frame = cv2.flip(frame, 1)
             # Convert the OpenCV frame to a Tkinter-compatible photo image
-            self.photo = ImageTk.PhotoImage(image=Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)))
+            self.photo = ImageTk.PhotoImage(image=Image.fromarray(cv2.cvtColor(mirrored_frame, cv2.COLOR_BGR2RGB)))
 
             # Update the canvas with the new photo image
             self.canvas.create_image(0, 0, anchor=tk.NW, image=self.photo)
