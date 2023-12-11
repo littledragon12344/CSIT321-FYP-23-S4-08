@@ -5,7 +5,7 @@ import Config as cfg
 def new_window(): 
     root = tk.Tk()
     root.title("Gesture Detection Prototype")
-    root.geometry("800x800")
+    root.geometry("800x600")
     
     #label = tk.Label(root, text="Created by group CSIT321-FYP-23-S4-08")
     #label.pack()
@@ -38,36 +38,29 @@ def new_window():
     root.config(menu=menubar)
     #==========================================================
     
+    #======================== UI LAYOUT ========================
+    # create a base frame for the layout
     base = tk.Frame(root)
-    camera = tk.Frame(base, width=480, height=400, bg="green")
+    # create a frame to contain the camera
+    camera = tk.Frame(base, width=480, height=350, bg="green")
     # get the camera feed for the frame
     cam.Camera(camera, 450, 320)
-    #frame.place(x=25, y=22.5)
     
+    # create a frame for the loadout display
     catalog = tk.Frame(base, bg="red")
-
-    config = tk.Frame(base, width=800, height=400, bg="blue")
-    #frame.place(x=25, y=392.5)
+    # create a frame for the gesture list display
+    config = tk.Frame(base, width=800, height=300, bg="blue")
 
     #cfg.Config(frame)
     
+    # placing the frames onto a grid for the UI layout
     base.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
-    camera.grid(column=1, row=1, columnspan=3, rowspan=2, sticky=("N", "S", "E", "W"))
-    catalog.grid(column=4, row=1, columnspan=2, rowspan=2, sticky=("N", "S", "E", "W"))
-    config.grid(column=1, row=3, columnspan=5, rowspan=2, sticky=("N", "S", "E", "W"))
+    camera.grid(column=0, row=0, columnspan=3, rowspan=2, padx=2, pady=2, sticky=("N", "S", "E", "W"))
+    catalog.grid(column=3, row=0, columnspan=2, rowspan=2, padx=0, pady=2, sticky=("N", "S", "E", "W"))
+    config.grid(column=0, row=2, columnspan=5, rowspan=2, sticky=("N", "S", "E", "W"))
+    #===========================================================
 
-    #root.columnconfigure(0, weight=1)
-    #root.rowconfigure(0, weight=1)
-    #base.columnconfigure(0, weight=1)
-    #base.columnconfigure(1, weight=1)
-    #base.columnconfigure(2, weight=1)
-    #base.columnconfigure(3, weight=1)
-    #base.columnconfigure(4, weight=1)
-    #base.rowconfigure(0, weight=1)
-    #base.rowconfigure(1, weight=1)
-    #base.rowconfigure(2, weight=1)
-    #base.rowconfigure(3, weight=1)
-
+    # start the window
     root.mainloop()
     
 

@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import font
 import cv2
 from PIL import Image, ImageTk
 
@@ -20,7 +21,9 @@ class Camera:
         #self.close_button = tk.Button(window, text="Close", command=self.close)
         #self.close_button.pack()
         
-        self.text = tk.Label(window, text="Gesture Display")
+        custom_font = font.Font(size=14)
+        self.text = tk.Label(window, text="Gesture Display", font=custom_font)
+        self.text.pack(ipadx=3)
 
     def update(self):
         # Read a frame from the camera
