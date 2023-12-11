@@ -6,6 +6,7 @@ def new_window():
     root = tk.Tk()
     root.title("Gesture Detection Prototype")
     root.geometry("800x600")
+    root.resizable(width=False, height=False)
     
     #label = tk.Label(root, text="Created by group CSIT321-FYP-23-S4-08")
     #label.pack()
