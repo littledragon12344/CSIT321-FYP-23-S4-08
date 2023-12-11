@@ -3,11 +3,11 @@ import cv2
 from PIL import Image, ImageTk
 
 class Camera:
-    def __init__(self, window):
+    def __init__(self, window, _width, _height):
         self.window = window
 
         # Create a canvas to display the camera feed
-        self.canvas = tk.Canvas(window, width=450, height=320)
+        self.canvas = tk.Canvas(window, width=_width, height=_height)
         self.canvas.pack()
 
         # Open the camera
