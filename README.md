@@ -11,7 +11,7 @@ Python Version 3.10.11
 
 
 Installing packages (if dont have)<br />
-in cmd type 
+in cmd type <br />
 py -m pip install pillow <br />
 py -m pip install opencv-python  <br />
 py -m pip install mediapipe <br />
