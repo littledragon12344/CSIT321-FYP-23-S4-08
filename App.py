@@ -10,7 +10,7 @@ def new_window():
     
     #label = tk.Label(root, text="Created by group CSIT321-FYP-23-S4-08")
     #label.pack()
-    
+
     #======================== MENU BAR ========================
     # creates a new menu bar
     menubar = tk.Menu(root)
@@ -52,13 +52,13 @@ def new_window():
     # create a frame for the gesture list display
     config = tk.Frame(base, width=800, height=300, bg="blue")
 
-    #cfg.Config(frame)
+    cfg.Config(config)
     
     # placing the frames onto a grid for the UI layout
     base.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
-    camera.grid(column=0, row=0, columnspan=3, rowspan=2, padx=2, pady=2, sticky=("N", "S", "E", "W"))
-    catalog.grid(column=3, row=0, columnspan=2, rowspan=2, padx=0, pady=2, sticky=("N", "S", "E", "W"))
-    config.grid(column=0, row=2, columnspan=5, rowspan=2, sticky=("N", "S", "E", "W"))
+    camera.grid(column=0, row=0, columnspan=3, rowspan=2, padx=2, pady=2, sticky="news")
+    catalog.grid(column=3, row=0, columnspan=2, rowspan=2, padx=0, pady=2, sticky="news")
+    config.grid(column=0, row=2, columnspan=5, rowspan=2, sticky="news")
     #===========================================================
 
     # start the window
