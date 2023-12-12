@@ -9,7 +9,7 @@ class Config:
         self.window = window
 
         # Create a Frame to store config information
-        self.container = tk.Frame(self.window, width=780, height=380,
+        self.container = tk.Frame(self.window, width=780, height=235,
                                   highlightbackground="black",
                                   highlightthickness=2)
         self.container.grid_propagate(False)
@@ -17,7 +17,7 @@ class Config:
         # Read loadout information
         self.getloadout()
         
-        self.container.grid(column=0, row=0, padx=10, pady=10)
+        self.container.grid(column=0, row=0, padx=10, pady=5)
         for ind, x in enumerate(self.cfglist):
             z = ind % 5
             y = math.floor(ind/5)
