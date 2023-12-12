@@ -15,4 +15,3 @@ in cmd type <br />
 py -m pip install pillow <br />
 py -m pip install opencv-python  <br />
 py -m pip install mediapipe <br />
-py -m pip install tensorflow <br />
