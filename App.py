@@ -50,7 +50,7 @@ def new_window():
     # create a frame for the loadout display
     catalog = tk.Frame(base, bg="red")
     # create a frame for the gesture list display
-    config = tk.Frame(base, width=800, height=300, bg="blue")
+    config = tk.Frame(base, width=800, height=250, bg="blue")
 
     cfg.Config(config)
     
