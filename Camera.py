@@ -7,7 +7,7 @@ class Camera:
         self.window = window
 
         # Create a canvas to display the camera feed
-        self.canvas = tk.Canvas(window, width=450, height=320)
+        self.canvas = tk.Canvas(window, width=480, height=400)
         self.canvas.pack()
 
         # Open the camera
