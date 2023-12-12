@@ -1,10 +1,7 @@
-import tkinter as tk
+﻿import tkinter as tk
 import Camera as cam
 import Config as cfg
 
-#import cv2 as cv
-#import numpy as np
-#import mediapipe as mp
 
 def new_window(): 
     root = tk.Tk()
@@ -50,7 +47,8 @@ def new_window():
     camera = tk.Frame(base, width=480, height=350, bg="green")
     # get the camera feed for the frame
     cam.Camera(camera, 450, 320)
-    
+
+
     # create a frame for the loadout display
     catalog = tk.Frame(base, bg="red")
     # create a frame for the gesture list display
