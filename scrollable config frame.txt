@@ -1,0 +1,28 @@
+        # Create a Frame to store config information
+        container = tk.Frame(self.window, width=780, height=380, highlightbackground="black", highlightthickness=2)
+        container.grid_propagate(False)
+        container.grid(column=0, row=0, padx=10, pady=10, sticky="news")
+
+        # Turn frame into scrollable frame
+        field = tk.Canvas(container)
+        field.grid(column=0, row=0, sticky="news")
+
+        scroll = tk.Scrollbar(container, orient="vertical", command=field.yview)
+        scroll.grid(column=1, row=0, sticky="ns")
+        field.configure(yscrollcommand=scroll.set)
+        
+        self.scrollframe = tk.Frame(field)
+        field.create_window((0,0), window=self.scrollframe, anchor="nw")
+        
+        # Read loadout information
+        self.getloadout()
+
+        self.scrollframe.grid(column=0, row=0)
+        for ind, x in enumerate(self.cfglist):
+            z = ind % 5
+            y = math.floor(ind/5)
+            x.base.grid(column=z, row=y, padx=8, pady=8, sticky="news")
+        
+        self.scrollframe.update_idletasks()
+        self.scrollframe.config(width=770 + scroll.winfo_width(), height=380)
+        field.config(scrollregion=field.bbox("all"))
