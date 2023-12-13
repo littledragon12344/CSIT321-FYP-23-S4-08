@@ -57,7 +57,7 @@ def new_window():
     cfg.Config(config)
     
     # placing the frames onto a grid for the UI layout
-    base.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
+    base.grid(column=0, row=0, sticky="news")
     camera.grid(column=0, row=0, columnspan=3, rowspan=2, padx=2, pady=2, sticky="news")
     catalog.grid(column=3, row=0, columnspan=2, rowspan=2, padx=0, pady=2, sticky="news")
     config.grid(column=0, row=2, columnspan=5, rowspan=2, sticky="news")
