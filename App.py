@@ -1,7 +1,7 @@
 ﻿import tkinter as tk
 import Camera as cam
 import Config as cfg
-
+import Loadout as lo
 
 def new_window(): 
     root = tk.Tk()
@@ -48,9 +48,10 @@ def new_window():
     # get the camera feed for the frame
     cam.Camera(camera, 450, 320)
 
-
     # create a frame for the loadout display
-    catalog = tk.Frame(base, bg="red")
+    loadout_display = tk.Frame(base, width=320, height=350, bg="red")
+    lo.LoadoutDisplay(loadout_display, 250, 300)
+    
     # create a frame for the gesture list display
     config = tk.Frame(base, width=800, height=250, bg="blue")
 
@@ -59,7 +60,7 @@ def new_window():
     # placing the frames onto a grid for the UI layout
     base.grid(column=0, row=0, sticky="news")
     camera.grid(column=0, row=0, columnspan=3, rowspan=2, padx=2, pady=2, sticky="news")
-    catalog.grid(column=3, row=0, columnspan=2, rowspan=2, padx=0, pady=2, sticky="news")
+    loadout_display.grid(column=3, row=0, columnspan=2, rowspan=2, padx=0, pady=2, sticky="news")
     config.grid(column=0, row=2, columnspan=5, rowspan=2, sticky="news")
     #===========================================================
 
