@@ -8,25 +8,22 @@ import HandDetector as DT
 class Camera:
     timestamp = 0
     def __init__(self, window, _width, _height):
+        # Initialize variables
         self.window = window
 
         # Create a canvas to display the camera feed
         self.canvas = tk.Canvas(window, width=_width, height=_height)
         self.canvas.pack()
+        # Create a label to display detected gesture
+        custom_font = font.Font(size=14)
+        self.text = tk.Label(window, text="Gesture Display", font=custom_font)
+        self.text.pack(ipadx=3)
 
         # Open the camera
         self.cap = cv.VideoCapture(0)  # 0 for default camera, adjust if needed
 
         # Call the update method to continuously update the canvas with new frames
         self.update()
-
-        # Add a button to close the application
-        #self.close_button = tk.Button(window, text="Close", command=self.close)
-        #self.close_button.pack()
-        
-        custom_font = font.Font(size=14)
-        self.text = tk.Label(window, text="Gesture Display", font=custom_font)
-        self.text.pack(ipadx=3)
 
     def update(self):
         
@@ -43,6 +40,15 @@ class Camera:
           
             # Update the canvas with the new photo image
             self.canvas.create_image(0, 0, anchor=tk.NW, image=self.photo)
+            
+            # Update the label text with the detected hand gestures
+            gestures = DT.current_gestures
+            label_txt = "No gestures detected."
+            if len(gestures) == 1:
+                label_txt = f"{gestures[0]}"
+            elif len(gestures) > 1:
+                label_txt = ", ".join(gestures)
+            self.text.configure(text=label_txt)
 
         # Schedule the update method to be called after a delay (e.g., 10 milliseconds)
         self.window.after(10, self.update)

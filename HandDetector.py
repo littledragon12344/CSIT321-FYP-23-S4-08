@@ -18,7 +18,7 @@ VisionRunningMode = mp.tasks.vision.RunningMode
 
 def __result_callback(result, output_image, timestamp_ms):
         lock.acquire() # solves potential concurrency issues
-        current_gestures = []
+        current_gestures.clear()
         if result is not None and any(result.gestures):
             print("Recognized gestures:")
             for single_hand_gesture_data in result.gestures:
