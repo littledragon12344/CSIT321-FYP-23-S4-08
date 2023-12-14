@@ -49,12 +49,11 @@ def new_window():
     cam.Camera(camera, 450, 320)
 
     # create a frame for the loadout display
-    loadout_display = tk.Frame(base, width=320, height=350, bg="red")
+    loadout_display = tk.Frame(base, width=320, height=350, borderwidth=1, relief="solid", bg="red")
     lo.LoadoutDisplay(loadout_display, 250, 300)
     
     # create a frame for the gesture list display
     config = tk.Frame(base, width=800, height=250, bg="blue")
-
     cfg.Config(config)
     
     # placing the frames onto a grid for the UI layout
