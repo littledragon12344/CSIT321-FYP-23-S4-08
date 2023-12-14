@@ -6,6 +6,7 @@ from PIL import Image, ImageTk
 import HandDetector as DT
 
 class Camera:
+    timestamp = 0
     def __init__(self, window, _width, _height):
         self.window = window
 
@@ -35,8 +36,8 @@ class Camera:
         if ret:
             # Flip the frame horizontally (mirror effect)
             mirrored_frame = cv.flip(frame, 1)
-            detection = DT.detect(mirrored_frame)
-
+            detection = DT.detect(mirrored_frame, self.timestamp)
+            self.timestamp = self.timestamp + 1 # should be monotonically increasing, because in LIVE_STREAM mode
             # Convert the OpenCV frame to a Tkinter-compatible photo image
             self.photo = ImageTk.PhotoImage(image=Image.fromarray(cv.cvtColor(detection, cv.COLOR_BGR2RGB)))
           
