@@ -26,15 +26,14 @@ class Camera:
         self.update()
 
     def update(self):
-        
         # Read a frame from the camera
         ret, frame = self.cap.read()
         
         if ret:
             # Flip the frame horizontally (mirror effect)
             mirrored_frame = cv.flip(frame, 1)
-            detection = DT.detect(mirrored_frame, self.timestamp)
-            self.timestamp = self.timestamp + 1 # should be monotonically increasing, because in LIVE_STREAM mode
+            detection = DT.detect(mirrored_frame)
+            DT.timestamp += 1 # should be monotonically increasing, because in LIVE_STREAM mode
             # Convert the OpenCV frame to a Tkinter-compatible photo image
             self.photo = ImageTk.PhotoImage(image=Image.fromarray(cv.cvtColor(detection, cv.COLOR_BGR2RGB)))
           
@@ -49,10 +48,10 @@ class Camera:
             elif len(gestures) > 1:
                 label_txt = ", ".join(gestures)
             self.text.configure(text=label_txt)
-
+    
         # Schedule the update method to be called after a delay (e.g., 10 milliseconds)
-        self.window.after(10, self.update)
-
+        self.window.after(1, self.update) 
+ 
     def close(self):
         # Release the camera and close the application
         self.cap.release()
