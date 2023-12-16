@@ -15,3 +15,6 @@ def PressNrelease(Key)
 
 def GetKey(Key)				 # to link keys with specfic gesture
 		keyboard.record(key) # records keyboard activity until key is pressed
+
+#need to press key once and not press again unless a diff gesture is detected
+#if not the system will keep pressing the key over and over again
