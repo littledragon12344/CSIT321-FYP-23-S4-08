@@ -48,7 +48,7 @@ def detect(image):
         model_complexity=0,
         static_image_mode=False,
         max_num_hands=num_hands,
-        min_detection_confidence=0.7,
+        min_detection_confidence=0.5,
         min_tracking_confidence=0.5) as hands:
         # To improve performance, optionally mark the image as not writeable to
         # pass by reference.
@@ -72,12 +72,16 @@ def detect(image):
                 mp_hands.HAND_CONNECTIONS,
                 mp_drawing_styles.get_default_hand_landmarks_style(),
                 mp_drawing_styles.get_default_hand_connections_style())  
-            mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=np_array)    
+            mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=np_array)  
+            
             if current_timestamp == timestamp and counter == 2:
                 timestamp += 1
                 recognizer.recognize_async(mp_image, timestamp) 
-            else:
+            elif counter == 1:
                 recognizer.recognize_async(mp_image, timestamp) 
+            else:
+                print("3hand+ error")
+                #if it detect 3 hands for some reason so it doesnt crash
             
     return image
 
