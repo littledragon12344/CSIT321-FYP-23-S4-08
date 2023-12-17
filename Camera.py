@@ -4,9 +4,11 @@ import cv2 as cv
 from PIL import Image, ImageTk
 
 import HandDetector as DT
+import InputTrigger as IT
 
 class Camera:
     timestamp = 0
+    gestures = list
     def __init__(self, window, _width, _height):
         # Initialize variables
         self.window = window
@@ -41,17 +43,29 @@ class Camera:
             self.canvas.create_image(0, 0, anchor=tk.NW, image=self.photo)
             
             # Update the label text with the detected hand gestures
+            global gestures
             gestures = DT.current_gestures
             label_txt = "No gestures detected."
             if len(gestures) == 1:
                 label_txt = f"{gestures[0]}"
+                
             elif len(gestures) > 1:
                 label_txt = ", ".join(gestures)
-            self.text.configure(text=label_txt)
+            self.text.configure(text=label_txt)       
     
         # Schedule the update method to be called after a delay (e.g., 10 milliseconds)
-        self.window.after(1, self.update) 
- 
+        self.window.after(5, self.update) 
+        self.window.after(10, self.input_update) 
+    
+    def input_update(self):
+        global gestures
+        if len(gestures) >= 1:
+                if gestures[0] == "Pointing_Up":
+                    IT.Space()
+        
+        gestures.clear()
+
+
     def close(self):
         # Release the camera and close the application
         self.cap.release()
