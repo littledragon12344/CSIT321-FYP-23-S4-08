@@ -4,8 +4,8 @@
 GestureArr = [] # How many Gestures does the file have
 KeyBoardArr = [] # How many Gestures does the file have
 
- min_detection_confidence = 0.5 #settings configs 
- min_tracking_confidence  = 0.5 #settings configs 
+min_detection_confidence = 0.5 #settings configs 
+min_tracking_confidence  = 0.5 #settings configs 
 
 #TotalList
 #GestureKeyBoardArr =[TotalList][,GestureArr,KeyBoardArr] # test if better to use 2d
