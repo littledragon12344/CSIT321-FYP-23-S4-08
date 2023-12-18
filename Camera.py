@@ -4,7 +4,16 @@ import cv2 as cv
 from PIL import Image, ImageTk
 
 import HandDetector as DT
-import InputTrigger as IT
+#import InputTrigger as IT
+import KeyboardInput as KeyInput
+import LoadoutGestures as LoadedGesture
+
+LoadedGesture.Loadgestures() # to load the gesture
+
+GestureLoad=LoadedGesture.GestureArr 
+KeyBoardLoad=LoadedGesture.KeyBoardArr  
+print("Loadout Gestures Loaded")
+
 
 class Camera:
     timestamp = 0
@@ -59,9 +68,13 @@ class Camera:
     
     def input_update(self):
         global gestures
-        if len(gestures) >= 1:
-                if gestures[0] == "Pointing_Up":
-                    IT.Space()
+        if len(gestures) >= 1: # Detect if Theres Gesture
+
+                for x in range(len(GestureLoad)): # list of how many gesture need to check
+                    if gestures[0] == GestureLoad[x]:
+                        #IT.Space() #Do trigger
+                        KeyInput.PressNrelease(KeyBoardLoad[x]) #Passes the varible that is linked to the Gesture
+
         
         gestures.clear()
 
