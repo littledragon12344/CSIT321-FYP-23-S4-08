@@ -41,7 +41,6 @@ def Loadgestures():
         
         #Add Loaded Gestures
         GestureArr.append("Closed_Fist")    #default handgesture to reset everything else
-        #KeyBoardArr.append("space")
 
         #Add Loaded Gestures
         #GestureArr.append("")
@@ -66,7 +65,10 @@ def SaveLoadoutFile():
 
         for x in range(len(GestureArr)): # writes "Gesture inputtrigger" on each line 
             file.write(GestureArr[x]+" ")
-            file.write(KeyBoardArr[x]+"\n")
+            if x == len(GestureArr) - 1:
+                file.write("\n")
+            else: 
+                file.write(KeyBoardArr[x]+"\n")
 
         file.write(str(min_detection_confidence)+"\n")
         file.write(str(min_tracking_confidence)+"\n")
