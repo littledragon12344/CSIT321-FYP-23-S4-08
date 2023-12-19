@@ -42,7 +42,7 @@ def DeleteGesture(Num):
         print("Gesture deleted")
        
 def SaveLoadoutFile():
-        file = open("LoadOutTest.txt", "w") #w means create file, but will override if possible
+        file = open("Loadout/LoadOutTest.txt", "w") #w means create file, but will override if possible
 
         for x in range(len(GestureArr)): # writes "Gesture inputtrigger" on each line 
             file.write(GestureArr[x]+" ")
@@ -54,5 +54,5 @@ def SaveLoadoutFile():
         print("LoadOut File saved")
 
 def LoadLoadoutFile():
-        file = open("LoadOutTest.txt", "r") # Read file
+        file = open("Loadout/LoadOutTest.txt", "r") # Read file
         print("LoadOut File Loaded")
