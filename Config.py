@@ -7,13 +7,15 @@ class Config:
     cfglist = []
     def __init__(self, window):
         self.window = window
+        base = tk.Frame(self.window, highlightbackground="black", highlightthickness=2)
+        base.pack(side="left", fill="both", expand=True, padx=10)
         
         # create a canvas for list display
-        self.canvas = tk.Canvas(self.window)
-        self.canvas.pack(side="left", fill="both", expand=True, padx=10, pady=2)
+        self.canvas = tk.Canvas(base)
+        self.canvas.pack(side="left", fill="both", expand=True)
 
         # create a vertical scrollbar and attach it to the display frame
-        self.scrollbar = tk.Scrollbar(self.window, width=20, orient="vertical", command=self.canvas.yview)
+        self.scrollbar = tk.Scrollbar(base, width=20, orient="vertical", command=self.canvas.yview)
         self.scrollbar.pack(side="right", fill="y")
         
         # config the canvas
