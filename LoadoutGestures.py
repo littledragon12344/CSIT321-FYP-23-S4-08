@@ -4,6 +4,7 @@
 
 GestureArr = [] # How many Gestures does the file have
 KeyBoardArr = [] # How many Gestures does the file have
+#gesture and keyboard array are linked 1:1 so if the array is inconsistant will have problem
 
 min_detection_confidence = 0.5 #settings configs 
 min_tracking_confidence  = 0.5 #settings configs 
@@ -29,6 +30,7 @@ def Loadgestures():
 
         #GestureArr.remove(Key)
         #KeyBoardArr.remove(Key)
+        print("Loadout Gestures Loaded")
 
 #to save gesture to specfic Key
 def SaveGesture(Num):
@@ -55,4 +57,16 @@ def SaveLoadoutFile():
 
 def LoadLoadoutFile():
         file = open("Loadout/LoadOutTest.txt", "r") # Read file
+        file.close()
+
+        '''
+        #Clear Loaded Gestures 
+        GestureArr.clear()
+        KeyBoardArr.clear() 
+       
+        #Add Loaded Gestures
+        GestureArr.append("Closed_Fist")
+        KeyBoardArr.append("space")
+        '''
+
         print("LoadOut File Loaded")

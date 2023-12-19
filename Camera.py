@@ -10,15 +10,17 @@ import LoadoutGestures as LoadedGesture
 
 LoadedGesture.Loadgestures() # to load the gesture
 
-GestureLoad=LoadedGesture.GestureArr 
-KeyBoardLoad=LoadedGesture.KeyBoardArr  
-print("Loadout Gestures Loaded")
-LoadedGesture.SaveLoadoutFile()
+GestureLoad=LoadedGesture.GestureArr  #gesture array
+KeyBoardLoad=LoadedGesture.KeyBoardArr  #keyboard array
+LoadedGesture.SaveLoadoutFile() #Save the file to txt file
+
+LastGesture="No gestures detected"
 
 
 class Camera:
     timestamp = 0
     gestures = list
+
     def __init__(self, window, _width, _height):
         # Initialize variables
         self.window = window
@@ -69,11 +71,20 @@ class Camera:
     
     def input_update(self):
         global gestures
+        global LastGesture  # last gesture detected
+
         if len(gestures) >= 1: # Detect if Theres Gesture
 
                 for x in range(len(GestureLoad)): # list of how many gesture need to check
-                    if gestures[0] == GestureLoad[x]:
-                        #IT.Space() #Do trigger
+
+                    if gestures[0]==LastGesture:# so the key only trigger once
+                            break
+                    else:
+                            LastGesture="reset gesture"
+
+                    if gestures[0] == GestureLoad[x]:                                            
+                        LastGesture=GestureLoad[x]
+
                         KeyInput.PressNrelease(KeyBoardLoad[x]) #Passes the varible that is linked to the Gesture
 
         
