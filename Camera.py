@@ -71,15 +71,15 @@ class Camera:
     
     def input_update(self):
         global gestures
-        global LastGesture  # last gesture detected
-
         if len(gestures) >= 1: # Detect if Theres Gesture
 
                 for x in range(len(GestureLoad)): # list of how many gesture need to check
                     if gestures[0] == GestureLoad[x]:
                         #IT.Space() #Do trigger
-                        KeyInput.PressNrelease(KeyBoardLoad[x]) #Passes the varible that is linked to the Gesture
-
+                        if GestureLoad[x] == "Closed_Fist":         #change to whatever default handgesture is to to reset keys
+                            KeyInput.ReleaseAllKeys(KeyBoardLoad)
+                        else:
+                            KeyInput.PressKey(KeyBoardLoad[x])    # Press the key 
         
         gestures.clear()
 
