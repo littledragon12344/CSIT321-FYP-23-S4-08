@@ -10,10 +10,11 @@ import LoadoutGestures as LoadedGesture
 
 LoadedGesture.Loadgestures() # to load the gesture
 
-GestureLoad=LoadedGesture.GestureArr 
-KeyBoardLoad=LoadedGesture.KeyBoardArr  
-print("Loadout Gestures Loaded")
-LoadedGesture.SaveLoadoutFile()
+GestureLoad=LoadedGesture.GestureArr  #gesture array
+KeyBoardLoad=LoadedGesture.KeyBoardArr  #keyboard array
+LoadedGesture.SaveLoadoutFile() #Save the file to txt file
+
+LastGesture="No gestures detected"
 
 
 class Camera:
@@ -70,16 +71,15 @@ class Camera:
     
     def input_update(self):
         global gestures
+        global LastGesture  # last gesture detected
+
         if len(gestures) >= 1: # Detect if Theres Gesture
 
                 for x in range(len(GestureLoad)): # list of how many gesture need to check
                     if gestures[0] == GestureLoad[x]:
                         #IT.Space() #Do trigger
-                        #KeyInput.PressNrelease(KeyBoardLoad[x]) #Passes the varible that is linked to the Gesture
-                        if GestureLoad[x] == "Closed_Fist":         #change to whatever default handgesture is to to reset keys
-                            KeyInput.ReleaseAllKeys(KeyBoardLoad)
-                        else:
-                            KeyInput.PressKey(KeyBoardLoad[x])    # Press the key 
+                        KeyInput.PressNrelease(KeyBoardLoad[x]) #Passes the varible that is linked to the Gesture
+
         
         gestures.clear()
 
