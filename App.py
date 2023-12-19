@@ -6,7 +6,7 @@ import Loadout as lo
 def new_window(): 
     root = tk.Tk()
     root.title("Gesture Detection Prototype")
-    root.geometry("800x600")
+    root.geometry("800x610")
     root.resizable(width=False, height=False)
     
     #label = tk.Label(root, text="Created by group CSIT321-FYP-23-S4-08")
@@ -44,22 +44,22 @@ def new_window():
     # create a base frame for the layout
     base = tk.Frame(root)
     # create a frame to contain the camera
-    camera = tk.Frame(base, width=480, height=350, bg="green")
+    camera = tk.Frame(base, width=480, height=280, bg="green")
     # get the camera feed for the frame
-    cam.Camera(camera, 450, 320)
+    cam.Camera(camera, 466, 305)
 
     # create a frame for the loadout display
-    loadout_display = tk.Frame(base, width=320, height=350, borderwidth=1, relief="solid", bg="red")
-    lo.LoadoutDisplay(loadout_display, 250, 300)
+    loadout_display = tk.Frame(base, borderwidth=1, relief="solid", bg="red")
+    lo.LoadoutDisplay(loadout_display, 300, 280)
     
     # create a frame for the gesture list display
-    config = tk.Frame(base, width=800, height=250, bg="blue")
+    config = tk.Frame(base, width=800, height=275, bg="blue")
     cfg.Config(config)
     
     # placing the frames onto a grid for the UI layout
     base.grid(column=0, row=0, sticky="news")
-    camera.grid(column=0, row=0, columnspan=3, rowspan=2, padx=2, pady=2, sticky="news")
-    loadout_display.grid(column=3, row=0, columnspan=2, rowspan=2, padx=0, pady=2, sticky="news")
+    camera.grid(column=0, row=0, columnspan=3, rowspan=2, sticky="news")
+    loadout_display.grid(column=3, row=0, columnspan=2, rowspan=2, sticky="news")
     config.grid(column=0, row=2, columnspan=5, rowspan=2, sticky="news")
     #===========================================================
 
