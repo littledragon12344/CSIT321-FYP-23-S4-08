@@ -13,6 +13,7 @@ LoadedGesture.Loadgestures() # to load the gesture
 GestureLoad=LoadedGesture.GestureArr 
 KeyBoardLoad=LoadedGesture.KeyBoardArr  
 print("Loadout Gestures Loaded")
+LoadedGesture.SaveLoadoutFile()
 
 
 class Camera:
