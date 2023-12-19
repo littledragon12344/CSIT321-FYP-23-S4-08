@@ -18,6 +18,7 @@ print("Loadout Gestures Loaded")
 class Camera:
     timestamp = 0
     gestures = list
+
     def __init__(self, window, _width, _height):
         # Initialize variables
         self.window = window
@@ -73,8 +74,11 @@ class Camera:
                 for x in range(len(GestureLoad)): # list of how many gesture need to check
                     if gestures[0] == GestureLoad[x]:
                         #IT.Space() #Do trigger
-                        KeyInput.PressNrelease(KeyBoardLoad[x]) #Passes the varible that is linked to the Gesture
-
+                        #KeyInput.PressNrelease(KeyBoardLoad[x]) #Passes the varible that is linked to the Gesture
+                        if GestureLoad[x] == "Closed_Fist":         #change to whatever default handgesture is to to reset keys
+                            KeyInput.ReleaseAllKeys(KeyBoardLoad)
+                        else:
+                            KeyInput.PressKey(KeyBoardLoad[x])    # Press the key 
         
         gestures.clear()
 

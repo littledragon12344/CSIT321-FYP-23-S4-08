@@ -17,10 +17,30 @@ def Loadgestures():
         #Clear Loaded Gestures 
         GestureArr.clear()
         KeyBoardArr.clear() 
-       
+        
         #Add Loaded Gestures
-        GestureArr.append("Closed_Fist")
+        GestureArr.append("Victory")
         KeyBoardArr.append("space")
+        
+        #Add Loaded Gestures
+        GestureArr.append("Open_Palm")
+        KeyBoardArr.append("w")
+
+        #Add Loaded Gestures
+        GestureArr.append("Thumb_Up")
+        KeyBoardArr.append("a")
+
+        #Add Loaded Gestures
+        GestureArr.append("Thumb_Down")
+        KeyBoardArr.append("d")
+
+        #Add Loaded Gestures
+        GestureArr.append("Pointing_Up")
+        KeyBoardArr.append("s")
+        
+        #Add Loaded Gestures
+        GestureArr.append("Closed_Fist")    #default handgesture to reset everything else
+        #KeyBoardArr.append("space")
 
         #Add Loaded Gestures
         #GestureArr.append("")
