@@ -84,7 +84,7 @@ class Camera:
                 """
                 for x in range(len(GestureLoad)): # list of how many gesture need to check
                     if gestures[0] == GKBA[0][x]: # gesture array
-                            KeyInput.PressKey(GKBA[1][x])    # Press the key 
+                            KeyInput.PressKey(GKBA[1][x], KeyBoardLoad)    # Press the key 
 
 
                             
