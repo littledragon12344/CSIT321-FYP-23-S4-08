@@ -12,6 +12,7 @@ LoadedGesture.Loadgestures() # to load the gesture
 
 GestureLoad=LoadedGesture.GestureArr  #gesture array
 KeyBoardLoad=LoadedGesture.KeyBoardArr  #keyboard array
+GKBA=LoadedGesture.GestureKeyBoardArr
 LoadedGesture.SaveLoadoutFile() #Save the file to txt file
 
 LastGesture="No gestures detected"
@@ -67,23 +68,30 @@ class Camera:
     
         # Schedule the update method to be called after a delay (e.g., 10 milliseconds)
         self.window.after(5, self.update) 
-        self.window.after(10, self.input_update) 
+        self.window.after(5, self.input_update) 
     
     def input_update(self):
         global gestures
         if len(gestures) >= 1: # Detect if Theres Gesture
-
+                """
                 for x in range(len(GestureLoad)): # list of how many gesture need to check
                     if gestures[0] == GestureLoad[x]:
-                        #IT.Space() #Do trigger
+
                         if GestureLoad[x] == "Closed_Fist":         #change to whatever default handgesture is to to reset keys
                             KeyInput.ReleaseAllKeys(KeyBoardLoad)
                         else:
                             KeyInput.PressKey(KeyBoardLoad[x])    # Press the key 
+                """
+                for x in range(len(GestureLoad)): # list of how many gesture need to check
+                    if gestures[0] == GKBA[0][x]: # gesture array
+                            KeyInput.PressKey(GKBA[1][x])    # Press the key 
+
+
+                            
         
         gestures.clear()
 
-
+          
     def close(self):
         # Release the camera and close the application
         self.cap.release()

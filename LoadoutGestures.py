@@ -1,6 +1,7 @@
 #For Testing 
 #can transfer to the loadout.py in the future
 
+import numpy as np
 
 GestureArr = [] # How many Gestures does the file have
 KeyBoardArr = [] # How many Gestures does the file have
@@ -10,11 +11,12 @@ min_detection_confidence = 0.5 #settings configs
 min_tracking_confidence  = 0.5 #settings configs 
 
 #TotalList
-#GestureKeyBoardArr =[TotalList][,GestureArr,KeyBoardArr] # test if better to use 2d
+GestureKeyBoardArr = []
 
 #loadout Loading gestures
 #to load the gestures
 def Loadgestures(): 
+        global GestureKeyBoardArr       
 
         #Clear Loaded Gestures 
         GestureArr.clear()
@@ -42,13 +44,16 @@ def Loadgestures():
         
         #Add Loaded Gestures
         GestureArr.append("Closed_Fist")    #default handgesture to reset everything else
-
+        KeyBoardArr.append("Release")
         #Add Loaded Gestures
         #GestureArr.append("")
         #KeyBoardArr.append("")
 
         #GestureArr.remove(Key)
         #KeyBoardArr.remove(Key)
+
+        GestureKeyBoardArr= np.array([GestureArr,KeyBoardArr])
+      
         print("Loadout Gestures Loaded")
 
 #to save gesture to specfic Key
