@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import filedialog
 
 # loadout display class
 class LoadoutDisplay():
@@ -90,7 +91,19 @@ class LoadoutDisplay():
             self.selected = id
             print(f"Selected frame #{id}")    
         return handler
-        
+
+def importLoadout():
+    # ask the user to choose a file location
+    file_path = filedialog.askopenfilename(title="Select a file", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+    if file_path:
+        print(f"Selected file: {file_path}")
+
+def exportLoadout():
+    # ask the user to choose a file location
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+    if file_path:
+        print(f"Selected export location: {file_path}")
+
 # loadout item class
 class Loadout():
     pass

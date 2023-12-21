@@ -22,8 +22,8 @@ def new_window():
     file_menu.add_command(label="New")
     # loadouts
     file_menu.add_separator()
-    file_menu.add_command(label="Import loadouts")
-    file_menu.add_command(label="Export loadouts")
+    file_menu.add_command(label="Import loadouts", command=lo.importLoadout)
+    file_menu.add_command(label="Export loadouts", command=lo.exportLoadout)
     # exit from app
     file_menu.add_separator()
     file_menu.add_command(label="Exit", command=root.quit)
