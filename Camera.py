@@ -67,8 +67,8 @@ class Camera:
             self.text.configure(text=label_txt)       
     
         # Schedule the update method to be called after a delay (e.g., 10 milliseconds)
-        self.window.after(5, self.update) 
-        self.window.after(1, self.input_update) 
+        self.window.after(2, self.update) 
+        self.window.after(2, self.input_update) 
     
     def input_update(self):
         global gestures
