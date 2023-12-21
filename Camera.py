@@ -12,6 +12,7 @@ LoadedGesture.Loadgestures() # to load the gesture
 
 GestureLoad=LoadedGesture.GestureArr  #gesture array
 KeyBoardLoad=LoadedGesture.KeyBoardArr  #keyboard array
+GKBA=LoadedGesture.GestureKeyBoardArr
 LoadedGesture.SaveLoadoutFile() #Save the file to txt file
 
 LastGesture="No gestures detected"
@@ -66,31 +67,37 @@ class Camera:
             self.text.configure(text=label_txt)       
     
         # Schedule the update method to be called after a delay (e.g., 10 milliseconds)
-        self.window.after(5, self.update) 
-        self.window.after(10, self.input_update) 
+        self.window.after(2, self.update) 
+        self.window.after(2, self.input_update) 
     
     def input_update(self):
         global gestures
-        global LastGesture  # last gesture detected
-
         if len(gestures) >= 1: # Detect if Theres Gesture
-
+                """
                 for x in range(len(GestureLoad)): # list of how many gesture need to check
+                    if gestures[0] == GestureLoad[x]:
 
-                    if gestures[0]==LastGesture:# so the key only trigger once
-                            break
-                    else:
-                            LastGesture="reset gesture"
+                        if GestureLoad[x] == "Closed_Fist":         #change to whatever default handgesture is to to reset keys
+                            KeyInput.ReleaseAllKeys(KeyBoardLoad)
+                        else:
+                            KeyInput.PressKey(KeyBoardLoad[x])    # Press the key 
+                """
+                for x in range(len(GestureLoad)): # list of how many gesture need to check
+                  
+                    if gestures[0] == GKBA[0][x]: # gesture array
+                            if GKBA[1][x] == "Release":   #if release 
+                                KeyInput.ReleaseAllKeys(KeyBoardLoad)
+                                break
 
-                    if gestures[0] == GestureLoad[x]:                                            
-                        LastGesture=GestureLoad[x]
+                            KeyInput.PressKey(GKBA[1][x])    # Press the key 
+                            break # so it doesnt check all of the loop
 
-                        KeyInput.PressNrelease(KeyBoardLoad[x]) #Passes the varible that is linked to the Gesture
 
+                            
         
         gestures.clear()
 
-
+          
     def close(self):
         # Release the camera and close the application
         self.cap.release()

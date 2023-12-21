@@ -1,6 +1,7 @@
 #For Testing 
 #can transfer to the loadout.py in the future
 
+import numpy as np
 
 GestureArr = [] # How many Gestures does the file have
 KeyBoardArr = [] # How many Gestures does the file have
@@ -10,26 +11,49 @@ min_detection_confidence = 0.5 #settings configs
 min_tracking_confidence  = 0.5 #settings configs 
 
 #TotalList
-#GestureKeyBoardArr =[TotalList][,GestureArr,KeyBoardArr] # test if better to use 2d
+GestureKeyBoardArr = []
 
 #loadout Loading gestures
 #to load the gestures
 def Loadgestures(): 
+        global GestureKeyBoardArr       
 
         #Clear Loaded Gestures 
         GestureArr.clear()
         KeyBoardArr.clear() 
-       
+        
         #Add Loaded Gestures
-        GestureArr.append("Closed_Fist")
+        GestureArr.append("Victory")
         KeyBoardArr.append("space")
+        
+        #Add Loaded Gestures
+        GestureArr.append("Open_Palm")
+        KeyBoardArr.append("w")
 
+        #Add Loaded Gestures
+        GestureArr.append("Thumb_Up")
+        KeyBoardArr.append("a")
+
+        #Add Loaded Gestures
+        GestureArr.append("Thumb_Down")
+        KeyBoardArr.append("d")
+
+        #Add Loaded Gestures
+        GestureArr.append("Pointing_Up")
+        KeyBoardArr.append("s")
+        
+        #Add Loaded Gestures
+        GestureArr.append("Closed_Fist")    #default handgesture to reset everything else
+        KeyBoardArr.append("Release")
         #Add Loaded Gestures
         #GestureArr.append("")
         #KeyBoardArr.append("")
 
         #GestureArr.remove(Key)
         #KeyBoardArr.remove(Key)
+
+        GestureKeyBoardArr= np.array([GestureArr,KeyBoardArr])
+      
         print("Loadout Gestures Loaded")
 
 #to save gesture to specfic Key
@@ -48,7 +72,10 @@ def SaveLoadoutFile():
 
         for x in range(len(GestureArr)): # writes "Gesture inputtrigger" on each line 
             file.write(GestureArr[x]+" ")
-            file.write(KeyBoardArr[x]+"\n")
+            if x == len(GestureArr) - 1:
+                file.write("\n")
+            else: 
+                file.write(KeyBoardArr[x]+"\n")
 
         file.write(str(min_detection_confidence)+"\n")
         file.write(str(min_tracking_confidence)+"\n")
