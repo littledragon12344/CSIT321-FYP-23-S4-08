@@ -67,8 +67,8 @@ class Camera:
             self.text.configure(text=label_txt)       
     
         # Schedule the update method to be called after a delay (e.g., 10 milliseconds)
-        self.window.after(2, self.update) 
-        self.window.after(2, self.input_update) 
+        self.window.after(5, self.update) 
+        self.window.after(1, self.input_update) 
     
     def input_update(self):
         global gestures
@@ -83,8 +83,13 @@ class Camera:
                             KeyInput.PressKey(KeyBoardLoad[x])    # Press the key 
                 """
                 for x in range(len(GestureLoad)): # list of how many gesture need to check
+                  
                     if gestures[0] == GKBA[0][x]: # gesture array
-                            KeyInput.PressKey(GKBA[1][x], KeyBoardLoad)    # Press the key 
+                            if GKBA[1][x] == "Release":   #if release 
+                                KeyInput.ReleaseAllKeys(KeyBoardLoad)
+                                break
+
+                            KeyInput.PressKey(GKBA[1][x])    # Press the key 
 
 
                             

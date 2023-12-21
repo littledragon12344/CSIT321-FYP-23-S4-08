@@ -5,30 +5,17 @@ import keyboard
 #
 #key_states = {}  # Dictionary to store the state of each key
 
-def PressKey(Key, KeyBoardLoad):
-		if Key == "Release":         #change to whatever default handgesture is to to reset keys
-			ReleaseAllKeys(KeyBoardLoad)
-			return		
-
+def PressKey(Key):
 		keyboard.press(Key)	  #press a key.
 		print(Key+" is pressed")
 		#key_states[Key] = True  # Update key state to pressed
 
 def ReleaseKey(Key):
-		#if Key == "Release":         #change to whatever default handgesture is to to reset keys
-			#ReleaseAllKeys()
-			#return	
-
 		keyboard.release(Key) #releases a key.
 		#print(Key+" is released")
 		#key_states[Key] = False  # Update key state to released
 		
 def PressNrelease(Key):
-		#if Key == "Release":         #change to whatever default handgesture is to to reset keys
-			#ReleaseAllKeys()
-			#return
-
-		#ReleaseKey(Key)
 		keyboard.press_and_release(Key) # presses and releases a key.
 		print(Key+" is pressed and released")
 
