@@ -90,6 +90,7 @@ class Camera:
                                 break
 
                             KeyInput.PressKey(GKBA[1][x])    # Press the key 
+                            break # so it doesnt check all of the loop
 
 
                             
