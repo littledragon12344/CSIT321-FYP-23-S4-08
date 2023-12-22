@@ -8,12 +8,16 @@ import HandDetector as DT
 import KeyboardInput as KeyInput
 import LoadoutGestures as LoadedGesture
 
-LoadedGesture.Loadgestures() # to load the gesture
 
+
+#LoadedGesture.SaveLoadoutFile() #Save the file to txt file
+#LoadedGesture.LoadLoadoutFile() # load the file to the array 
+LoadedGesture.Loadgestures() # Default gestures load
 GestureLoad=LoadedGesture.GestureArr  #gesture array
 KeyBoardLoad=LoadedGesture.KeyBoardArr  #keyboard array
 GKBA=LoadedGesture.GestureKeyBoardArr
-LoadedGesture.SaveLoadoutFile() #Save the file to txt file
+
+
 
 LastGesture="No gestures detected"
 

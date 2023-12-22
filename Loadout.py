@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
+import LoadoutGestures as LOG
 
 # loadout display class
 class LoadoutDisplay():
@@ -97,12 +98,14 @@ def importLoadout():
     file_path = filedialog.askopenfilename(title="Select a file", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
     if file_path:
         print(f"Selected file: {file_path}")
+        LOG.LoadLoadoutFile(file_path)
 
 def exportLoadout():
     # ask the user to choose a file location
     file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
     if file_path:
         print(f"Selected export location: {file_path}")
+        LOG.SaveLoadoutFile(file_path)
 
 # loadout item class
 class Loadout():

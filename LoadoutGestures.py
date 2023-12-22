@@ -67,33 +67,47 @@ def DeleteGesture(Num):
         KeyBoardArr.append(Key)
         print("Gesture deleted")
        
-def SaveLoadoutFile():
-        file = open("Loadout/LoadOutTest.txt", "w") #w means create file, but will override if possible
+def SaveLoadoutFile(File_path):# to export/save import
+        #file = open("Loadout/LoadOutTest.txt", "w") #w means create file, but will override if possible
 
-        for x in range(len(GestureArr)): # writes "Gesture inputtrigger" on each line 
-            file.write(GestureArr[x]+" ")
-            if x == len(GestureArr) - 1:
-                file.write("\n")
-            else: 
-                file.write(KeyBoardArr[x]+"\n")
+        file = open(File_path, "w") #w means create file, but will override if possible
 
         file.write(str(min_detection_confidence)+"\n")
         file.write(str(min_tracking_confidence)+"\n")
+
+        for x in range(len(GestureArr)): # writes "Gesture inputtrigger" on each line 
+            file.write(GestureArr[x]+" ")
+            file.write(KeyBoardArr[x]+"\n")
+
+  
         file.close()
         print("LoadOut File saved")
 
-def LoadLoadoutFile():
-        file = open("Loadout/LoadOutTest.txt", "r") # Read file
+def LoadLoadoutFile(File_path):#import/read file
+        global GestureKeyBoardArr      
+
+        #with open("Loadout/LoadOutTest.txt") as file:
+        with open(File_path) as file:
+            GestureArr.clear()
+            KeyBoardArr.clear() 
+
+            min_detection_confidence = float(file.readline())
+            print(str(min_detection_confidence)+"\n")
+            min_tracking_confidence = float(file.readline())
+            print(str(min_tracking_confidence)+"\n")
+
+            #read each line by line
+            for each in file:
+                #print (each)
+                first_word = each.split()[0] #GestureArr
+                sec_word = each.split()[1] #KeyBoardArr
+            
+                print(first_word+"\n")
+                print(sec_word+"\n")
+                GestureArr.append(first_word)
+                KeyBoardArr.append(sec_word)
+
+            GestureKeyBoardArr= np.array([GestureArr,KeyBoardArr])
         file.close()
-
-        '''
-        #Clear Loaded Gestures 
-        GestureArr.clear()
-        KeyBoardArr.clear() 
-       
-        #Add Loaded Gestures
-        GestureArr.append("Closed_Fist")
-        KeyBoardArr.append("space")
-        '''
-
-        print("LoadOut File Loaded")
+        
+        print("LoadOut File Loaded to gesture")
