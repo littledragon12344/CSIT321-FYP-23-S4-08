@@ -13,8 +13,7 @@ min_tracking_confidence  = 0.5 #settings configs
 #TotalList
 GestureKeyBoardArr = []
 
-#loadout Loading gestures
-#to load the gestures
+#Loading default gesture
 def Loadgestures(): 
         global GestureKeyBoardArr       
 
@@ -45,12 +44,6 @@ def Loadgestures():
         #Add Loaded Gestures
         GestureArr.append("Closed_Fist")    #default handgesture to reset everything else
         KeyBoardArr.append("Release")
-        #Add Loaded Gestures
-        #GestureArr.append("")
-        #KeyBoardArr.append("")
-
-        #GestureArr.remove(Key)
-        #KeyBoardArr.remove(Key)
 
         GestureKeyBoardArr= np.array([GestureArr,KeyBoardArr])
       
@@ -63,8 +56,8 @@ def SaveGesture(Num):
         print("Gesture saved")
         
 def DeleteGesture(Num):
-        GestureArr.append(Gesture)
-        KeyBoardArr.append(Key)
+        GestureArr.remove(Gesture)
+        KeyBoardArr.remove(Key)
         print("Gesture deleted")
        
 def SaveLoadoutFile(File_path):# to export/save import
@@ -79,7 +72,6 @@ def SaveLoadoutFile(File_path):# to export/save import
             file.write(GestureArr[x]+" ")
             file.write(KeyBoardArr[x]+"\n")
 
-  
         file.close()
         print("LoadOut File saved")
 

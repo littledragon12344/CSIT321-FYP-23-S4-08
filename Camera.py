@@ -9,17 +9,12 @@ import KeyboardInput as KeyInput
 import LoadoutGestures as LoadedGesture
 
 
-
 #LoadedGesture.SaveLoadoutFile() #Save the file to txt file
 #LoadedGesture.LoadLoadoutFile() # load the file to the array 
 LoadedGesture.Loadgestures() # Default gestures load
 GestureLoad=LoadedGesture.GestureArr  #gesture array
 KeyBoardLoad=LoadedGesture.KeyBoardArr  #keyboard array
 GKBA=LoadedGesture.GestureKeyBoardArr
-
-
-
-LastGesture="No gestures detected"
 
 
 class Camera:
@@ -77,15 +72,7 @@ class Camera:
     def input_update(self):
         global gestures
         if len(gestures) >= 1: # Detect if Theres Gesture
-                """
-                for x in range(len(GestureLoad)): # list of how many gesture need to check
-                    if gestures[0] == GestureLoad[x]:
 
-                        if GestureLoad[x] == "Closed_Fist":         #change to whatever default handgesture is to to reset keys
-                            KeyInput.ReleaseAllKeys(KeyBoardLoad)
-                        else:
-                            KeyInput.PressKey(KeyBoardLoad[x])    # Press the key 
-                """
                 for x in range(len(GestureLoad)): # list of how many gesture need to check
                   
                     if gestures[0] == GKBA[0][x]: # gesture array
