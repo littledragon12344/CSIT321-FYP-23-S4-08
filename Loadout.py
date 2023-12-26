@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
 import LoadoutGestures as LOG
+from ReadWriteFile import *
 
 # loadout display class
 class LoadoutDisplay():
@@ -9,9 +10,18 @@ class LoadoutDisplay():
         self.root = frame
         self.width = width
         self.height = height
-        
+    
         # initializing values
         self.selected = -1
+        self.loadouts = {
+            0: {'Open_Palm': 'Space', 'Victory': 'W'}, 
+            1: {'Open_Palm': 'A', 'Victory': 'S'}
+        }
+        
+        loadout = Loadout()
+        loadout.add_pair(gesture='Open_Palm', key='S')
+        
+        self.loadouts[2] = loadout
         
         # getting the layout
         self.get_layout()
@@ -46,9 +56,10 @@ class LoadoutDisplay():
 
         # create a frame to contain the widgets within the canvas
         self.frame = tk.Frame(self.canvas)
-        self.canvas.create_window((0, 0), window=self.frame, anchor="nw")
+        self.canvas.create_window((0, 0), window=self.frame, anchor="nw", width=self.width)
 
         # add some sample items to the frame
+        """
         for i in range(30):
             # create a frame for the item
             item_frame = tk.Frame(self.frame, bg="yellow", pady=2, padx=2)
@@ -64,7 +75,26 @@ class LoadoutDisplay():
 
             button = tk.Button(item_frame, text="Click Me")
             button.grid(column=2, row=i, padx=2, sticky="news")
+        """ 
+        for id, sub_dict in self.loadouts.items():
+            # create a frame for the item
+            item_frame = tk.Frame(self.frame, bg="yellow", pady=2, padx=2)
+            item_frame.pack(fill="x", expand=True, padx=2, pady=2)
+            # bind mouse event to the frame
+            item_frame.bind("<Button-1>", self.loadout_select_handler(id))
             
+            # loadout name label
+            loadout_name = tk.Label(item_frame, text=f"Loadout #{id}", width=14, anchor="center")
+            loadout_name.grid(column=0, row=0, padx=1, sticky="news", columnspan=2)
+            
+            # gestures and their repective keys labels
+            for i, (gesture, key) in enumerate(sub_dict.items()):
+                gesture_label = tk.Label(item_frame, text=f"{gesture}", width=12, anchor="center")
+                gesture_label.grid(column=2, row=i+1, padx=1, sticky="news", columnspan=2)
+                
+                key_label = tk.Label(item_frame, text=f"{key}", width=12, anchor="center")
+                key_label.grid(column=4, row=i+1, padx=1, sticky="news", columnspan=2)
+        
         # update the scrollregion
         self.canvas.bind('<Configure>', lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
     
@@ -92,6 +122,23 @@ class LoadoutDisplay():
             self.selected = id
             print(f"Selected frame #{id}")    
         return handler
+    
+def dictionary_to_string(dictionary):
+    str = ""
+    for gesture, key in dictionary.items():
+        str += f"{gesture}: {key}\n"
+    return str
+
+def string_to_dictionary(str):
+    lines = str.splitlines()
+    result = {}
+    for line in lines:
+        line = line.strip()
+        # skip empty lines
+        if line:
+            gesture, key = line.split(': ', 1)
+            result[gesture] = key
+    return result
 
 def importLoadout():
     # ask the user to choose a file location
@@ -105,8 +152,20 @@ def exportLoadout():
     file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
     if file_path:
         print(f"Selected export location: {file_path}")
+        file_str = readFromFile()
+        
         LOG.SaveLoadoutFile(file_path)
 
 # loadout item class
 class Loadout():
-    pass
+    def __init__(self, gestures_map=None):
+        if gestures_map is None:
+            self.dictionary = {}
+        else:
+            self.dictionary = gestures_map
+        
+    def add_pair(self, gesture, key):
+        self.dictionary[gesture] = key
+        
+    def items(self):
+        return self.dictionary.items()
