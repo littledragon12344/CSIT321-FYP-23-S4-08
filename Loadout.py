@@ -14,14 +14,14 @@ class LoadoutDisplay():
         # initializing values
         self.selected = -1
         self.loadouts = {
-            0: {'Open_Palm': 'Space', 'Victory': 'W'}, 
-            1: {'Open_Palm': 'A', 'Victory': 'S'}
+            'Loadout 1': {'Open_Palm': 'Space', 'Victory': 'W'}, 
+            'Loadout 2': {'Open_Palm': 'A', 'Victory': 'S'}
         }
         
         loadout = Loadout()
         loadout.add_pair(gesture='Open_Palm', key='S')
         
-        self.loadouts[2] = loadout
+        self.loadouts['Loadout 3'] = loadout
         
         # getting the layout
         self.get_layout()
@@ -57,34 +57,21 @@ class LoadoutDisplay():
         # create a frame to contain the widgets within the canvas
         self.frame = tk.Frame(self.canvas)
         self.canvas.create_window((0, 0), window=self.frame, anchor="nw", width=self.width)
+        
+        #display loadouts
+        self.display_loadouts(self.loadouts)
 
-        # add some sample items to the frame
-        """
-        for i in range(30):
+    def display_loadouts(self, loadout_list):
+        # add loadouts to the display
+        for id, (name, sub_dict) in enumerate(loadout_list.items()):
             # create a frame for the item
             item_frame = tk.Frame(self.frame, bg="yellow", pady=2, padx=2)
             item_frame.pack(fill="x", expand=True, padx=2, pady=2)
             # bind mouse event to the frame
-            item_frame.bind("<Button-1>", self.loadout_select_handler(i))
-
-            label = tk.Label(item_frame, text=f"Item {i + 1}")
-            label.grid(column=0, row=i, padx=2, sticky="news")
-
-            label = tk.Label(item_frame, text=f"Label {i + 1}")
-            label.grid(column=1, row=i, padx=2, sticky="news")
-
-            button = tk.Button(item_frame, text="Click Me")
-            button.grid(column=2, row=i, padx=2, sticky="news")
-        """ 
-        for id, sub_dict in self.loadouts.items():
-            # create a frame for the item
-            item_frame = tk.Frame(self.frame, bg="yellow", pady=2, padx=2)
-            item_frame.pack(fill="x", expand=True, padx=2, pady=2)
-            # bind mouse event to the frame
-            item_frame.bind("<Button-1>", self.loadout_select_handler(id))
+            item_frame.bind("<Button-1>", self.loadout_select_handler(id, name))
             
             # loadout name label
-            loadout_name = tk.Label(item_frame, text=f"Loadout #{id}", width=14, anchor="center")
+            loadout_name = tk.Label(item_frame, text=f"{name}", width=14, anchor="center")
             loadout_name.grid(column=0, row=0, padx=1, sticky="news", columnspan=2)
             
             # gestures and their repective keys labels
@@ -97,10 +84,26 @@ class LoadoutDisplay():
         
         # update the scrollregion
         self.canvas.bind('<Configure>', lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+        
+    def update_display(self, loadout_list):
+        # clear the frame
+        for widget in self.frame.winfo_children():
+            widget.destroy()
+        # display loadouts
+        self.display_loadouts(loadout_list)
     
     def search_loadout(self):
         # getting the input text
         search_txt = self.searchbar.get("1.0", "end-1c")
+        # initializing an empty dictionary
+        loadouts_found = {}
+        # start searching by the loadout name
+        for loadout_name, loadout_data in self.loadouts.items():
+            if search_txt.casefold() in loadout_name.casefold():
+                loadouts_found[loadout_name] = loadout_data
+        # update the display
+        self.update_display(loadouts_found)
+        
         print(f"Searched for {search_txt} loadout!")
     
     def enable_loadout(self, id):
@@ -109,7 +112,7 @@ class LoadoutDisplay():
     def disable_loadout(self, id):
         print(f"Disabled {id} loadout!")
         
-    def loadout_select_handler(self, id):
+    def loadout_select_handler(self, id, loadout_name):
         def handler(event):
             # reset the frames appearance
             for child in self.frame.winfo_children():
@@ -118,6 +121,8 @@ class LoadoutDisplay():
             # hightlight the selected frame
             selected_frame = self.frame.winfo_children()[id]
             selected_frame.config(bg="brown")
+            
+            print(f"{loadout_name}")
             
             self.selected = id
             print(f"Selected frame #{id}")    
@@ -156,7 +161,11 @@ def exportLoadout():
         
         LOG.SaveLoadoutFile(file_path)
 
-# loadout item class
+# loadout controller class
+class LoadoutController():
+    pass
+
+# loadout entity class
 class Loadout():
     def __init__(self, gestures_map=None):
         if gestures_map is None:
