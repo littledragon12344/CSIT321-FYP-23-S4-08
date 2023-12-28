@@ -3,10 +3,20 @@ import Camera as cam
 import Config as cfg
 import Loadout as lo
 
-def new_window(): 
+loadout_widget = None
+
+def new_window():     
+    def export_loadout():
+        if loadout_widget is None: return
+        loadout_widget.export_loadout()
+        
+    def import_loadout():
+        if loadout_widget is None: return
+        loadout_widget.import_loadout()
+
     root = tk.Tk()
     root.title("Gesture Detection Prototype")
-    root.geometry("800x610")
+    root.geometry("800x600")
     root.resizable(width=False, height=False)
     
     #label = tk.Label(root, text="Created by group CSIT321-FYP-23-S4-08")
@@ -22,8 +32,8 @@ def new_window():
     file_menu.add_command(label="New")
     # loadouts
     file_menu.add_separator()
-    file_menu.add_command(label="Import loadouts", command=lo.importLoadout)
-    file_menu.add_command(label="Export loadouts", command=lo.exportLoadout)
+    file_menu.add_command(label="Import a loadout", command=import_loadout)
+    file_menu.add_command(label="Export a loadout", command=export_loadout)
     # exit from app
     file_menu.add_separator()
     file_menu.add_command(label="Exit", command=root.quit)
@@ -50,7 +60,7 @@ def new_window():
 
     # create a frame for the loadout display
     loadout_display = tk.Frame(base, borderwidth=1, relief="solid", bg="red")
-    lo.LoadoutDisplay(loadout_display, 300, 280)
+    loadout_widget = lo.LoadoutDisplay(loadout_display, 300, 280)
     
     # create a frame for the gesture list display
     config = tk.Frame(base, width=800, height=275, bg="blue")
@@ -65,6 +75,5 @@ def new_window():
 
     # start the window
     root.mainloop()
-    
 
 new_window()
