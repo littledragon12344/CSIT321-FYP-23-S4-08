@@ -1,4 +1,5 @@
 from tkinter import filedialog
+import os
 
 def writeToFile(content):
     # ask the user to choose a file location
@@ -16,3 +17,21 @@ def readFromFile():
         with open(file_path, 'r') as file:
             content = file.read()
             return content
+        
+def readFromFolder(folder_name):
+        # get the folder directory
+        folder_path = os.path.join(os.getcwd(), folder_name)
+        print(f"cwd: {folder_path}")
+        
+        # get all files within that folder
+        files = os.listdir(folder_path)
+        contents = []
+        # loop through each file
+        for file_name in files:
+            file_path = os.path.join(folder_path, file_name)
+            # read from the file and extract its data
+            if os.path.isfile(file_path):
+                with open(file_path, 'r') as file:
+                    content = file.read()
+                    contents.append(content)
+        return contents

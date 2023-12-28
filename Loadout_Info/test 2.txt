@@ -1,0 +1,3 @@
+test *:
+Open_Palm-S
+Victory-3

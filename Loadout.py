@@ -116,13 +116,13 @@ class LoadoutDisplay():
         return handler
     
     def import_loadout(self):
-        self.controller.importLoadout()
+        self.controller.import_loadout_from_file()
         self.update_display(self.controller.loadouts)
         
     def export_loadout(self):
         for name, data in self.controller.loadouts.items():
             if self.selected.casefold() in name.casefold():
-                self.controller.exportLoadout(data)
+                self.controller.export_loadout_to_file(data)
     
     """
 def importLoadout():
@@ -147,7 +147,7 @@ class LoadoutController():
         self.loadouts = {}
         
         # add in sample loadouts
-        loadout = Loadout(name='Loadout 1', gesture='Open_Palm', key='Space')
+        """loadout = Loadout(name='Loadout 1', gesture='Open_Palm', key='Space')
         loadout.add_pair(gesture='Victory', key='W')
         self.add_loadout(loadout.name, loadout)
         
@@ -161,7 +161,10 @@ class LoadoutController():
         
         loadout = Loadout(name= 'Moon Lighter')
         loadout.add_pair(gesture='Open_Palm', key='S')
-        self.add_loadout(loadout.name, loadout)
+        self.add_loadout(loadout.name, loadout)"""
+        
+        # import all loadouts from a folder
+        self.load_loadouts_from_folder("Loadout_Info")
     
     def add_loadout(self, name, data):
         self.loadouts[name] = data
@@ -182,7 +185,28 @@ class LoadoutController():
     def disable_loadout(self, name):
         print(f"Disabled loadout: {name}!")
     
-    def importLoadout(self):
+    def load_loadouts_from_folder(self, folder_name):
+        contents = readFromFolder(folder_name)
+        # loop through the content list and extract the data
+        for content in contents:
+            lines = content.splitlines()
+            # initialize the loadout
+            loadout = Loadout()
+            # start converting string data to loadout
+            for line in lines:
+                line = line.strip()
+                # skip empty lines
+                if line:
+                    if ':' in line:
+                        parts = line.split(':', 1)
+                        loadout.name = parts[0].strip()
+                    elif '-' in line:
+                        gesture, key = line.split('-', 1)
+                        loadout.add_pair(gesture, key)
+            # add the loadout to the list
+            self.add_loadout(loadout.name, loadout)
+    
+    def import_loadout_from_file(self):
         # get data from a file
         str = readFromFile()
         # if file is empty return False
@@ -190,9 +214,9 @@ class LoadoutController():
         
         # split the string data into lines
         lines = str.splitlines()
-        # initialize the dictionary
+        # initialize the loadout
         loadout = Loadout()
-        # start converting string data to dictionary
+        # start converting string data to loadout
         for line in lines:
             line = line.strip()
             # skip empty lines
@@ -207,7 +231,7 @@ class LoadoutController():
         self.add_loadout(loadout.name, loadout)
         return True
 
-    def exportLoadout(self, loadout):
+    def export_loadout_to_file(self, loadout):
         str = loadout.to_string()
         writeToFile(str)
 
