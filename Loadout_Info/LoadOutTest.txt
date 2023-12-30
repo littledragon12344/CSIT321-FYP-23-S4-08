@@ -1,0 +1,7 @@
+Loadouttest:
+Victory-space
+Open_Palm-w
+Thumb_Up-a
+Thumb_Down-d
+Pointing_Up-s
+Closed_Fist-Release
