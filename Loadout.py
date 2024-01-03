@@ -57,7 +57,7 @@ class LoadoutDisplay():
 
     def on_canvas_configure(self, event):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
-        
+
     def display_loadouts(self, loadout_list):
         # add loadouts to the display
         for id, (name, sub_dict) in enumerate(loadout_list.items()):
@@ -123,45 +123,23 @@ class LoadoutDisplay():
         for name, data in self.controller.loadouts.items():
             if self.selected.casefold() in name.casefold():
                 self.controller.export_loadout_to_file(data)
+
+    def set_camera_display(self, camera):
+        # set reference to the camera
+        self.controller.set_camera_display(camera)
+        # enable default loadout
+        self.controller.enable_default_loadout()
     
-    """
-def importLoadout():
-    # ask the user to choose a file location
-    file_path = filedialog.askopenfilename(title="Select a file", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
-    if file_path:
-        print(f"Selected file: {file_path}")
-        LOG.LoadLoadoutFile(file_path)
+    def get_current_loadout(self):
+        return self.controller.get_currently_enabled()
 
-def exportLoadout():
-    # ask the user to choose a file location
-    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
-    if file_path:
-        print(f"Selected export location: {file_path}")
-        file_str = readFromFile()
-        
-        LOG.SaveLoadoutFile(file_path)"""
-
-# loadout controller class
+# ====================================== CONTROLLER ======================================
 class LoadoutController():
     def __init__(self):
         self.loadouts = {}
-        
-        # add in sample loadouts
-        """loadout = Loadout(name='Loadout 1', gesture='Open_Palm', key='Space')
-        loadout.add_pair(gesture='Victory', key='W')
-        self.add_loadout(loadout.name, loadout)
-        
-        loadout = Loadout(name='Loadout 2', gesture='Open_Palm', key='A')
-        loadout.add_pair(gesture='Victory', key='S')
-        self.add_loadout(loadout.name, loadout)
-        
-        loadout = Loadout(name='Hollow Knight', gesture='Closed_Fist', key='V')
-        loadout.add_pair(gesture='Open_Palm', key='S')
-        self.add_loadout(loadout.name, loadout)
-        
-        loadout = Loadout(name= 'Moon Lighter')
-        loadout.add_pair(gesture='Open_Palm', key='S')
-        self.add_loadout(loadout.name, loadout)"""
+        self.enabled = ""
+        # create a reference to the camera display
+        self.cam_display = None
         
         # import all loadouts from a folder
         self.load_loadouts_from_folder("Loadout_Info")
@@ -180,10 +158,25 @@ class LoadoutController():
         return found
     
     def enable_loadout(self, name):
+        self.enabled = name
+        if self.cam_display is not None: 
+            # get the entity class
+            curr_enabled = self.get_currently_enabled()
+            # convert the entity class to dictionarys
+            self.cam_display.set_loadout(curr_enabled.get_all_pairs())
         print(f"Enabled loadout: {name}!")
     
+    def enable_default_loadout(self):
+        self.enable_loadout(next(iter(self.loadouts)))
+        
     def disable_loadout(self, name):
         print(f"Disabled loadout: {name}!")
+    
+    def set_camera_display(self, camera):
+        self.cam_display = camera
+
+    def get_currently_enabled(self):
+        return self.loadouts[self.enabled]
     
     def load_loadouts_from_folder(self, folder_name):
         contents = readFromFolder(folder_name)
@@ -235,7 +228,7 @@ class LoadoutController():
         str = loadout.to_string()
         writeToFile(str)
 
-# loadout entity class
+# ====================================== ENTITY ======================================
 class Loadout():
     def __init__(self, name=None, gestures_map=None, gesture=None, key=None):
         # initialize name
@@ -263,3 +256,6 @@ class Loadout():
         for gesture, key in self.dictionary.items():
             str += f"{gesture}-{key}\n"
         return str
+    
+    def get_all_pairs(self):
+        return self.dictionary
