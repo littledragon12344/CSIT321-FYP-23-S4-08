@@ -1,6 +1,6 @@
 Cammel:
 Open_Palm-S
-Victory-p
+Victory-space
 Thumb_Up-a
 Thumb_Down-d
 Pointing_Up-w

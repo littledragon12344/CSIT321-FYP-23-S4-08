@@ -110,7 +110,6 @@ class GestureDetectionController:
             return
         
         if len(detected) < 1:
-            KeyInput.ReleaseKey(']')
             return
         
         for gesture in detected:
@@ -118,7 +117,7 @@ class GestureDetectionController:
             if gesture in self.loadout:
                 # check if the key is release
                 if self.loadout[gesture].casefold() == "Release".casefold():
-                    KeyInput.ReleaseKey(']')
+                    KeyInput.ReleaseAllKeys(self.loadout.values())
                     continue
                 # press all key detected otherwise
                 KeyInput.PressKey(self.loadout[gesture])
