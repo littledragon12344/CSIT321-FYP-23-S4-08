@@ -4,18 +4,7 @@ import cv2 as cv
 from PIL import Image, ImageTk
 
 import HandDetector as DT
-#import InputTrigger as IT
 import KeyboardInput as KeyInput
-import LoadoutGestures as LoadedGesture
-
-
-#LoadedGesture.SaveLoadoutFile() #Save the file to txt file
-#LoadedGesture.LoadLoadoutFile() # load the file to the array 
-LoadedGesture.Loadgestures() # Default gestures load
-GestureLoad=LoadedGesture.GestureArr  #gesture array
-KeyBoardLoad=LoadedGesture.KeyBoardArr  #keyboard array
-GKBA=LoadedGesture.GestureKeyBoardArr
-
 
 class Camera:
     timestamp = 0
@@ -73,21 +62,6 @@ class Camera:
         self.window.after(5, self.input_update) 
     
     def input_update(self):
-        """global gestures
-        if len(gestures) >= 1: # Detect if Theres Gesture
-
-                for x in range(len(GestureLoad)): # list of how many gesture need to check
-                  
-                    if gestures[0] == GKBA[0][x]: # gesture array
-                            if GKBA[1][x] == "Release":   #if release 
-                                KeyInput.ReleaseAllKeys(KeyBoardLoad)
-                                break
-
-                            KeyInput.PressKey(GKBA[1][x])    # Press the key 
-                            break # so it doesnt check all of the loop
-
-        gestures.clear()"""
-        
         self.controller.gesture_to_input(self.detected_gestures)
 
     def close(self):
@@ -106,12 +80,12 @@ class GestureDetectionController:
         self.loadout = loadout
         
     def gesture_to_input(self, detected):
-        if len(self.loadout) < 1:
-            return
+        # check if the loadout is empty
+        if len(self.loadout) < 1: return
+        # check if the detected gesture list is empty
+        if len(detected) < 1: return
         
-        if len(detected) < 1:
-            return
-        
+        # loop through the detected gestures and translate them to key input
         for gesture in detected:
             # check if the gesture is part of the loadout
             if gesture in self.loadout:

@@ -24,17 +24,19 @@ class LoadoutDisplay():
         container = tk.Frame(self.root, height=1, bg="magenta")
         container.pack(side="top", fill="x", expand=True, padx=1, pady=1, anchor="n")
         # create a text input field
-        self.searchbar = tk.Text(container, width=20, height=1, wrap="none")
+        self.searchbar = tk.Text(container, width=20, height=1, wrap="none", font=('', 12))
         self.searchbar.grid(column=0, row=0, sticky="news", pady=1.5)
+        # bind the search bar to enter key to search loadout
+        self.searchbar.bind("<Return>", self.on_enter_key)
         # create a search button
-        search_btn = tk.Button(container, width=6, text="Search", command=self.search_loadout)
-        search_btn.grid(column=1, row=0, sticky="news", padx=1, pady=1.5)
+        self.search_btn = tk.Button(container, width=8, text="Search", command=self.search_loadout)
+        self.search_btn.grid(column=1, row=0, sticky="news", padx=1, pady=1.5)
         # create an enable button
-        enable_btn = tk.Button(container, width=6, text="Enable", command= lambda: self.controller.enable_loadout(self.selected))
-        enable_btn.grid(column=2, row=0, sticky="news", padx=1, pady=1.5)
+        self.enable_btn = tk.Button(container, width=8, text="Enable", command=self.enable_loadout)
+        self.enable_btn.grid(column=2, row=0, sticky="news", padx=1, pady=1.5)
         # create a disable button
-        disable_btn = tk.Button(container, width=6,text="Disable", command= lambda: self.controller.disable_loadout(self.selected))
-        disable_btn.grid(column=3, row=0, sticky="news", padx=1, pady=1.5)
+        #disable_btn = tk.Button(container, width=6,text="Disable", command= lambda: self.controller.disable_loadout(self.selected))
+        #disable_btn.grid(column=3, row=0, sticky="news", padx=1, pady=1.5)
         
         # create a canvas for list display
         self.canvas = tk.Canvas(self.root, width=self.width, height=self.height + 15, bg="cyan")
@@ -49,35 +51,58 @@ class LoadoutDisplay():
 
         # create a frame to contain the widgets within the canvas
         self.frame = tk.Frame(self.canvas)
-        self.canvas.create_window((0, 0), window=self.frame, anchor="nw", width=self.width)
-        self.canvas.bind('<Configure>', self.on_canvas_configure)
+        self.canvas.create_window((0, 0), window=self.frame, anchor="nw", width=self.width+5)
+        self.canvas.bind("<Configure>", self.on_canvas_configure)
+        self.canvas.bind("<MouseWheel>", self.on_mousewheel)
         
         #display loadouts
         self.display_loadouts(self.controller.loadouts)
-
+    
+    def on_enter_key(self, event):
+        # search the loadout
+        self.search_loadout()
+        # disable the default behavior of inserting a line break
+        return 'break'
+    
+    def on_mousewheel(self, event):
+        # Scroll the canvas when the mouse wheel is used
+        scroll_speed = 1.0  # Adjust this value to control the scroll speed
+        self.canvas.yview_scroll(int(-1 * (event.delta / 120) * scroll_speed), "units")
+        
     def on_canvas_configure(self, event):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
+    def bind_recursive(self, widget, event_string, callback):
+        # bind the widget to an event callback
+        widget.bind(event_string, callback)
+        # bind all children in the widget to an event callback
+        for child in widget.winfo_children():
+            self.bind_recursive(child, event_string, callback)
 
     def display_loadouts(self, loadout_list):
         # add loadouts to the display
         for id, (name, sub_dict) in enumerate(loadout_list.items()):
             # create a frame for the item
-            item_frame = tk.Frame(self.frame, bg="yellow", pady=2, padx=2)
-            item_frame.pack(fill="x", expand=True, padx=2, pady=2)
-            # bind mouse event to the frame
-            item_frame.bind("<Button-1>", self.loadout_select_handler(id, name))
+            item_frame = tk.Frame(self.frame, bg="yellow", bd=0.5, relief=tk.SOLID)
+            item_frame.pack(fill="x", expand=True, pady=2)
             
             # loadout name label
-            loadout_name = tk.Label(item_frame, text=f"{name}", width=14, anchor="center")
+            loadout_name = tk.Label(item_frame, text=f"{name}", width=12, anchor="center")
             loadout_name.grid(column=0, row=0, padx=1, sticky="news", columnspan=2)
             
             # gestures and their repective keys labels
             for i, (gesture, key) in enumerate(sub_dict.items()):
-                gesture_label = tk.Label(item_frame, text=f"{gesture}", width=12, anchor="center")
+                # create a label for the gesture 
+                gesture_label = tk.Label(item_frame, text=f"{gesture}", width=14, anchor="center")
                 gesture_label.grid(column=2, row=i+1, padx=1, sticky="news", columnspan=2)
-                
-                key_label = tk.Label(item_frame, text=f"{key}", width=12, anchor="center")
+                # create a label for the key 
+                key_label = tk.Label(item_frame, text=f"{key.upper()}", width=14, anchor="center")
                 key_label.grid(column=4, row=i+1, padx=1, sticky="news", columnspan=2)
+            
+            # bind mouse click event to the item frame and its children
+            self.bind_recursive(item_frame, "<Button-1>", self.loadout_select_handler(id, name))
+            # bind scroll wheel event to the item frame and its children
+            self.bind_recursive(item_frame, "<MouseWheel>", self.on_mousewheel)
         
         # update the scrollregion
         self.on_canvas_configure(None)
@@ -92,12 +117,20 @@ class LoadoutDisplay():
     def search_loadout(self):
         # getting the input text
         search_txt = self.searchbar.get("1.0", "end-1c")
+        # stop focus on the searchbar
+        self.search_btn.focus_force()
         # search for the matching loadout
         loadouts_found = self.controller.find_loadout(search_txt)
         # update the display
         self.update_display(loadouts_found)
         
         print(f"Searched for {search_txt} loadout!")
+    
+    def enable_loadout(self):
+        # enable the selected loadout
+        self.controller.enable_loadout(self.selected)
+        # update the enable button
+        self.enable_btn.config(text="Enabled!", state=tk.DISABLED)
     
     def loadout_select_handler(self, id, loadout_name):
         def handler(event):
@@ -109,9 +142,13 @@ class LoadoutDisplay():
             selected_frame = self.frame.winfo_children()[id]
             selected_frame.config(bg="brown")
             
-            print(f"{loadout_name}")
-            
             self.selected = loadout_name
+            # update enable button base on the enabled loadout name
+            if self.controller.enabled == loadout_name:
+                self.enable_btn.config(text="Enabled!", state=tk.DISABLED)
+            else:
+                self.enable_btn.config(text="Enable", state=tk.NORMAL)
+            
             print(f"Selected frame #{id}, with name: {loadout_name}")    
         return handler
     
