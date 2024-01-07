@@ -11,7 +11,8 @@ class LoadoutDisplay():
         self.height = height
     
         # initializing values
-        self.selected = ""
+        self.selected_name = ""
+        self.selected_id = -1
         
         # create a controller
         self.controller = LoadoutController()
@@ -35,7 +36,7 @@ class LoadoutDisplay():
         self.enable_btn = tk.Button(container, width=8, text="Enable", command=self.enable_loadout)
         self.enable_btn.grid(column=2, row=0, sticky="news", padx=1, pady=1.5)
         # create a disable button
-        #disable_btn = tk.Button(container, width=6,text="Disable", command= lambda: self.controller.disable_loadout(self.selected))
+        #disable_btn = tk.Button(container, width=6,text="Disable", command= lambda: self.controller.disable_loadout(self.selected_name))
         #disable_btn.grid(column=3, row=0, sticky="news", padx=1, pady=1.5)
         
         # create a canvas for list display
@@ -128,12 +129,20 @@ class LoadoutDisplay():
     
     def enable_loadout(self):
         # enable the selected loadout
-        self.controller.enable_loadout(self.selected)
+        self.controller.enable_loadout(self.selected_name)
         # update the enable button
         self.enable_btn.config(text="Enabled!", state=tk.DISABLED)
+        # update the enabled frame background
+        frame_children = self.frame.winfo_children()
+        if self.selected_id >= 0 and self.selected_id < len(frame_children):
+            frame_children[self.selected_id].config(bg="orange")
     
     def loadout_select_handler(self, id, loadout_name):
         def handler(event):
+            # save the selected information
+            self.selected_name = loadout_name
+            self.selected_id = id
+            
             # reset the frames appearance
             for child in self.frame.winfo_children():
                 child.configure(bg="yellow")
@@ -142,10 +151,10 @@ class LoadoutDisplay():
             selected_frame = self.frame.winfo_children()[id]
             selected_frame.config(bg="brown")
             
-            self.selected = loadout_name
             # update enable button base on the enabled loadout name
             if self.controller.enabled == loadout_name:
                 self.enable_btn.config(text="Enabled!", state=tk.DISABLED)
+                selected_frame.config(bg="orange")
             else:
                 self.enable_btn.config(text="Enable", state=tk.NORMAL)
             
@@ -158,7 +167,7 @@ class LoadoutDisplay():
         
     def export_loadout(self):
         for name, data in self.controller.loadouts.items():
-            if self.selected.casefold() in name.casefold():
+            if self.selected_name.casefold() in name.casefold():
                 self.controller.export_loadout_to_file(data)
 
     def set_camera_display(self, camera):
@@ -166,6 +175,11 @@ class LoadoutDisplay():
         self.controller.set_camera_display(camera)
         # enable default loadout
         self.controller.enable_default_loadout()
+        # hightlight the enabled loadout
+        frame = self.frame.winfo_children()[0]
+        frame.config(bg="orange")
+        # disable the enable button
+        self.enable_btn.config(text="Enabled!", state=tk.DISABLED)
     
     def get_current_loadout(self):
         return self.controller.get_currently_enabled()
