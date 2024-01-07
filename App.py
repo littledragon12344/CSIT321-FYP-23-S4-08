@@ -4,6 +4,7 @@ import Config as cfg
 import Loadout as lo
 
 loadout_widget = None
+current_loadout = None
 
 def new_window():     
     def export_loadout():
@@ -56,11 +57,13 @@ def new_window():
     # create a frame to contain the camera
     camera = tk.Frame(base, width=480, height=280, bg="green")
     # get the camera feed for the frame
-    cam.Camera(camera, 466, 305)
+    cam_display = cam.Camera(camera, 466, 305)
 
     # create a frame for the loadout display
     loadout_display = tk.Frame(base, borderwidth=1, relief="solid", bg="red")
     loadout_widget = lo.LoadoutDisplay(loadout_display, 300, 280)
+    # set the reference of the camera to the loadout
+    loadout_widget.set_camera_display(cam_display)
     
     # create a frame for the gesture list display
     config = tk.Frame(base, width=800, height=275, bg="blue")

@@ -1,4 +1,7 @@
 Cammel:
 Open_Palm-S
-Closed_Fist-O
-Victory-P
+Victory-space
+Thumb_Up-a
+Thumb_Down-d
+Pointing_Up-w
+Closed_Fist-Release

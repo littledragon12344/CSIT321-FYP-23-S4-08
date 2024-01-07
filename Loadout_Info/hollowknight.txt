@@ -1,3 +1,6 @@
 Hollow Knight:
-Closed_Fist-V
-Open_Palm-S
+Open_Palm-D
+Thumb_Up-A
+Thumb_Down-S
+Pointing_Up-W
+Closed_Fist-Release
