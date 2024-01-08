@@ -5,6 +5,7 @@ import Loadout as lo
 
 loadout_widget = None
 current_loadout = None
+config = None
 
 def new_window():     
     def export_loadout():
@@ -52,6 +53,15 @@ def new_window():
     #==========================================================
     
     #======================== UI LAYOUT ========================
+    def update_gui():
+        global config
+        if config:
+            config.destroy()  # Destroy the existing Config frame
+        config = tk.Frame(base, width=800, height=275, bg="blue")  # Recreate the Config frame
+        cfgwidget = cfg.Config(config, loadout_widget)  # Pass the update_gui function
+        cfgwidget.set_loadout(loadout_widget)  # Pass the LoadoutDisplay instance directly
+        config.grid(column=0, row=2, columnspan=5, rowspan=2, sticky="news")  # Grid the new Config frame
+
     # create a base frame for the layout
     base = tk.Frame(root)
     # create a frame to contain the camera
@@ -61,13 +71,14 @@ def new_window():
 
     # create a frame for the loadout display
     loadout_display = tk.Frame(base, borderwidth=1, relief="solid", bg="red")
-    loadout_widget = lo.LoadoutDisplay(loadout_display, 300, 280)
+    loadout_widget = lo.LoadoutDisplay(loadout_display, 300, 280, update_gui)
     # set the reference of the camera to the loadout
     loadout_widget.set_camera_display(cam_display)
     
     # create a frame for the gesture list display
     config = tk.Frame(base, width=800, height=275, bg="blue")
-    cfg.Config(config, loadout_widget)
+    cfgwidget = cfg.Config(config, loadout_widget)
+    cfgwidget.set_loadout(loadout_widget)
     
     # placing the frames onto a grid for the UI layout
     base.grid(column=0, row=0, sticky="news")

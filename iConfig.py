@@ -10,6 +10,8 @@ class iConfig(object):
         self.name = name
         self.inp = inp
 
+        cleaned = self.name.replace("_", " ")
+
         # Create frame for each configuration object
         self.base = tk.Frame(self.target, width=130, height=200, bg="green")
 
@@ -18,10 +20,10 @@ class iConfig(object):
         img.image=self.picture
 
         textfr = tk.Frame(self.base, width=130, height=40)
-        text = tk.Label(self.base, text=self.name, bg="blue")
+        text = tk.Label(self.base, text=cleaned.upper(), bg="white")
 
         choicefr=tk.Frame(self.base, width=130, height=40)
-        choice = tk.Button(self.base, text=f"{self.inp.upper()}", command=self.change_input, bg="grey")
+        choice = tk.Button(self.base, text=self.inp.upper(), command=self.change_input, bg="grey")
 
         self.base.grid(column=0, row=0, padx=5, pady=5)
         imgfr.grid(column=0, row=0, padx=5, pady=5)

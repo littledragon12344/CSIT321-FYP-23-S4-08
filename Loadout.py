@@ -5,11 +5,14 @@ from ReadWriteFile import *
 
 # loadout display class
 class LoadoutDisplay():
-    def __init__(self, frame, width, height):
+    def __init__(self, frame, width, height, updatefunction):
         # saving the frame and its dimension
         self.root = frame
         self.width = width
         self.height = height
+
+        # save reference to gui update function
+        self.gui_update = updatefunction
     
         # initializing values
         self.selected_name = ""
@@ -134,6 +137,8 @@ class LoadoutDisplay():
         self.controller.enable_loadout(self.selected_name)
         # update the enable button
         self.enable_btn.config(text="Enabled!", state=tk.DISABLED)
+        # call update gui function in main window
+        self.gui_update()
         # update the enabled frame background
         frame_children = self.frame.winfo_children()
         if self.selected_id >= 0 and self.selected_id < len(frame_children):
@@ -182,6 +187,9 @@ class LoadoutDisplay():
         frame.config(bg="orange")
         # disable the enable button
         self.enable_btn.config(text="Enabled!", state=tk.DISABLED)
+
+    def set_config(self, config):
+        self.controller.set_config(config)
     
     def get_current_loadout(self):
         return self.controller.get_currently_enabled()
@@ -191,8 +199,9 @@ class LoadoutController():
     def __init__(self):
         self.loadouts = {}
         self.enabled = ""
-        # create a reference to the camera display
+        # create a references
         self.cam_display = None
+        self.cfg = None
         
         # import all loadouts from a folder
         self.load_loadouts_from_folder("Loadout_Info")
@@ -227,6 +236,9 @@ class LoadoutController():
     
     def set_camera_display(self, camera):
         self.cam_display = camera
+    
+    def set_config(self, config):
+        self.cfg = config
 
     def get_currently_enabled(self):
         return self.loadouts[self.enabled]

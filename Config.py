@@ -5,12 +5,11 @@ import math
 from PIL import Image, ImageTk
 
 class Config:
-    cfglist = []
-    cfggestures = []
-    cfgkeys = []
-    
     def __init__(self, window, widget):
-        self.loadoutwidget = widget
+        self.cfglist = []
+        self.cfggestures = []
+        self.cfgkeys = []
+        self.loadout_widget = widget
 
         self.window = window
         base = tk.Frame(self.window, highlightbackground="black", highlightthickness=2)
@@ -33,21 +32,20 @@ class Config:
         self.canvas.create_window((0, 0), window=self.frame, anchor="nw")
         
         # Read loadout information
-        self.getconfig()
+        self.get_config()
 
         # update the scrollregion
         self.canvas.bind('<Configure>', lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
     
     # For testing sake, no params
-    def getconfig(self):
+    def get_config(self):
         size = 120, 120
         img = Image.open("TestImage.jpg")
         img.thumbnail(size)
         phi = ImageTk.PhotoImage(img)
         
-        currentload = self.loadoutwidget.controller.get_currently_enabled()
+        currentload = self.loadout_widget.controller.get_currently_enabled()
         controls = currentload.get_all_pairs()
-        print(f"{type(controls)}")
 
         for (gesture, key) in controls.items():
             self.cfggestures.append(gesture)
@@ -64,6 +62,8 @@ class Config:
             z = ind % 5
             y = math.floor(ind/5)
             x.base.grid(column=z, row=y, padx=8, pady=8)
+        
+        print(f"Showing total of {len(self.cfglist)} results!")
 
-    def setloadout(self, load):
-        self.loadoutwidget = load
+    def set_loadout(self, load):
+        self.loadout_widget = load
