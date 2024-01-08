@@ -21,7 +21,7 @@ class iConfig(object):
         text = tk.Label(self.base, text=self.name, bg="blue")
 
         choicefr=tk.Frame(self.base, width=130, height=40)
-        choice = tk.Button(self.base, text=self.inp, command=self.change_input, bg="grey")
+        choice = tk.Button(self.base, text=f"{self.inp.upper()}", command=self.change_input, bg="grey")
 
         self.base.grid(column=0, row=0, padx=5, pady=5)
         imgfr.grid(column=0, row=0, padx=5, pady=5)

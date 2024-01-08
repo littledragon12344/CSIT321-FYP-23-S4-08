@@ -1,4 +1,5 @@
 import tkinter as tk
+import Config as cfg
 #import LoadoutGestures as LOG
 from ReadWriteFile import *
 
@@ -92,6 +93,7 @@ class LoadoutDisplay():
             loadout_name.grid(column=0, row=0, padx=1, sticky="news", columnspan=2)
             
             # gestures and their repective keys labels
+            # connect to iConfig object
             for i, (gesture, key) in enumerate(sub_dict.items()):
                 # create a label for the gesture 
                 gesture_label = tk.Label(item_frame, text=f"{gesture}", width=14, anchor="center")

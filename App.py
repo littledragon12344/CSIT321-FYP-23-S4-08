@@ -67,7 +67,7 @@ def new_window():
     
     # create a frame for the gesture list display
     config = tk.Frame(base, width=800, height=275, bg="blue")
-    cfg.Config(config)
+    cfg.Config(config, loadout_widget)
     
     # placing the frames onto a grid for the UI layout
     base.grid(column=0, row=0, sticky="news")
