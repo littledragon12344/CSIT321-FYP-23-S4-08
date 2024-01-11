@@ -1,7 +1,5 @@
-#from mediapipe_model_maker import gesture_recognizer
 
 #https://developers.google.com/mediapipe/solutions/vision/gesture_recognizer/python
-#https://www.youtube.com/watch?v=vODSFXEP-XY&t=134s
+#bruh, still no idea how it works
 
 
-#Issues on making this work , so im just leaving a comment here
