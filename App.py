@@ -18,7 +18,7 @@ def new_window():
 
     root = tk.Tk()
     root.title("Gesture Detection Prototype")
-    root.geometry("800x600")
+    root.geometry("800x600")    
     root.resizable(width=False, height=False)
     
     #label = tk.Label(root, text="Created by group CSIT321-FYP-23-S4-08")
@@ -66,7 +66,7 @@ def new_window():
     base = tk.Frame(root)
     # create a frame to contain the camera
     camera = tk.Frame(base, width=480, height=280, bg="green")
-    # get the camera feed for the frame
+    # get the camera feed for the frame 
     cam_display = cam.Camera(camera, 466, 305)
 
     # create a frame for the loadout display

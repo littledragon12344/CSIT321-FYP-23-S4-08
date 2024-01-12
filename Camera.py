@@ -2,13 +2,46 @@
 from tkinter import font
 import cv2 as cv
 from PIL import Image, ImageTk
+import requests
+import numpy as np 
+import imutils 
+import os
+from pynput import keyboard
+from datetime import datetime
 
 import HandDetector as DT
+import ModelTrainer as MT
 import KeyboardInput as KeyInput
 
 class Camera:
     timestamp = 0
     gestures = list
+    use_ip_webcam = True
+    
+    #capture
+    record = False                      # specify which hand gesture directory to save the image sequences
+    start_time = ''
+    rec_folder_path = ""
+    sub_dir = "test_gesture"
+
+    # Replace the below URL with your own. Make sure to add "/shot.jpg" at last. 
+    url = "https://192.168.1.78:8080/shot.jpg"
+
+    def keyboard_update(key):
+        if key == keyboard.Key.f12:
+            if Camera.record == False:
+                now = datetime.now()
+                Camera.start_time = now.strftime("%d_%m_%Y_%H_%M_%S")
+                Camera.rec_folder_path = os.path.join(os.getcwd(), "Recorded_Data", Camera.sub_dir, f"recording_{Camera.start_time}")
+                os.mkdir(Camera.rec_folder_path)
+                Camera.record = True
+                print("Recording started")
+            else:
+                Camera.record = False
+                DT.iteration_counter = 0
+                print("Recording stopped")
+        elif key == keyboard.Key.f11:
+            MT.ModelTrainer.preprocess_data()
 
     def __init__(self, window, _width, _height):
         # Initialize variables
@@ -25,15 +58,29 @@ class Camera:
         self.controller = GestureDetectionController()
 
         # Open the camera
-        self.cap = cv.VideoCapture(0)  # 0 for default camera, adjust if needed
+        if Camera.use_ip_webcam == False :
+            self.cap = cv.VideoCapture(0)  # 0 for default camera, adjust if needed
+
+        keyboard_listener = keyboard.Listener(
+            on_press=Camera.keyboard_update)
+        
+        keyboard_listener.start()
 
         # Call the update method to continuously update the canvas with new frames
         self.update()
 
     def update(self):
         # Read a frame from the camera
-        ret, frame = self.cap.read()
-        
+        if Camera.use_ip_webcam == False:
+            ret, frame = self.cap.read()
+        else:
+            requests.packages.urllib3.disable_warnings() 
+            img_resp = requests.get(Camera.url, verify=False) 
+            img_arr = np.array(bytearray(img_resp.content), dtype=np.uint8) 
+            frame = cv.imdecode(img_arr, -1) 
+            frame = imutils.resize(frame, width=480, height=280)
+            ret = True
+             
         if ret:
             # Flip the frame horizontally (mirror effect)
             mirrored_frame = cv.flip(frame, 1)
@@ -55,12 +102,12 @@ class Camera:
                 label_txt = ", ".join(self.detected_gestures)
             else:
                 label_txt = "No gestures detected."
-            self.text.configure(text=label_txt)       
-    
+            self.text.configure(text=label_txt)     
+
         # Schedule the update method to be called after a delay (e.g., 10 milliseconds)
         self.window.after(5, self.update) 
         self.window.after(5, self.input_update) 
-    
+
     def input_update(self):
         self.controller.gesture_to_input(self.detected_gestures)
 
