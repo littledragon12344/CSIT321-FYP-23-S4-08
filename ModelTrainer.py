@@ -1,8 +1,8 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 import datetime as dt
-import matplotlib.pyplot as plt
 import os
 
 from sklearn.model_selection import train_test_split
@@ -10,12 +10,17 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import joblib
 
+#TO DO:
+# - option to preprocess only one gesture class
+# - merging npz files in preprocess data to combine new and old datasets
+
 class ModelTrainer:
-    gestures = ['open_palm', 'closed_fist', 'pointing_up']
+    gestures = ['open_palm', 'closed_fist', 'pointing_up', 'thumbs_down']
 
     data_folder_path = os.path.join(os.getcwd(), "Datasets")
 
-    def preprocess_data():
+    #Handles preprocessing (labeling) of recorded landmark data
+    def preprocess_data(): #preprocess and label data
         loaded_data = np.load(os.path.join(ModelTrainer.data_folder_path, f'data_{ModelTrainer.gestures[0]}.npz'))
         X, y = loaded_data['X'], loaded_data['y']
         for data_class in ModelTrainer.gestures[1:]:
@@ -87,7 +92,7 @@ class ModelTrainer:
             current_date_time_dt = dt.datetime.now()
             current_date_time_str = dt.datetime.strftime(current_date_time_dt, date_time_format)
 
-            model_name = f'model_rf__date_time_{current_date_time_str}__acc_{test_accuracy}__hand__oneimage.pkl'
+            model_name = f'model_rf__date_time_{current_date_time_str}_acc_{test_accuracy}.pkl'
             joblib.dump(model, model_name)
 
 

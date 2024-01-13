@@ -16,32 +16,19 @@ import KeyboardInput as KeyInput
 class Camera:
     timestamp = 0
     gestures = list
-    use_ip_webcam = True
-    
-    #capture
-    record = False                      # specify which hand gesture directory to save the image sequences
-    start_time = ''
-    rec_folder_path = ""
-    sub_dir = "test_gesture"
 
-    # Replace the below URL with your own. Make sure to add "/shot.jpg" at last. 
+    #For ip webcam
+    use_ip_webcam = False 
+     #Replace the below URL with your own. Make sure to add "/shot.jpg" at last. 
     url = "https://192.168.1.78:8080/shot.jpg"
 
-    def keyboard_update(key):
-        if key == keyboard.Key.f12:
-            if Camera.record == False:
-                now = datetime.now()
-                Camera.start_time = now.strftime("%d_%m_%Y_%H_%M_%S")
-                Camera.rec_folder_path = os.path.join(os.getcwd(), "Recorded_Data", Camera.sub_dir, f"recording_{Camera.start_time}")
-                os.mkdir(Camera.rec_folder_path)
-                Camera.record = True
-                print("Recording started")
-            else:
-                Camera.record = False
-                DT.iteration_counter = 0
-                print("Recording stopped")
-        elif key == keyboard.Key.f11:
-            MT.ModelTrainer.preprocess_data()
+    #For hand landmark recording
+    record_hotkey = keyboard.Key.f12
+    build_hotkey = keyboard.Key.f11
+    record = False                      
+    start_time = ''
+    rec_folder_path = ""     # specify which hand gesture directory to save the landmark arrays
+    #sub_dir = "test_gesture" 
 
     def __init__(self, window, _width, _height):
         # Initialize variables
@@ -61,9 +48,9 @@ class Camera:
         if Camera.use_ip_webcam == False :
             self.cap = cv.VideoCapture(0)  # 0 for default camera, adjust if needed
 
+        #Listener for keyboard input
         keyboard_listener = keyboard.Listener(
-            on_press=Camera.keyboard_update)
-        
+            on_press=Camera.keyboard_input_update)
         keyboard_listener.start()
 
         # Call the update method to continuously update the canvas with new frames
@@ -106,9 +93,15 @@ class Camera:
 
         # Schedule the update method to be called after a delay (e.g., 10 milliseconds)
         self.window.after(5, self.update) 
-        self.window.after(5, self.input_update) 
+        self.window.after(5, self.gesture_input_update) 
 
-    def input_update(self):
+    def keyboard_input_update(key):
+        if key == Camera.record_hotkey:
+            Camera.start_landmark_recording()
+        elif key == Camera.build_hotkey:
+            MT.ModelTrainer.preprocess_data()
+    
+    def gesture_input_update(self):
         self.controller.gesture_to_input(self.detected_gestures)
 
     def close(self):
@@ -118,6 +111,15 @@ class Camera:
         
     def set_loadout(self, loadout):
         self.controller.set_loadout(loadout)
+
+    def start_landmark_recording():
+        if Camera.record == False:
+                now = datetime.now()
+                Camera.start_time = now.strftime("%d_%m_%Y_%H_%M_%S")
+                Camera.rec_folder_path = os.path.join(os.getcwd(), "Recorded_Data", f"recording_{Camera.start_time}")
+                os.mkdir(Camera.rec_folder_path)
+                Camera.record = True
+                print("Recording started")
 
 class GestureDetectionController:
     def __init__(self):
