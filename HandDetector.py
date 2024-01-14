@@ -10,7 +10,15 @@ timestamp = 0
 current_gestures = []
 num_hands = 2 
 
-#TO DO: Refactor landmark extraction to a separate class
+#Current issues: 
+# - Inaccuracy (likely just due to the small dataset)
+# - gesture recognition only works for the hand used in the recording
+#TO DO: 
+# - Refactor landmark extraction to a separate class
+# - try adding the z-coordinates
+# - implementing other algos and benchmarking performance
+# - improve on them???
+
 #For landmark extraction
 sample_frame_count = 100 #total number of frames to save during recording
 iteration_counter = 1
@@ -35,7 +43,7 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
-model_name_rf = 'model_rf__date_time_2024_01_13__14_07_53_acc_1.0.pkl'
+model_name_rf = 'model_rf__date_time_2024_01_13__15_36_25_acc_1.0.pkl'
 model = MT.joblib.load(model_name_rf)
 
 def detect(image):
@@ -73,7 +81,6 @@ def detect(image):
                     hand_landmark_array.extend([lm.x, lm.y])         
             
                 hand_landmark_array = MT.np.array(hand_landmark_array)  # 1D array of current landmark positions
-                print(len(hand_landmark_array))
                 hand_landmark_array = hand_landmark_array[None, :]  # adds a new dimension to x to avoid input shape error
                 yhat_idx = int(model.predict(hand_landmark_array)[0]) #The estimated or predicted values in a regression or other predictive model are termed the y-hat values
                 yhat = idx_to_class[yhat_idx]
@@ -108,7 +115,7 @@ def detect(image):
                     y = cam.np.array(y)
                     print(X.shape)
                     print(y.shape)
-                    cam.np.savez(cam.os.path.join(cam.Camera.rec_folder_path, f'data_{recorded_gesture_class}.npz'), X=X, y=y)
+                    cam.np.savez(cam.os.path.join(cam.Camera.rec_folder_path, f'data_{recorded_gesture_class}_{cam.Camera.start_time}.npz'), X=X, y=y)
                     print(f'Landmarks for category {recorded_gesture_class} saved.')
                     cam.Camera.record = False
 
