@@ -19,17 +19,26 @@ class ModelTrainer:
 
     data_folder_path = os.path.join(os.getcwd(), "Datasets")
 
-    #Handles preprocessing (labeling) of recorded landmark data
-    def preprocess_data(): #preprocess and label data
+    #Handles preprocessing of recorded landmark data
+    def preprocess_data(): #process and label data points
         loaded_data = np.load(os.path.join(ModelTrainer.data_folder_path, f'data_{ModelTrainer.gestures[0]}.npz'))
         X, y = loaded_data['X'], loaded_data['y']
         for data_class in ModelTrainer.gestures[1:]:
+            # sub_dir_path = os.path.join(ModelTrainer.data_folder_path, data_class)
+            # if os.path.exists(sub_dir_path):
+            #     loaded_data = np.load(os.path.join(ModelTrainer.data_folder_path, data_class, f'data_{ModelTrainer.gestures[0]}.npz'))
+            #     X, y = loaded_data['X'], loaded_data['y']
+            #     for file in os.listdir(sub_dir_path):
+            #         loaded_data = np.load(os.path.join(ModelTrainer.data_folder_path, data_class, f'data_{data_class}.npz'))
+            #         X = np.vstack((X, loaded_data['X']))
+            #         y = np.concatenate((y, loaded_data['y']))                               
             if os.path.exists(os.path.join(ModelTrainer.data_folder_path, f'data_{data_class}.npz')):
                 loaded_data = np.load(os.path.join(ModelTrainer.data_folder_path, f'data_{data_class}.npz'))
                 X = np.vstack((X, loaded_data['X']))
                 y = np.concatenate((y, loaded_data['y']))
         
         X_train, X_test, y_train, y_test = train_test_split(X, y, shuffle=True, test_size=0.2, random_state=1, stratify=y)
+        
         print(X_train.shape)
         print(X_test.shape)
 
@@ -79,7 +88,7 @@ class ModelTrainer:
 
         model.summary()
     
-    def build_RF(x_train, x_test, y_train, y_test):
+    def build_RF(x_train, x_test, y_train, y_test): #creates model file with 
         with tf.device('/GPU:0'):
             model = RandomForestClassifier()
             model.fit(x_train, y_train)
