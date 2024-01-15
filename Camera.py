@@ -21,10 +21,10 @@ class Camera:
     timestamp = 0
     gestures = list
 
-    #For ip webcam
+    #For ip webcam - would be nice to have a toggle for this on the UI
     use_ip_webcam = False 
      #Replace the below URL with your own. Make sure to add "/shot.jpg" at last. 
-    url = "https://192.168.1.78:8080/shot.jpg"
+    url = "https://192.168.1.79:8080/shot.jpg"
 
     #For hand landmark recording
     record_hotkey = keyboard.Key.f12

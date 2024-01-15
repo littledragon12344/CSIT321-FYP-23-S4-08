@@ -5,25 +5,29 @@ from mediapipe.tasks import python
 import Camera as cam
 import ModelTrainer as MT
 
-#setup
-timestamp = 0 
-current_gestures = []
-num_hands = 2 
-
 #Current issues: 
 # - Inaccuracy (likely just due to the small dataset)
 # - gesture recognition only works for the hand used in the recording
 #TO DO: 
-# - Refactor landmark extraction to a separate class
 # - try adding the z-coordinates
 # - implementing other algos and benchmarking performance
-# - improve on them???
+# - algo optimization
+# - Front end for gesture creation and model training
+
+#Setup
+timestamp = 0 
+current_gestures = []
+num_hands = 2 
+    
+mp_drawing = mp.solutions.drawing_utils
+mp_drawing_styles = mp.solutions.drawing_styles
+mp_hands = mp.solutions.hands
 
 #For landmark extraction
 sample_frame_count = 100 #total number of frames to save during recording
-iteration_counter = 1
-recorded_gesture_class = 'thumbs_down' #current gesture being recorded
+recorded_gesture_class = 'pointing_up' #current gesture being recorded
 X, y = [], [] 
+iteration_counter = 1
 
 gesture_map = {
     'open_palm': 0,
@@ -32,18 +36,15 @@ gesture_map = {
     'thumbs_down': 3
 }
 
-idx_to_class = {
-    0: 'open_palm',
-    1: 'closed_fist',
-    2: 'pointing_up',
-    3: 'thumbs_down',
+idx_to_string = {
+    0: 'Open_Palm',
+    1: 'Closed_Fist',
+    2: 'Pointing_Up',
+    3: 'Thumb_Down',
 }
-        
-mp_drawing = mp.solutions.drawing_utils
-mp_drawing_styles = mp.solutions.drawing_styles
-mp_hands = mp.solutions.hands
 
-model_name_rf = 'model_rf__date_time_2024_01_13__15_36_25_acc_1.0.pkl'
+#Load ML model
+model_name_rf = 'model_rf__date_time_2024_01_15__22_56_19_acc_1.0.pkl'
 model = MT.joblib.load(model_name_rf)
 
 def detect(image):
@@ -54,8 +55,8 @@ def detect(image):
         max_num_hands=num_hands,
         min_detection_confidence=0.4,
         min_tracking_confidence=0.4) as hands:
-        # To improve performance, optionally mark the image as not writeable to
-        # pass by reference.
+        # To improve performance, optionally mark the image as 
+        # not writeable to pass by reference.
         image.flags.writeable = False
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         results = hands.process(image)
@@ -63,10 +64,9 @@ def detect(image):
         image.flags.writeable = True
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-        
-
         if results.multi_hand_landmarks:
             counter = 0
+            current_gestures.clear()
             for res in results.multi_hand_landmarks:  
                 counter += 1
                 hand_landmark_array = []        
@@ -83,17 +83,19 @@ def detect(image):
                 hand_landmark_array = MT.np.array(hand_landmark_array)  # 1D array of current landmark positions
                 hand_landmark_array = hand_landmark_array[None, :]  # adds a new dimension to x to avoid input shape error
                 yhat_idx = int(model.predict(hand_landmark_array)[0]) #The estimated or predicted values in a regression or other predictive model are termed the y-hat values
-                yhat = idx_to_class[yhat_idx]
-                print(yhat)    
-            #For LSTM: extract keypoints from results
-            # if cam.Camera.record == True:
-            #     global iteration_counter
-            #     iteration_counter += 1
-            #     for lm in res.landmark:
-            #         recorded_landmarks = cam.np.array([lm.x, lm.y, lm.z]).flatten()
-            #         npy_path = cam.os.path.join(cam.Camera.rec_folder_path, f"frame_{iteration_counter}")      
-            #         cam.np.save(npy_path, recorded_landmarks)
-            #         print(recorded_landmarks)                 
+                yhat = idx_to_string[yhat_idx] #Predicted gesture
+                current_gestures.append(yhat)
+                #print(yhat)                      
+
+        #For LSTM: extract keypoints from results
+        # if cam.Camera.record == True:
+        #     global iteration_counter
+        #     iteration_counter += 1
+        #     for lm in res.landmark:
+        #         recorded_landmarks = cam.np.array([lm.x, lm.y, lm.z]).flatten()
+        #         npy_path = cam.os.path.join(cam.Camera.rec_folder_path, f"frame_{iteration_counter}")      
+        #         cam.np.save(npy_path, recorded_landmarks)
+        #         print(recorded_landmarks)
 
         #For RF model: extract keypoints from results
         if cam.Camera.record == True:
@@ -121,6 +123,7 @@ def detect(image):
 
             iteration_counter += 1
             print(iteration_counter)               
-        
+        #===============================================================#
+
     return image
 
