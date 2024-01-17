@@ -10,7 +10,7 @@ import ModelTrainer as MT
 # - gesture recognition only works for the hand used in the recording
 #TO DO: 
 # - try adding the z-coordinates
-# - implementing other algos and benchmarking performance
+# - benchmarking performance
 # - algo optimization
 # - Front end for gesture creation and model training
 
@@ -44,7 +44,7 @@ idx_to_string = {
 }
 
 #Load ML model
-model_name_rf = 'model_rf__date_time_2024_01_15__22_56_19_acc_1.0.pkl'
+model_name_rf = 'model_rf__date_time_2024_01_17__04_05_53_acc_1.0.pkl'
 model = MT.joblib.load(model_name_rf)
 
 def detect(image):
@@ -79,13 +79,14 @@ def detect(image):
                 #RF model gesture prediction      
                 for lm in res.landmark:
                     hand_landmark_array.extend([lm.x, lm.y])         
-            
-                hand_landmark_array = MT.np.array(hand_landmark_array)  # 1D array of current landmark positions
-                hand_landmark_array = hand_landmark_array[None, :]  # adds a new dimension to x to avoid input shape error
-                yhat_idx = int(model.predict(hand_landmark_array)[0]) #The estimated or predicted values in a regression or other predictive model are termed the y-hat values
-                yhat = idx_to_string[yhat_idx] #Predicted gesture
-                current_gestures.append(yhat)
-                #print(yhat)                      
+
+                hand_landmark_array = MT.np.array(hand_landmark_array) # 1D array of current landmark positions
+                hand_landmark_array = hand_landmark_array[None, :]     # adds a new dimension to x to avoid input shape error
+                yhat = model.predict(hand_landmark_array)[0]           # The estimated or predicted values in a regression or
+                print(yhat)
+                yhat_idx = int(yhat)  # other predictive model are termed the y-hat values
+                gesture = idx_to_string[yhat_idx]                                                              
+                current_gestures.append(gesture)                 
 
         #For LSTM: extract keypoints from results
         # if cam.Camera.record == True:
