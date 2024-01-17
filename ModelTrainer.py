@@ -20,7 +20,7 @@ class ModelTrainer:
         loaded_data = np.load(os.path.join(ModelTrainer.data_folder_path, 'data.npz'))
         X, y = loaded_data['X'], loaded_data['y']
         #iterate through all files in each sub directory in Datasets folder
-        for data_class in ModelTrainer.gestures[0:]:
+        for data_class in ModelTrainer.gestures:
             sub_dir_path = os.path.join(ModelTrainer.data_folder_path, data_class)
             for file in os.listdir(sub_dir_path):
                 if file.endswith(".npz"): 

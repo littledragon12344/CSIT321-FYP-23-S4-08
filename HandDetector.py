@@ -44,7 +44,7 @@ idx_to_string = {
 }
 
 #Load ML model
-model_name_rf = 'model_rf__date_time_2024_01_17__04_05_53_acc_1.0.pkl'
+model_name_rf = 'model_rf__date_time_2024_01_17__16_11_06_acc_1.0.pkl'
 model = MT.joblib.load(model_name_rf)
 
 def detect(image):
