@@ -100,7 +100,6 @@ class Camera:
                 DT.timestamp += 1 # should be monotonically increasing, because in LIVE_STREAM mode
                 # Convert the OpenCV frame to a Tkinter-compatible photo image
                 photo = ImageTk.PhotoImage(image=Image.fromarray(cv.cvtColor(detection, cv.COLOR_BGR2RGB)))
-          
                 # Put the frame in the queue for processing
                 self.frame_queue.put(photo)   
 
@@ -147,20 +146,47 @@ class Camera:
 
     def check_gesture(self, photo):
         # Process the frame (e.g., perform gesture detection)
+            
+            # Check brightness of the frame
+            dark = self.check_brightness(photo)
 
             # Update the label text with the detected hand gestures
             self.detected_gestures = DT.current_gestures
             label_txt = "No gestures detected."
-            if len(self.detected_gestures) == 1:
-                label_txt = f"{self.detected_gestures[0]}"
-            elif len(self.detected_gestures) > 1:
-                label_txt = ", ".join(self.detected_gestures)
+            
+            if (dark == False):
+                if len(self.detected_gestures) == 1:
+                    label_txt = f"{self.detected_gestures[0]}"
+                elif len(self.detected_gestures) > 1:
+                    label_txt = ", ".join(self.detected_gestures)
+                elif len(self.detected_gestures) < 1:
+                    label_txt = "No gestures detected."
             else:
-                label_txt = "No gestures detected."
+                label_txt = "The environment is too dark"
+            
             self.text.configure(text=label_txt)
 
             # Update the canvas with the processed frame
             self.canvas.create_image(0, 0, anchor=tk.NW, image=photo)
+
+    def check_brightness(self, photo, threshold=50):
+        # Convert PhotoImage to PIL Image
+        pil_image = ImageTk.getimage(photo)
+        
+        # Convert to NumPy array
+        frame = np.array(pil_image)
+
+        # Convert to BGR format
+        frame_bgr = cv.cvtColor(frame, cv.COLOR_RGB2BGR)
+
+        # Access the red channel directly
+        red_channel = frame_bgr[:, :, 2]
+
+        # Calculate average intensity
+        avg_intensity = np.mean(red_channel)
+
+        return avg_intensity < threshold
+
 
 if __name__ == "__main__":
     app = tk.Tk()
