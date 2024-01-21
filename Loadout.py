@@ -1,7 +1,8 @@
 import tkinter as tk
-import Config as cfg
+from tkinter import messagebox
+#import Config as cfg
 #import LoadoutGestures as LOG
-from ReadWriteFile import *
+from FileManager import *
 
 # loadout display class
 class LoadoutDisplay():
@@ -13,6 +14,8 @@ class LoadoutDisplay():
 
         # save reference to gui update function
         self.gui_update = updatefunction
+        # create reference list to the loadout name labels
+        self.loadout_name_labels = []
     
         # initializing values
         self.selected_name = ""
@@ -29,10 +32,10 @@ class LoadoutDisplay():
         container = tk.Frame(self.root, height=1, bg="magenta")
         container.pack(side="top", fill="x", expand=True, padx=1, pady=1, anchor="n")
         # create a text input field
-        self.searchbar = tk.Text(container, width=20, height=1, wrap="none", font=('', 12))
+        self.searchbar = tk.Entry(container, width=20, font=('', 12))
         self.searchbar.grid(column=0, row=0, sticky="news", pady=1.5)
         # bind the search bar to enter key to search loadout
-        self.searchbar.bind("<Return>", self.on_enter_key)
+        self.searchbar.bind("<Return>", lambda _: self.search_loadout())
         # create a search button
         self.search_btn = tk.Button(container, width=8, text="Search", command=self.search_loadout)
         self.search_btn.grid(column=1, row=0, sticky="news", padx=1, pady=1.5)
@@ -61,20 +64,14 @@ class LoadoutDisplay():
         self.canvas.bind("<MouseWheel>", self.on_mousewheel)
         
         #display loadouts
-        self.display_loadouts(self.controller.loadouts)
-    
-    def on_enter_key(self, event):
-        # search the loadout
-        self.search_loadout()
-        # disable the default behavior of inserting a line break
-        return 'break'
+        self.display_loadouts(self.controller.get_dictionaries())
     
     def on_mousewheel(self, event):
         # Scroll the canvas when the mouse wheel is used
         scroll_speed = 1.0  # Adjust this value to control the scroll speed
         self.canvas.yview_scroll(int(-1 * (event.delta / 120) * scroll_speed), "units")
         
-    def on_canvas_configure(self, event):
+    def on_canvas_configure(self, event=None):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
 
     def bind_recursive(self, widget, event_string, callback):
@@ -85,6 +82,8 @@ class LoadoutDisplay():
             self.bind_recursive(child, event_string, callback)
 
     def display_loadouts(self, loadout_list):
+        # clear references
+        self.loadout_name_labels.clear()
         # add loadouts to the display
         for id, (name, sub_dict) in enumerate(loadout_list.items()):
             # create a frame for the item
@@ -94,6 +93,7 @@ class LoadoutDisplay():
             # loadout name label
             loadout_name = tk.Label(item_frame, text=f"{name}", width=12, anchor="center")
             loadout_name.grid(column=0, row=0, padx=1, sticky="news", columnspan=2)
+            self.loadout_name_labels.append(loadout_name)
             
             # gestures and their repective keys labels
             # connect to iConfig object
@@ -105,24 +105,35 @@ class LoadoutDisplay():
                 key_label = tk.Label(item_frame, text=f"{key.upper()}", width=14, anchor="center")
                 key_label.grid(column=4, row=i+1, padx=1, sticky="news", columnspan=2)
             
+            # create a frame to contain some buttons
+            hbox = tk.Frame(item_frame)
+            hbox.grid(column=0, row=i+1, sticky="news")
+            # create the edit name button
+            rename_btn = tk.Button(hbox, text="A", command=self.rename_selected)
+            rename_btn.grid(column=0, row=0, sticky="news")
+            # create the delete loadout button
+            delete_btn = tk.Button(hbox, text="B", command=self.remove_selected)
+            delete_btn.grid(column=1, row=0, sticky="news")
+            
             # bind mouse click event to the item frame and its children
             self.bind_recursive(item_frame, "<Button-1>", self.loadout_select_handler(id, name))
             # bind scroll wheel event to the item frame and its children
             self.bind_recursive(item_frame, "<MouseWheel>", self.on_mousewheel)
         
         # update the scrollregion
-        self.on_canvas_configure(None)
+        self.on_canvas_configure()
         
     def update_display(self, loadout_list):
         # clear the frame
         for widget in self.frame.winfo_children():
+            widget.unbind_all(None)
             widget.destroy()
         # display loadouts
         self.display_loadouts(loadout_list)
     
     def search_loadout(self):
         # getting the input text
-        search_txt = self.searchbar.get("1.0", "end-1c")
+        search_txt = self.searchbar.get()
         # stop focus on the searchbar
         self.search_btn.focus_force()
         # search for the matching loadout
@@ -134,7 +145,7 @@ class LoadoutDisplay():
     
     def enable_loadout(self):
         # enable the selected loadout
-        self.controller.enable_loadout(self.selected_name)
+        self.controller.enable_loadout(self.selected_id)
         # update the enable button
         self.enable_btn.config(text="Enabled!", state=tk.DISABLED)
         # call update gui function in main window
@@ -143,6 +154,48 @@ class LoadoutDisplay():
         frame_children = self.frame.winfo_children()
         if self.selected_id >= 0 and self.selected_id < len(frame_children):
             frame_children[self.selected_id].config(bg="orange")
+    
+    def rename_selected(self):
+        # exit if nothing is selected yet 
+        if self.selected_id < 0 : return
+        
+        # get the currently selected frame and its label name
+        selected_frame = self.frame.winfo_children()[self.selected_id]
+        name_label = self.loadout_name_labels[self.selected_id]
+        
+        # check if the label is mapped
+        if name_label.winfo_ismapped():     # unmap the label and create a new entry widget
+            name_label.grid_forget()
+            self.entry = tk.Entry(selected_frame)
+            self.entry.insert(0, name_label.cget("text"))
+            self.entry.grid(column=0, row=0, padx=1, sticky="news", columnspan=2)
+            # bind the enter key to the entry
+            self.entry.bind("<Return>", lambda _: self.rename_loadout())
+        else: 
+            # update the new name of the loadout
+            self.controller.rename_loadout(self.selected_id, self.entry.get())
+            # map the label with the updated text
+            name_label.config(text=self.entry.get())
+            name_label.grid(column=0, row=0, padx=1, sticky="news", columnspan=2)
+            # destroy the entry widget
+            if hasattr(self, 'entry') and self.entry.winfo_exists():
+                self.entry.unbind_all(None)
+                self.entry.destroy()
+            # update the loadout display 
+            self.update_display(self.controller.get_dictionaries())
+
+    def remove_selected(self):
+        # exit if nothing is selected yet 
+        if self.selected_id < 0 : return
+        
+        # ask user for confirmation
+        result = messagebox.askyesno("Confirmation", "Are you sure you want to delete this loadout?")
+        if result:
+            # remove the selected loadout from the list
+            self.controller.remove_loadout(self.selected_id)
+            # update the display with the new list
+            new_loadouts = self.controller.get_dictionaries()
+            self.update_display(new_loadouts)
     
     def loadout_select_handler(self, id, loadout_name):
         def handler(event):
@@ -170,7 +223,7 @@ class LoadoutDisplay():
     
     def import_loadout(self):
         self.controller.import_loadout_from_file()
-        self.update_display(self.controller.loadouts)
+        self.update_display(self.controller.get_dictionaries())
         
     def export_loadout(self):
         for name, data in self.controller.loadouts.items():
@@ -197,8 +250,9 @@ class LoadoutDisplay():
 # ====================================== CONTROLLER ======================================
 class LoadoutController():
     def __init__(self):
-        self.loadouts = {}
-        self.enabled = ""
+        #self.loadouts = {}
+        self.loadouts = []
+        self.enabled = None
         # create a references
         self.cam_display = None
         self.cfg = None
@@ -206,33 +260,41 @@ class LoadoutController():
         # import all loadouts from a folder
         self.load_loadouts_from_folder("Loadout_Info")
     
-    def add_loadout(self, name, data):
-        self.loadouts[name] = data
+    # append a loadout obj
+    def add_loadout(self, loadout):
+        self.loadouts.append(loadout)
     
     def find_loadout(self, search_txt):
         # initializing an empty dictionary
         found = {}
         # start searching by the loadout name
-        for name, data in self.loadouts.items():
-            if search_txt.casefold() in name.casefold():
-                found[name] = data
-        
+        for loadout in self.loadouts:
+            if search_txt.casefold() in loadout.name.casefold():
+                found[loadout.name] = loadout.get_all_pairs()
+        # returns a dictionary of found loadout
         return found
     
-    def enable_loadout(self, name):
-        self.enabled = name
+    def enable_loadout(self, id=None):
+        if id is not None:
+            self.enabled = self.loadouts[id]
+        else: 
+            print("Which to enable???")
+            return
+        
         if self.cam_display is not None: 
-            # get the entity class
-            curr_enabled = self.get_currently_enabled()
-            # convert the entity class to dictionarys
-            self.cam_display.set_loadout(curr_enabled.get_all_pairs())
-        print(f"Enabled loadout: {name}!")
+            # get the dictionary from the loadout obj
+            self.cam_display.set_loadout(self.enabled.get_all_pairs())
+        print(f"Enabled loadout: {self.enabled.name}!")
     
     def enable_default_loadout(self):
-        self.enable_loadout(next(iter(self.loadouts)))
+        #self.enable_loadout(next(iter(self.loadouts)))
+        self.enable_loadout(0)
         
-    def disable_loadout(self, name):
-        print(f"Disabled loadout: {name}!")
+    def rename_loadout(self, id, new_name):
+        self.loadouts[id].name = new_name
+    
+    def remove_loadout(self, id):
+        self.loadouts.pop(id)
     
     def set_camera_display(self, camera):
         self.cam_display = camera
@@ -241,7 +303,16 @@ class LoadoutController():
         self.cfg = config
 
     def get_currently_enabled(self):
-        return self.loadouts[self.enabled]
+        # returns a dictionary of the currently enabled loadout obj
+        return self.enabled
+    
+    def get_dictionaries(self):
+        loadout_dicts = {}
+        # convert list of loadout obj into dictionary
+        for loadout in self.loadouts:
+            loadout_dicts[loadout.name] = loadout.dictionary
+        # returns dictionary
+        return loadout_dicts
     
     def load_loadouts_from_folder(self, folder_name):
         contents = readFromFolder(folder_name)
@@ -262,7 +333,7 @@ class LoadoutController():
                         gesture, key = line.split('-', 1)
                         loadout.add_pair(gesture, key)
             # add the loadout to the list
-            self.add_loadout(loadout.name, loadout)
+            self.add_loadout(loadout)
     
     def import_loadout_from_file(self):
         # get data from a file
@@ -286,7 +357,7 @@ class LoadoutController():
                     gesture, key = line.split('-', 1)
                     loadout.add_pair(gesture, key)
         
-        self.add_loadout(loadout.name, loadout)
+        self.add_loadout(loadout)
         return True
 
     def export_loadout_to_file(self, loadout):
