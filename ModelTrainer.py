@@ -33,6 +33,10 @@ class ModelTrainer:
         
         print(X_train.shape)
         print(X_test.shape)
+        print(X_train)
+        print(X_test)
+        print(y_train)
+        print(y_test)
 
         ModelTrainer.build_RF(X_train, X_test, y_train, y_test)
    
@@ -60,7 +64,7 @@ class ModelTrainer:
             # add in cross validation
 
             yhat_pred = best_rf.predict(x_test)
-
+            
             test_accuracy = accuracy_score(y_test, yhat_pred)
             # precision = precision_score(y_test, yhat_pred)
             # recall = recall_score(y_test, yhat_pred)

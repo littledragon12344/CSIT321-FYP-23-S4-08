@@ -28,7 +28,8 @@ sample_frame_count = 100 #total number of frames to save during recording
 recorded_gesture_class = 'pointing_up' #current gesture being recorded
 X, y = [], [] 
 iteration_counter = 1
-
+y_test = cam.np.array([[2, 1, 3, 0, 3, 0, 0, 1, 0, 1, 1, 0, 1, 0, 3, 2, 0, 0, 2, 2, 1, 0, 1, 0, 1, 0, 2, 3, 2, 3, 2, 1, 1, 0, 0, 1, 1,
+          1, 2, 2, 1, 2]])
 gesture_map = {
     'open_palm': 0,
     'closed_fist': 1,
@@ -82,10 +83,13 @@ def detect(image):
 
                 hand_landmark_array = MT.np.array(hand_landmark_array) # 1D array of current landmark positions
                 hand_landmark_array = hand_landmark_array[None, :]     # adds a new dimension to x to avoid input shape error
-                yhat = model.predict(hand_landmark_array)[0]           # The estimated or predicted values in a regression or
-                print(yhat)
-                yhat_idx = int(yhat)  # other predictive model are termed the y-hat values
-                gesture = idx_to_string[yhat_idx]                                                              
+                global y_test
+                #y_test = y_test[None, :]
+                yhat = model.predict(hand_landmark_array)        # The estimated or predicted values in a regression or
+                score = model.score(y_test, yhat)
+                print(score)                                            # other predictive model are termed the y-hat values
+                yhat_idx = yhat[0]
+                gesture = idx_to_string[yhat_idx]                                                             
                 current_gestures.append(gesture)                 
 
         #For LSTM: extract keypoints from results
