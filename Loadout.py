@@ -73,6 +73,7 @@ class LoadoutDisplay():
         
     def on_canvas_configure(self, event=None):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        self.canvas.update_idletasks()
 
     def bind_recursive(self, widget, event_string, callback):
         # bind the widget to an event callback
@@ -105,14 +106,17 @@ class LoadoutDisplay():
                 key_label = tk.Label(item_frame, text=f"{key.upper()}", width=14, anchor="center")
                 key_label.grid(column=4, row=i+1, padx=1, sticky="news", columnspan=2)
             
-            # create a frame to contain some buttons
+            # create the new gesture key pair button to the current loadout
+            new_loadout_btn = tk.Button(item_frame, text="+")
+            new_loadout_btn.grid(column=5, row=0, sticky="ne", padx=6)
+            # create a frame to contain the buttons
             hbox = tk.Frame(item_frame)
             hbox.grid(column=0, row=i+1, sticky="news")
             # create the edit name button
-            rename_btn = tk.Button(hbox, text="A", command=self.rename_selected)
+            rename_btn = tk.Button(hbox, text="Rename", command=self.rename_selected)
             rename_btn.grid(column=0, row=0, sticky="news")
             # create the delete loadout button
-            delete_btn = tk.Button(hbox, text="B", command=self.remove_selected)
+            delete_btn = tk.Button(hbox, text="Delete", bg="red", command=self.remove_selected)
             delete_btn.grid(column=1, row=0, sticky="news")
             
             # bind mouse click event to the item frame and its children
@@ -121,7 +125,7 @@ class LoadoutDisplay():
             self.bind_recursive(item_frame, "<MouseWheel>", self.on_mousewheel)
         
         # update the scrollregion
-        self.on_canvas_configure()
+        self.canvas.after(10, self.on_canvas_configure)
         
     def update_display(self, loadout_list):
         # clear the frame
@@ -212,7 +216,7 @@ class LoadoutDisplay():
             selected_frame.config(bg="brown")
             
             # update enable button base on the enabled loadout name
-            if self.controller.enabled == loadout_name:
+            if self.controller.enabled.name == loadout_name:
                 self.enable_btn.config(text="Enabled!", state=tk.DISABLED)
                 selected_frame.config(bg="orange")
             else:
@@ -226,18 +230,17 @@ class LoadoutDisplay():
         self.update_display(self.controller.get_dictionaries())
         
     def export_loadout(self):
-        for name, data in self.controller.loadouts.items():
-            if self.selected_name.casefold() in name.casefold():
-                self.controller.export_loadout_to_file(data)
+        for loadout in self.controller.loadouts:
+            if self.selected_name.casefold() in loadout.name.casefold():
+                self.controller.export_loadout_to_file(loadout)
 
     def set_camera_display(self, camera):
         # set reference to the camera
         self.controller.set_camera_display(camera)
         # enable default loadout
         self.controller.enable_default_loadout()
-        # hightlight the enabled loadout
-        frame = self.frame.winfo_children()[0]
-        frame.config(bg="orange")
+        # select the 1st item in the loadout list
+        self.loadout_select_handler(0, self.controller.loadouts[0].name)(None)
         # disable the enable button
         self.enable_btn.config(text="Enabled!", state=tk.DISABLED)
 
@@ -339,7 +342,7 @@ class LoadoutController():
         # get data from a file
         str = readFromFile()
         # if file is empty return False
-        if str == "": return False
+        if str == "" or str is None: return False
         
         # split the string data into lines
         lines = str.splitlines()
