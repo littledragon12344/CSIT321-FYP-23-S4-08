@@ -16,6 +16,21 @@ def new_window():
         if loadout_widget is None: return
         loadout_widget.import_loadout()
 
+    def update_gui():
+        global config
+        if config:
+            config.destroy()  # Destroy the existing Config frame
+        config = tk.Frame(base, width=800, height=275, bg="blue")  # Recreate the Config frame
+        cfgwidget = cfg.Config(config, loadout_widget, pop_up)  # Pass the update_gui function
+        cfgwidget.set_loadout(loadout_widget)  # Pass the LoadoutDisplay instance directly
+        config.grid(column=0, row=2, columnspan=5, rowspan=2, sticky="news")  # Grid the new Config frame
+
+    def pop_up(title_text: str):
+        top = tk.Toplevel(root)
+        top.geometry("400x200")
+        top.title(title_text)
+        return top
+
     root = tk.Tk()
     root.title("Gesture Detection Prototype")
     root.geometry("800x600")    
@@ -53,15 +68,6 @@ def new_window():
     #==========================================================
     
     #======================== UI LAYOUT ========================
-    def update_gui():
-        global config
-        if config:
-            config.destroy()  # Destroy the existing Config frame
-        config = tk.Frame(base, width=800, height=275, bg="blue")  # Recreate the Config frame
-        cfgwidget = cfg.Config(config, loadout_widget)  # Pass the update_gui function
-        cfgwidget.set_loadout(loadout_widget)  # Pass the LoadoutDisplay instance directly
-        config.grid(column=0, row=2, columnspan=5, rowspan=2, sticky="news")  # Grid the new Config frame
-
     # create a base frame for the layout
     base = tk.Frame(root)
     # create a frame to contain the camera
@@ -77,7 +83,7 @@ def new_window():
     
     # create a frame for the gesture list display
     config = tk.Frame(base, width=800, height=275, bg="blue")
-    cfgwidget = cfg.Config(config, loadout_widget)
+    cfgwidget = cfg.Config(config, loadout_widget, pop_up)
     cfgwidget.set_loadout(loadout_widget)
     
     # placing the frames onto a grid for the UI layout

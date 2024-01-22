@@ -5,11 +5,14 @@ import math
 from PIL import Image, ImageTk
 
 class Config:
-    def __init__(self, window, widget):
+    def __init__(self, window, widget, pop):
         self.cfglist = []
         self.cfggestures = []
         self.cfgkeys = []
+
         self.loadout_widget = widget
+        self.pop = pop
+        self.pop_win = None
 
         self.window = window
         base = tk.Frame(self.window, highlightbackground="black", highlightthickness=2)
@@ -39,6 +42,7 @@ class Config:
     
     # For testing sake, no params
     def get_config(self):
+        last = 0
         size = 120, 120
         img = Image.open("TestImage.jpg")
         img.thumbnail(size)
@@ -59,11 +63,39 @@ class Config:
             self.cfglist.append(cfgobject)
             
         for ind, x in enumerate(self.cfglist):
+            last = ind + 1
             z = ind % 5
             y = math.floor(ind/5)
             x.base.grid(column=z, row=y, padx=8, pady=8)
+        
+        # Create Gesture button
+        cImg = Image.open("AddSlot.png")
+        cImage = ImageTk.PhotoImage(cImg)
+        cFrame = tk.Frame(self.frame, width=130, height=210)
+        cButton = tk.Button(cFrame, command=self.create_gesture)
+        cButton.image = cImage
+        
+        nextZ = last % 5
+        nextY = math.floor(last/5)
+        cFrame.grid(column=nextZ, row=nextY, padx=8, pady=8)
+        cButton.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
         
         print(f"Showing total of {len(self.cfglist)} results!")
 
     def set_loadout(self, load):
         self.loadout_widget = load
+    
+    def create_gesture(self):
+        print(f"This button is working!")
+
+        # asd
+        if self.pop:
+            self.pop_win = self.pop("Test")
+            tLabel = tk.Label(self.pop_win, text="Button closes this window")
+            tButton = tk.Button(self.pop_win, text="Close", command=self.pop_win.destroy)
+            tLabel.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
+            tButton.grid(column=0, row=1, sticky=("N", "S", "E", "W"))
+
+            self.pop_win.update_idletasks()
+
+        print(f"This button is still working!")
