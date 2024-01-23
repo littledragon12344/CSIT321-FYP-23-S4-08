@@ -49,6 +49,8 @@ model_name_rf = 'model_rf__date_time_2024_01_17__16_11_06_acc_1.0.pkl'
 model = MT.joblib.load(model_name_rf)
 
 def detect(image):
+    global recorded_gesture_class
+
     # For webcam input:
     with mp_hands.Hands(
         model_complexity=0,
@@ -131,4 +133,8 @@ def detect(image):
         #===============================================================#
 
     return image
+
+def GestureName_Record(NameChange):
+        global recorded_gesture_class
+        recorded_gesture_class = NameChange #To Change Name before Gesture is being being Recorded
 

@@ -1,7 +1,10 @@
 ﻿import tkinter as tk
+from tkinter import simpledialog
+from pynput import keyboard
 import Camera as cam
 import Config as cfg
 import Loadout as lo
+import HandDetector as HD
 
 loadout_widget = None
 current_loadout = None
@@ -31,6 +34,26 @@ def new_window():
         top.title(title_text)
         return top
 
+    def Gesture_recording():
+        ROOT = tk.Tk()
+
+        ROOT.withdraw()
+        # the input dialog
+        USER_INP = simpledialog.askstring(title="Test",prompt="What is the Name of the Gesture being Recorded")
+
+        
+        #Change the Name
+        USER_INP.replace(" ", "_") #incase user enter a name with Space
+        HD.GestureName_Record(USER_INP)
+
+        print(f"Changed Gesture Recording to {USER_INP} And Start Recording")
+
+        #press the F12 key/or run the recording mode
+        cam.Camera.keyboard_input_update(keyboard.Key.f12)
+       
+
+        
+
     root = tk.Tk()
     root.title("Gesture Detection Prototype")
     root.geometry("800x600")    
@@ -59,6 +82,8 @@ def new_window():
     options_menu = tk.Menu(menubar, tearoff=0)
     # tutorial
     options_menu.add_command(label="Start tutorial...")
+    #
+    options_menu.add_command(label="Start Gesture Recording",command=Gesture_recording)
     
     # display the options on the menu bar
     menubar.add_cascade(label="File", menu=file_menu)
