@@ -136,5 +136,6 @@ def detect(image):
 
 def GestureName_Record(NameChange):
         global recorded_gesture_class
-        recorded_gesture_class = NameChange #To Change Name before Gesture is being being Recorded
+        recorded_gesture_class = NameChange 
+        #This i think legit usless so can delete
 

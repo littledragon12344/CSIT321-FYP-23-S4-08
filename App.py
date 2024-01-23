@@ -35,18 +35,17 @@ def new_window():
         return top
 
     def Gesture_recording():
-        ROOT = tk.Tk()
+        #ROOT = tk.Tk()
 
-        ROOT.withdraw()
+        #ROOT.withdraw()
         # the input dialog
-        USER_INP = simpledialog.askstring(title="Test",prompt="What is the Name of the Gesture being Recorded")
-
-        
+        #USER_INP = simpledialog.askstring(title="Name of Gesture",prompt="What is the Name of the Gesture being Recorded")
+      
         #Change the Name
-        USER_INP.replace(" ", "_") #incase user enter a name with Space
-        HD.GestureName_Record(USER_INP)
+        #USER_INP.replace(" ", "_") #incase user enter a name with Space
+        #HD.GestureName_Record(USER_INP)
 
-        print(f"Changed Gesture Recording to {USER_INP} And Start Recording")
+        #print(f"Changed Gesture Recording to {USER_INP} And Start Recording")
 
         #press the F12 key/or run the recording mode
         cam.Camera.keyboard_input_update(keyboard.Key.f12)

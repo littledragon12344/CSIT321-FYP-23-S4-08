@@ -114,6 +114,8 @@ class Camera:
             MT.ModelTrainer.preprocess_data()
     
     def gesture_input_update(self):
+        if Camera.record == True: return # so it doesnt press any keys during Recording
+        
         self.controller.gesture_to_input(self.detected_gestures)
 
     def close(self):

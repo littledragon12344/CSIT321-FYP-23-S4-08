@@ -17,6 +17,10 @@ class ModelTrainer:
 
     #Handles preprocessing of recorded landmark data
     def preprocess_data(): #process and label data points
+        #incase the Folder Doesnt exsist 
+
+        os.makedirs()
+
         loaded_data = np.load(os.path.join(ModelTrainer.data_folder_path, 'data.npz'))
         X, y = loaded_data['X'], loaded_data['y']
         #iterate through all files in each sub directory in Datasets folder
@@ -79,6 +83,10 @@ class ModelTrainer:
 
             model_name = f'model_rf__date_time_{current_date_time_str}_acc_{test_accuracy}.pkl'
             joblib.dump(best_rf, model_name)
+
+    #to add Gesture to the Array
+    def Add_gesture(Name):
+        gestures.append(Name)
 
     # def preprocess_data():
     #     gesture_data = []
