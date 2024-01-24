@@ -32,6 +32,7 @@ def new_window():
         top = tk.Toplevel(root)
         top.geometry("400x200")
         top.title(title_text)
+        top.resizable(width=False, height=False)
         return top
 
     def Gesture_recording():

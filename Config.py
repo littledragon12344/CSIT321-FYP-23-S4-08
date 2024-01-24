@@ -2,6 +2,7 @@ import tkinter as tk
 import iConfig as icfg
 import Loadout as ld
 import math
+import ModelTrainer as MT
 from PIL import Image, ImageTk
 
 class Config:
@@ -13,6 +14,8 @@ class Config:
         self.loadout_widget = widget
         self.pop = pop
         self.pop_win = None
+
+        self.btnText = tk.StringVar()
 
         self.window = window
         base = tk.Frame(self.window, highlightbackground="black", highlightthickness=2)
@@ -71,13 +74,13 @@ class Config:
         # Create Gesture button
         cImg = Image.open("AddSlot.png")
         cImage = ImageTk.PhotoImage(cImg)
-        cFrame = tk.Frame(self.frame, width=130, height=210)
-        cButton = tk.Button(cFrame, command=self.create_gesture)
+        cFrame = tk.Frame(self.frame, width=150, height=210)
+        cButton = tk.Button(cFrame, width=150, height=210, image=cImage, command=self.create_gesture)
         cButton.image = cImage
         
         nextZ = last % 5
         nextY = math.floor(last/5)
-        cFrame.grid(column=nextZ, row=nextY, padx=8, pady=8)
+        cFrame.grid(column=nextZ, row=nextY)
         cButton.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
         
         print(f"Showing total of {len(self.cfglist)} results!")
@@ -86,16 +89,29 @@ class Config:
         self.loadout_widget = load
     
     def create_gesture(self):
-        print(f"This button is working!")
-
-        # asd
+        self.btnText.set("Record")
         if self.pop:
             self.pop_win = self.pop("Test")
-            tLabel = tk.Label(self.pop_win, text="Button closes this window")
-            tButton = tk.Button(self.pop_win, text="Close", command=self.pop_win.destroy)
-            tLabel.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
-            tButton.grid(column=0, row=1, sticky=("N", "S", "E", "W"))
+            tFrame = tk.Frame(self.pop_win, width=400, height=200)
+            tLabel = tk.Label(tFrame, text="Button closes this window")
+            tRecord = tk.Button(tFrame, textvariable=self.btnText, command=self.button_trigger)
+            tClose = tk.Button(tFrame, text="Close", command=self.pop_win.destroy)
 
-            self.pop_win.update_idletasks()
-
-        print(f"This button is still working!")
+            tFrame.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
+            tLabel.grid(column=0, row=0, columnspan=2, sticky=("N", "S", "E", "W"))
+            tRecord.grid(column=0, row=1, sticky=("N", "S", "E", "W"))
+            tClose.grid(column=1, row=1, sticky=("N", "S", "E", "W"))
+        
+    def button_trigger(self):
+        self.change_button()
+        self.record_gesture()
+    
+    def change_button(self):
+        if self.pop_win:
+            if self.btnText.get() == "Record": self.btnText.set("Stop")
+            else: self.btnText.set("Record")
+    
+    def record_gesture(self):
+        self.change_button()
+        MT.ModelTrainer.preprocess_data()
+        print(f"The record button is functioning.")
