@@ -20,6 +20,7 @@ import concurrent.futures
 class Camera:
     timestamp = 0
     gestures = list
+    detected_gestures = []
 
     #For ip webcam - would be nice to have a toggle for this on the UI
     use_ip_webcam = False 

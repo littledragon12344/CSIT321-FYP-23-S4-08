@@ -7,10 +7,8 @@ import ModelTrainer as MT
 
 #Current issues: 
 # - Inaccuracy (likely just due to the small dataset)
-# - gesture recognition only works for the hand used in the recording
 #TO DO: 
 # - try adding the z-coordinates
-# - benchmarking performance
 # - algo optimization
 # - Front end for gesture creation and model training
 
@@ -18,6 +16,7 @@ import ModelTrainer as MT
 timestamp = 0 
 current_gestures = []
 num_hands = 2 
+pred_threshold = 0.5
     
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -28,8 +27,11 @@ sample_frame_count = 100 #total number of frames to save during recording
 recorded_gesture_class = 'pointing_up' #current gesture being recorded
 X, y = [], [] 
 iteration_counter = 1
-y_test = cam.np.array([[2, 1, 3, 0, 3, 0, 0, 1, 0, 1, 1, 0, 1, 0, 3, 2, 0, 0, 2, 2, 1, 0, 1, 0, 1, 0, 2, 3, 2, 3, 2, 1, 1, 0, 0, 1, 1,
-          1, 2, 2, 1, 2]])
+
+#For benchmarking prediction
+e_counter = 0
+total_e = 0.0
+
 gesture_map = {
     'open_palm': 0,
     'closed_fist': 1,
@@ -66,10 +68,10 @@ def detect(image):
         # Draw the hand annotations on the image.
         image.flags.writeable = True
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        current_gestures.clear()
 
         if results.multi_hand_landmarks:
             counter = 0
-            current_gestures.clear()
             for res in results.multi_hand_landmarks:  
                 counter += 1
                 hand_landmark_array = []        
@@ -83,16 +85,7 @@ def detect(image):
                 for lm in res.landmark:
                     hand_landmark_array.extend([lm.x, lm.y])         
 
-                hand_landmark_array = MT.np.array(hand_landmark_array) # 1D array of current landmark positions
-                hand_landmark_array = hand_landmark_array[None, :]     # adds a new dimension to x to avoid input shape error
-                global y_test
-                #y_test = y_test[None, :]
-                yhat = model.predict(hand_landmark_array)        # The estimated or predicted values in a regression or
-                score = model.score(y_test, yhat)
-                print(score)                                            # other predictive model are termed the y-hat values
-                yhat_idx = yhat[0]
-                gesture = idx_to_string[yhat_idx]                                                             
-                current_gestures.append(gesture)                 
+                predict(hand_landmark_array)             
 
         #For LSTM: extract keypoints from results
         # if cam.Camera.record == True:
@@ -133,6 +126,39 @@ def detect(image):
         #===============================================================#
 
     return image
+
+def predict(array):
+    #start = time.perf_counter() # For benchmarking execution time
+
+    hand_landmark_array = MT.np.array(array) # 1D array of current landmark positions
+    hand_landmark_array = hand_landmark_array[None, :]     # adds a new dimension to x to avoid input shape error
+    #global e_counter, total_e
+
+    #yhat = model.predict(hand_landmark_array)             # The estimated or predicted values in a regression or
+                                                           # other predictive model are termed the y-hat values  
+    yhat_preds = model.predict_proba(hand_landmark_array)
+    print(yhat_preds) 
+
+    yhat_idx = -1
+    yhat_prob = 0.0
+    counter = 0
+    
+    for pred_prob in yhat_preds[0]:  
+        if pred_prob > pred_threshold and pred_prob > yhat_prob:
+            yhat_idx = counter
+            yhat_prob = pred_prob
+        counter += 1
+
+
+    #yhat_idx = yhat[0]
+    if yhat_idx >= 0:
+        gesture = idx_to_string[yhat_idx]                                                             
+        current_gestures.append(gesture)    
+
+    #e_counter += 1
+    #total_e += time.perf_counter() - start
+    #print("Average prediction time:", (total_e / e_counter))
+
 
 def GestureName_Record(NameChange):
         global recorded_gesture_class
