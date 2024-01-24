@@ -85,8 +85,35 @@ def detect(image):
                 for lm in res.landmark:
                     hand_landmark_array.extend([lm.x, lm.y])         
 
-                predict(hand_landmark_array)             
+                predict(hand_landmark_array) 
+ 
+            #For RF model: extract keypoints from results
+            if cam.Camera.record == True:
+                one_sample = []
+                global iteration_counter
+                if iteration_counter < sample_frame_count + 1:
+                    if results.multi_hand_landmarks:
+                        for res in results.multi_hand_landmarks:  
+                            for lm in res.landmark:    
+                                one_sample.extend([lm.x, lm.y])
 
+                            global X
+                            global y
+                            X.append(one_sample)
+                            y.append(gesture_map[recorded_gesture_class])
+
+                    if iteration_counter == sample_frame_count:
+                        X = cam.np.array(X)
+                        y = cam.np.array(y)
+                        print(X.shape)
+                        print(y.shape)
+                        cam.np.savez(cam.os.path.join(cam.Camera.rec_folder_path, f'data_{recorded_gesture_class}_{cam.Camera.start_time}.npz'), X=X, y=y)
+                        print(f'Landmarks for category {recorded_gesture_class} saved.')
+                        cam.Camera.record = False
+
+                iteration_counter += 1
+                print(iteration_counter)               
+            #===============================================================#
         #For LSTM: extract keypoints from results
         # if cam.Camera.record == True:
         #     global iteration_counter
@@ -97,33 +124,6 @@ def detect(image):
         #         cam.np.save(npy_path, recorded_landmarks)
         #         print(recorded_landmarks)
 
-        #For RF model: extract keypoints from results
-        if cam.Camera.record == True:
-            one_sample = []
-            global iteration_counter
-            if iteration_counter < sample_frame_count + 1:
-                if results.multi_hand_landmarks:
-                    for res in results.multi_hand_landmarks:  
-                        for lm in res.landmark:    
-                            one_sample.extend([lm.x, lm.y])
-
-                        global X
-                        global y
-                        X.append(one_sample)
-                        y.append(gesture_map[recorded_gesture_class])
-
-                if iteration_counter == sample_frame_count:
-                    X = cam.np.array(X)
-                    y = cam.np.array(y)
-                    print(X.shape)
-                    print(y.shape)
-                    cam.np.savez(cam.os.path.join(cam.Camera.rec_folder_path, f'data_{recorded_gesture_class}_{cam.Camera.start_time}.npz'), X=X, y=y)
-                    print(f'Landmarks for category {recorded_gesture_class} saved.')
-                    cam.Camera.record = False
-
-            iteration_counter += 1
-            print(iteration_counter)               
-        #===============================================================#
 
     return image
 
@@ -160,8 +160,4 @@ def predict(array):
     #print("Average prediction time:", (total_e / e_counter))
 
 
-def GestureName_Record(NameChange):
-        global recorded_gesture_class
-        recorded_gesture_class = NameChange 
-        #This i think legit usless so can delete
 

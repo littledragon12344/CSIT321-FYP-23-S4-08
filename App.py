@@ -35,25 +35,6 @@ def new_window():
         top.resizable(width=False, height=False)
         return top
 
-    def Gesture_recording():
-        #ROOT = tk.Tk()
-
-        #ROOT.withdraw()
-        # the input dialog
-        #USER_INP = simpledialog.askstring(title="Name of Gesture",prompt="What is the Name of the Gesture being Recorded")
-      
-        #Change the Name
-        #USER_INP.replace(" ", "_") #incase user enter a name with Space
-        #HD.GestureName_Record(USER_INP)
-
-        #print(f"Changed Gesture Recording to {USER_INP} And Start Recording")
-
-        #press the F12 key/or run the recording mode
-        cam.Camera.keyboard_input_update(keyboard.Key.f12)
-       
-
-        
-
     root = tk.Tk()
     root.title("Gesture Detection Prototype")
     root.geometry("800x600")    
@@ -82,9 +63,7 @@ def new_window():
     options_menu = tk.Menu(menubar, tearoff=0)
     # tutorial
     options_menu.add_command(label="Start tutorial...")
-    #
-    options_menu.add_command(label="Start Gesture Recording",command=Gesture_recording)
-    
+
     # display the options on the menu bar
     menubar.add_cascade(label="File", menu=file_menu)
     menubar.add_cascade(label="Options", menu=options_menu)
