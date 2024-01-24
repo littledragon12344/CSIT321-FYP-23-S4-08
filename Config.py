@@ -2,6 +2,7 @@ import tkinter as tk
 import iConfig as icfg
 import Loadout as ld
 import math
+import Camera as cam
 import ModelTrainer as MT
 from PIL import Image, ImageTk
 
@@ -113,5 +114,10 @@ class Config:
     
     def record_gesture(self):
         self.change_button()
-        MT.ModelTrainer.preprocess_data()
+        cam.Camera.start_landmark_recording()
         print(f"The record button is functioning.")
+
+    def build_model(self):
+        self.change_button()
+        MT.ModelTrainer.preprocess_data()
+        print(f"The build button is functioning.")

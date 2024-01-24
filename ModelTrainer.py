@@ -17,9 +17,9 @@ class ModelTrainer:
 
     #Handles preprocessing of recorded landmark data
     def preprocess_data(): #process and label data points
-        #incase the Folder Doesnt exsist 
-
-        os.makedirs()
+        #incase the folder doesn't exist
+        if os.path.exists(ModelTrainer.data_folder_path) == False:
+            os.makedirs(ModelTrainer.data_folder_path)
 
         loaded_data = np.load(os.path.join(ModelTrainer.data_folder_path, 'data.npz'))
         X, y = loaded_data['X'], loaded_data['y']
