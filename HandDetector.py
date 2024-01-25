@@ -58,8 +58,8 @@ def detect(image):
         model_complexity=0,
         static_image_mode=False,
         max_num_hands=num_hands,
-        min_detection_confidence=0.4,
-        min_tracking_confidence=0.4) as hands:
+        min_detection_confidence=0.5,
+        min_tracking_confidence=0.5) as hands:
         # To improve performance, optionally mark the image as 
         # not writeable to pass by reference.
         image.flags.writeable = False

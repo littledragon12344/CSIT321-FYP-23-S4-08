@@ -215,8 +215,7 @@ class GestureDetectionController:
             if gesture in self.loadout:
                 # check if the key is release
                 if self.loadout[gesture].casefold() == "Release".casefold():
-                    KeyInput.ReleaseAllKeys(self.loadout.values())
-                    continue
-                # press all key detected otherwise
-                KeyInput.PressKey(self.loadout[gesture])
+                    KeyInput.ReleaseAllKeys(self.loadout.values())                  
+                elif  self.loadout[gesture].casefold() == gesture.casefold():             
+                    KeyInput.PressKey(self.loadout[gesture])  # press all key detected otherwise
         
