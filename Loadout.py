@@ -273,11 +273,13 @@ class LoadoutDisplay():
         # clear the data
         gestures.clear()
         keys.clear()    
+        # close the popup
+        widget.destroy()
         # create a record of the new loadout in the controller
         self.controller.create_loadout(name=name, data=gesture_map)
         self.update_display(self.controller.get_dictionaries())
-        # close the popup
-        widget.destroy()
+        # update the scrollregion
+        self.canvas.after(10, self.on_canvas_configure)
     
     def rename_selected(self):
         # exit if nothing is selected yet 
