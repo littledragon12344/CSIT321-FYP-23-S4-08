@@ -19,6 +19,10 @@ def new_window():
         if loadout_widget is None: return
         loadout_widget.import_loadout()
 
+    def create_loadout():
+        if loadout_widget is None: return
+        loadout_widget.create_loadout_popup()
+
     def update_gui():
         global config
         if config:
@@ -49,9 +53,9 @@ def new_window():
     
     # file menu items
     file_menu = tk.Menu(menubar, tearoff=0)
-    # 
-    file_menu.add_command(label="New")
-    # loadouts
+    # loadout creation
+    file_menu.add_command(label="New loadout...", command=create_loadout)
+    # loadout import/export
     file_menu.add_separator()
     file_menu.add_command(label="Import a loadout", command=import_loadout)
     file_menu.add_command(label="Export a loadout", command=export_loadout)

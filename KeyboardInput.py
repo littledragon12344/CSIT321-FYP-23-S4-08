@@ -30,7 +30,10 @@ def ReleaseAllKeys(KeyBoardLoad):	#for default hand gesture to reset
 def GetKey(Key):		     # to keys bind with specfic gesture
 		keyboard.record(Key) # records keyboard activity until key is pressed
 
-		
+
+# detect key pressed and return the pressed key name
+def detect_key():
+    return keyboard.read_event(suppress=True).name		
 	
 
 #need to press key once and not press again unless a diff gesture is detected

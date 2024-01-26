@@ -26,6 +26,7 @@ def readFromFolder(folder_name):
         # get all files within that folder
         files = os.listdir(folder_path)
         contents = []
+        fnames = []
         # loop through each file
         for file_name in files:
             file_path = os.path.join(folder_path, file_name)
@@ -34,4 +35,6 @@ def readFromFolder(folder_name):
                 with open(file_path, 'r') as file:
                     content = file.read()
                     contents.append(content)
-        return contents
+                    fnames.append(file_name)
+                    
+        return contents, fnames
