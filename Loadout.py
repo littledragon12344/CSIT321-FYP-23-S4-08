@@ -1,9 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
-#import Config as cfg
-#import LoadoutGestures as LOG
 from FileManager import *
 from KeyboardInput import detect_key
+from ProgramSettings import allowed_gestures
 
 # loadout display class
 class LoadoutDisplay():
@@ -205,6 +204,18 @@ class LoadoutDisplay():
         remove_btn = tk.Button(btn_container, anchor="nw", text="-", command=lambda: self.remove_gesturekey_field(gesture_entries, key_entries))
         remove_btn.grid(column=1, row=0, padx=5)
         
+        # release gesture entry
+        entry = ttk.Combobox(gesturekey_frame, values=allowed_gestures, state="readonly")
+        # select the 1st option in
+        entry.current(0)
+        entry.grid(column=1, row=1, sticky="news")
+        gesture_entries.append(entry)
+        
+        # release key entry
+        entry = tk.Button(gesturekey_frame, text="Release", state=tk.DISABLED)
+        entry.grid(column=2, row=1, sticky="news")
+        key_entries.append(entry)
+        
         self.create_gesturekey_field(gesturekey_frame, gesture_entries, key_entries)
         
         # create container to contain the buttons
@@ -221,7 +232,7 @@ class LoadoutDisplay():
         cancelBtn.grid(column=1, row=0)
     
     def create_gesturekey_field(self, base, gesture_entries, key_entries):
-        gestures = ["Open_Palm", "Closed_Fist", "Victory"]
+        gestures = allowed_gestures
         
         # get the current number of gestures
         gesture_count = len(gesture_entries)
@@ -249,14 +260,14 @@ class LoadoutDisplay():
         key_entries.append(entry)
     
     def remove_gesturekey_field(self, gesture_entries, key_entries):
-        if(len(gesture_entries) > 0):
+        if(len(gesture_entries) > 1):
             # remove the widget from list
             gesture_entry = gesture_entries.pop()
             # destroy the widget
             gesture_entry.unbind_all(None)
             gesture_entry.destroy()
             
-        if(len(key_entries) > 0):
+        if(len(key_entries) > 1):
             # remove the widget from list
             key_entry = key_entries.pop()
             # destroy the widget
