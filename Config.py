@@ -4,6 +4,8 @@ import Loadout as ld
 import math
 import Camera as cam
 import ModelTrainer as MT
+import HandDetector as HD
+
 from PIL import Image, ImageTk
 
 class Config:
@@ -89,19 +91,37 @@ class Config:
     def set_loadout(self, load):
         self.loadout_widget = load
     
+            
+
     def create_gesture(self):
         self.btnText.set("Record")
         if self.pop:
+            def ChangeName():   
+                GestureName=NameText.get("1.0","end-1c")
+                GestureName.replace(" ", "_") #incase user enter a name with Space
+                HD.GestureName_Record(GestureName)
+            
             self.pop_win = self.pop("Test")
             tFrame = tk.Frame(self.pop_win, width=400, height=200)
             tLabel = tk.Label(tFrame, text="Button closes this window")
+            NameLabel = tk.Label(tFrame, text="Name:")
+            NameText = tk.Text(tFrame, height = 1, width = 15)       
+            NameChangeBtn= tk.Button(tFrame,text="Change Name", command=ChangeName)
             tRecord = tk.Button(tFrame, textvariable=self.btnText, command=self.button_trigger)
             tClose = tk.Button(tFrame, text="Close", command=self.pop_win.destroy)
 
+
+            #HD.GestureName_Record(NameChange) #function to change name
+
             tFrame.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
-            tLabel.grid(column=0, row=0, columnspan=2, sticky=("N", "S", "E", "W"))
-            tRecord.grid(column=0, row=1, sticky=("N", "S", "E", "W"))
-            tClose.grid(column=1, row=1, sticky=("N", "S", "E", "W"))
+            NameLabel.grid(column=0, row=0, columnspan=1, sticky=("N", "S", "E", "W"))
+            NameText.grid(column=1, row=0, sticky=("N", "S", "E", "W"))
+            NameChangeBtn.grid(column=2, row=0, sticky=("N", "S", "E", "W"))
+            tLabel.grid(column=0, row=1, columnspan=2, sticky=("N", "S", "E", "W"))
+            tRecord.grid(column=0, row=2, sticky=("N", "S", "E", "W"))
+            tClose.grid(column=1, row=2, sticky=("N", "S", "E", "W"))
+
+           
         
     def button_trigger(self):
         self.change_button()
