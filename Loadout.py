@@ -302,6 +302,9 @@ class LoadoutDisplay():
         
         # check if the label is mapped
         if name_label.winfo_ismapped():     # unmap the label and create a new entry widget
+            # prevent another entry field from being created if one already exists
+            if hasattr(self, 'entry') and self.entry.winfo_exists():
+                return
             name_label.grid_forget()
             self.entry = tk.Entry(selected_frame)
             self.entry.insert(0, name_label.cget("text"))
