@@ -159,5 +159,8 @@ def predict(array):
     #total_e += time.perf_counter() - start
     #print("Average prediction time:", (total_e / e_counter))
 
-
+def GestureName_Record(NameChange):# change the Name
+    global recorded_gesture_class
+    print(f"Changed {recorded_gesture_class} to {NameChange}")
+    recorded_gesture_class = NameChange 
 
