@@ -26,6 +26,7 @@ def readFromFile(file_path=None):
         with open(file_path, 'r') as file:
             content = file.read()
             return content, file.name
+    else: return None, False
         
 def readFromFolder(folder_name):
         # get the folder directory

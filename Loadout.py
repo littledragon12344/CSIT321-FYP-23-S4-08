@@ -18,7 +18,6 @@ class LoadoutDisplay():
         self.loadout_name_labels = []
     
         # initializing values
-        self.selected_name = ""
         self.selected_id = -1
         
         # create a controller
@@ -29,7 +28,7 @@ class LoadoutDisplay():
 
     def get_layout(self):
         # create a frame as a container
-        container = tk.Frame(self.root, height=1, bg="magenta")
+        container = tk.Frame(self.root, height=1)
         container.pack(side="top", fill="x", expand=True, padx=1, pady=1, anchor="n")
         # create a text input field
         self.searchbar = tk.Entry(container, width=20, font=('', 12))
@@ -42,12 +41,9 @@ class LoadoutDisplay():
         # create an enable button
         self.enable_btn = tk.Button(container, width=8, text="Enable", command=self.enable_loadout)
         self.enable_btn.grid(column=2, row=0, sticky="news", padx=1, pady=1.5)
-        # create a disable button
-        #disable_btn = tk.Button(container, width=6,text="Disable", command= lambda: self.controller.disable_loadout(self.selected_name))
-        #disable_btn.grid(column=3, row=0, sticky="news", padx=1, pady=1.5)
         
         # create a canvas for list display
-        self.canvas = tk.Canvas(self.root, width=self.width, height=self.height + 15, bg="cyan")
+        self.canvas = tk.Canvas(self.root, width=self.width, height=self.height + 20)
         self.canvas.pack(side="left", fill="both", expand=True, padx=1)
 
         # create a vertical scrollbar and attach it to the LoadoutDisplay frame
@@ -69,7 +65,7 @@ class LoadoutDisplay():
     def on_mousewheel(self, event):
         # Scroll the canvas when the mouse wheel is used
         scroll_speed = 1.0  # Adjust this value to control the scroll speed
-        self.canvas.yview_scroll(int(-1 * (event.delta / 120) * scroll_speed), "units")
+        self.canvas.yview_scroll(-int((event.delta / 120) * scroll_speed), "units")
         
     def on_canvas_configure(self, event=None):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
@@ -88,7 +84,7 @@ class LoadoutDisplay():
         # add loadouts to the display
         for id, (name, sub_dict) in enumerate(loadout_list.items()):
             # create a frame for the item
-            item_frame = tk.Frame(self.frame, bg="yellow", bd=0.5, relief=tk.SOLID)
+            item_frame = tk.Frame(self.frame, bd=0.5, relief=tk.SOLID)
             item_frame.pack(fill="x", expand=True, pady=2)
             
             # loadout name label
@@ -107,7 +103,7 @@ class LoadoutDisplay():
                 key_label.grid(column=4, row=i+1, padx=1, sticky="news", columnspan=2)
             
             # create the new gesture key pair button to the current loadout
-            new_loadout_btn = tk.Button(item_frame, text="+")
+            new_loadout_btn = tk.Button(item_frame, anchor="center", text="Edit")
             new_loadout_btn.grid(column=5, row=0, sticky="ne", padx=6)
             # create a frame to contain the buttons
             hbox = tk.Frame(item_frame)
@@ -120,7 +116,7 @@ class LoadoutDisplay():
             delete_btn.grid(column=1, row=0, sticky="news")
             
             # bind mouse click event to the item frame and its children
-            self.bind_recursive(item_frame, "<Button-1>", self.loadout_select_handler(id, name))
+            self.bind_recursive(item_frame, "<Button-1>", self.loadout_select_handler(id))
             # bind scroll wheel event to the item frame and its children
             self.bind_recursive(item_frame, "<MouseWheel>", self.on_mousewheel)
         
@@ -160,6 +156,97 @@ class LoadoutDisplay():
         frame_children = self.frame.winfo_children()
         if self.selected_id >= 0 and self.selected_id < len(frame_children):
             frame_children[self.selected_id].config(bg="orange")
+    
+    def update_loadout_popup(self, loadoutID=None):
+        if loadoutID is None: return
+        
+        # get the loadout information
+        loadout_name = self.controller.get_loadout_name(loadoutID)
+        loadout_data = self.controller.get_loadout_data(loadoutID)
+        
+        # create popup window
+        popup = tk.Toplevel(self.root)
+        popup.title("Update loadout")
+        popup.geometry("500x300")
+        
+        # title label
+        title_label = tk.Label(popup, text="Loadout information:", anchor="w", font=("",16,"bold"))
+        title_label.pack(fill="x")
+        # create container to contain the loadout name field
+        name_frame = tk.Frame(popup)
+        name_frame.pack(fill="x")
+        # configure the column weight
+        for i in range(2):
+            name_frame.columnconfigure(i, weight=1)
+        # loadout name field
+        name_label = tk.Label(name_frame, text="Name:", anchor="w")
+        name_label.grid(column=0, row=0, padx=10, sticky="news")
+        name_entry = tk.Entry(name_frame)
+        name_entry.grid(column=1, row=0, sticky="news")
+        # set the name of the loadout
+        name_entry.insert(0, loadout_name)
+        
+        # create container to contain the gesture key pairs
+        gesturekey_frame = tk.Frame(popup)
+        gesturekey_frame.pack(fill="x")
+        # configure the column weight
+        for i in range(3):
+            gesturekey_frame.columnconfigure(i, weight=1)
+        # gesture label
+        gesture_label = tk.Label(gesturekey_frame, text="Gestures")
+        gesture_label.grid(column=1, row=0, sticky="news")
+        # key label
+        key_label = tk.Label(gesturekey_frame, text="Keys")
+        key_label.grid(column=2, row=0, sticky="news")
+        
+        gesture_entries = []
+        key_entries = []
+            
+        # create a container to contain the buttons
+        btn_container = tk.Frame(gesturekey_frame)
+        btn_container.grid(column=0, row=1)
+        # create entry field button
+        create_btn = tk.Button(btn_container, anchor="ne", text="+", command=lambda: self.create_gesturekey_field(gesturekey_frame, gesture_entries, key_entries))
+        create_btn.grid(column=0, row=0, padx=5)
+        # remove entry field button
+        remove_btn = tk.Button(btn_container, anchor="nw", text="-", command=lambda: self.remove_gesturekey_field(gesture_entries, key_entries))
+        remove_btn.grid(column=1, row=0, padx=5)
+        
+        for i, (gesture, key) in enumerate(loadout_data.items()):    
+            # release gesture entry
+            entry = ttk.Combobox(gesturekey_frame, values=allowed_gestures, state="readonly")
+            # set the current gesture to the combobox
+            entry.set(gesture)
+            # place the widget
+            entry.grid(column=1, row=1, sticky="news")
+            # add to list
+            gesture_entries.append(entry)
+        
+            # release key entry
+            # key entry callback
+            def key_entry_callback(id):
+                def on_key_press():
+                    # detect a key press
+                    key = detect_key()
+                    # edit the button text to the pressed key
+                    key_entries[id]["text"] = key.upper()
+                return on_key_press 
+            entry = tk.Button(gesturekey_frame, text=key, command=key_entry_callback(i))
+            entry.grid(column=2, row=1, sticky="news")
+            key_entries.append(entry)
+        
+        # create container to contain the buttons
+        btn_frame = tk.Frame(popup)
+        btn_frame.pack(fill="x")
+        # configure the column weight
+        for i in range(2):
+            btn_frame.columnconfigure(i, weight=1)
+        # confirm button
+        confirmBtn = tk.Button(btn_frame, anchor="e", text="Confirm", bg="green", command=lambda: self.create_loadout(popup, name_entry.get(), gesture_entries, key_entries))
+        confirmBtn.grid(column=0, row=0)
+        # cancel button
+        cancelBtn = tk.Button(btn_frame, anchor="w", text="Cancel", bg="red", command=popup.destroy)
+        cancelBtn.grid(column=1, row=0)
     
     def create_loadout_popup(self):
         popup = tk.Toplevel(self.root)
@@ -295,6 +382,23 @@ class LoadoutDisplay():
         self.controller.create_loadout(name=name, data=gesture_map)
         self.update_display(self.controller.get_dictionaries())
     
+    def update_loadout(self, widget, name, gestures, keys):
+        if name == "": return
+        # convert the data into dictionary
+        gesture_map = {}
+        for gesture, key in zip(gestures, keys):
+            gesture_name = gesture.get()
+            key_name = key["text"]
+            gesture_map[gesture_name] = key_name
+        # clear the data
+        gestures.clear()
+        keys.clear()    
+        # close the popup
+        widget.destroy()
+        # create a record of the new loadout in the controller
+        self.controller.create_loadout(name=name, data=gesture_map)
+        self.update_display(self.controller.get_dictionaries())
+    
     def rename_selected(self):
         # exit if nothing is selected yet 
         if self.selected_id < 0 : return
@@ -340,38 +444,36 @@ class LoadoutDisplay():
             new_loadouts = self.controller.get_dictionaries()
             self.update_display(new_loadouts)
     
-    def loadout_select_handler(self, id, loadout_name):
+    def loadout_select_handler(self, id):
         def handler(event):
             # save the selected information
-            self.selected_name = loadout_name
             self.selected_id = id
             
             # reset the frames appearance
             for child in self.frame.winfo_children():
-                child.configure(bg="yellow")
+                child.configure(bg="SystemButtonFace")
             
             # hightlight the selected frame
             selected_frame = self.frame.winfo_children()[id]
             selected_frame.config(bg="brown")
             
             # update enable button base on the enabled loadout name
-            if self.controller.enabled.name == loadout_name:
+            if self.controller.get_enabled_id() == self.selected_id:
                 self.enable_btn.config(text="Enabled!", state=tk.DISABLED)
                 selected_frame.config(bg="orange")
             else:
                 self.enable_btn.config(text="Enable", state=tk.NORMAL)
             
-            print(f"Selected frame #{id}, with name: {loadout_name}")    
+            print(f"Selected frame #{id}, with name: {self.controller.get_loadout_name(id)}")
         return handler
     
     def import_loadout(self):
-        self.controller.import_loadout_from_file()
-        self.update_display(self.controller.get_dictionaries())
+        success = self.controller.import_loadout_from_file()
+        if success: self.update_display(self.controller.get_dictionaries())
         
     def export_loadout(self):
-        for loadout in self.controller.loadouts:
-            if self.selected_name.casefold() in loadout.name.casefold():
-                self.controller.export_loadout_to_file(loadout)
+        # export selected loadout
+        self.controller.export_loadout_to_file(id=self.selected_id)
 
     def set_camera_display(self, camera):
         # set reference to the camera
@@ -379,7 +481,7 @@ class LoadoutDisplay():
         # enable default loadout
         self.controller.enable_default_loadout()
         # select the 1st item in the loadout list
-        self.loadout_select_handler(0, self.controller.loadouts[0].name)(None)
+        self.loadout_select_handler(0)(None)
         # disable the enable button
         self.enable_btn.config(text="Enabled!", state=tk.DISABLED)
 
@@ -395,6 +497,7 @@ class LoadoutController():
         # declaring variables
         self.loadouts = []
         self.enabled = None
+        self.enabled_id = -1
         self.folder_name = "Loadout_Info"
         
         # create a references
@@ -412,7 +515,19 @@ class LoadoutController():
         self.loadouts.append(new_loadout)
         # export the new loadout
         file_path = f"{self.folder_name}/{name}.txt"
-        self.export_loadout_to_file(new_loadout, file_path)
+        self.export_loadout_to_file(loadout=new_loadout, file_path=file_path)
+    
+    def update_loadout(self, id, name, data):
+        # prevent stack overflow
+        if id < 0 or id >= len(self.loadouts): return
+        
+        # get loadout and update its values
+        loadout = self.loadouts[id]
+        loadout.name = name
+        loadout.dictionary = data
+        # export the new loadout
+        file_path = f"{self.folder_name}/{name}.txt"
+        self.export_loadout_to_file(loadout=loadout, file_path=file_path)
     
     # append a loadout obj
     def add_loadout(self, loadout):
@@ -431,6 +546,7 @@ class LoadoutController():
     def enable_loadout(self, id=None):
         if id is not None:
             self.enabled = self.loadouts[id]
+            self.enabled_id = id
         else: 
             print("Which to enable???")
             return
@@ -450,7 +566,7 @@ class LoadoutController():
         loadout.name = new_name
         # update the loadout name in its file
         file_path = f"{self.folder_name}/{loadout.file_name}"
-        self.export_loadout_to_file(loadout, file_path)
+        self.export_loadout_to_file(loadout=loadout, file_path=file_path)
     
     def remove_loadout(self, id):
         # remove loadout from list
@@ -468,6 +584,17 @@ class LoadoutController():
     def get_currently_enabled(self):
         # returns a dictionary of the currently enabled loadout obj
         return self.enabled
+    
+    def get_enabled_id(self):
+        return self.enabled_id
+    
+    def get_loadout_name(self, id):
+        if id < 0 or id >= len(self.loadouts): return ""
+        return self.loadouts[id].name
+    
+    def get_loadout_data(self, id):
+        if id < 0 or id >= len(self.loadouts): return None
+        return self.loadouts[id].dictionary
     
     def get_dictionaries(self):
         loadout_dicts = {}
@@ -525,7 +652,10 @@ class LoadoutController():
         self.add_loadout(loadout)
         return True
 
-    def export_loadout_to_file(self, loadout, file_path=None):
+    def export_loadout_to_file(self, id=None, loadout=None, file_path=None):
+        if id is not None: 
+            if id >= 0 and id < len(self.loadouts):
+                loadout = self.loadouts[id]
         str = loadout.to_string()
         writeToFile(str, file_path)
         return True
