@@ -5,6 +5,9 @@ def writeToFile(content, file_path=None):
     if file_path is None:
         # ask the user to choose a file location
         file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+    else:
+        # convert the string to compatitle file path depending on os
+        file_path = os.path.normpath(file_path)
     if file_path:
         print(f"Selected export location: {file_path}")
         with open(file_path, 'w') as file:
@@ -14,11 +17,15 @@ def readFromFile(file_path=None):
     if file_path is None:
         # ask the user to choose a file location
         file_path = filedialog.askopenfilename(title="Select a file", filetypes=[("Text files", "*.txt"), ("All files", "*.*")])
+    else:
+        # convert the string to compatitle file path depending on os
+        file_path = os.path.normpath(file_path)
+    # start reading from file
     if file_path:
         print(f"Selected file: {file_path}")
         with open(file_path, 'r') as file:
             content = file.read()
-            return content
+            return content, file.name
         
 def readFromFolder(folder_name):
         # get the folder directory
@@ -37,6 +44,18 @@ def readFromFolder(folder_name):
                 with open(file_path, 'r') as file:
                     content = file.read()
                     contents.append(content)
-                    fnames.append(file_name)
+                fnames.append(file_name)
                     
         return contents, fnames
+    
+def deleteFile(file_path):
+    try:
+        # convert the string to compatitle file path depending on os
+        file_path = os.path.normpath(file_path)
+        # Attempt to delete the file
+        os.remove(file_path)
+        print(f"The file {file_path} has been deleted successfully.")
+    except FileNotFoundError:
+        print(f"The file {file_path} does not exist.")
+    except Exception as e:
+        print(f"An error occurred: {e}")

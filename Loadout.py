@@ -134,6 +134,8 @@ class LoadoutDisplay():
             widget.destroy()
         # display loadouts
         self.display_loadouts(loadout_list)
+        # update the scrollregion
+        self.canvas.after(10, self.on_canvas_configure)
     
     def search_loadout(self):
         # getting the input text
@@ -289,8 +291,6 @@ class LoadoutDisplay():
         # create a record of the new loadout in the controller
         self.controller.create_loadout(name=name, data=gesture_map)
         self.update_display(self.controller.get_dictionaries())
-        # update the scrollregion
-        self.canvas.after(10, self.on_canvas_configure)
     
     def rename_selected(self):
         # exit if nothing is selected yet 
@@ -391,18 +391,25 @@ class LoadoutController():
     def __init__(self):
         # declaring variables
         self.loadouts = []
-        self.filenames = []
         self.enabled = None
+        self.folder_name = "Loadout_Info"
+        
         # create a references
         self.cam_display = None
         self.cfg = None
         
         # import all loadouts from a folder
-        self.load_loadouts_from_folder("Loadout_Info")
+        self.load_loadouts_from_folder(self.folder_name)
     
     def create_loadout(self, name, data):
+        # create a loadout obj
         new_loadout = Loadout(name=name, gestures_map=data)
+        new_loadout.file_name = f"{name}.txt"
+        # add the obj to list 
         self.loadouts.append(new_loadout)
+        # export the new loadout
+        file_path = f"{self.folder_name}/{name}.txt"
+        self.export_loadout_to_file(new_loadout, file_path)
     
     # append a loadout obj
     def add_loadout(self, loadout):
@@ -435,10 +442,19 @@ class LoadoutController():
         self.enable_loadout(0)
         
     def rename_loadout(self, id, new_name):
-        self.loadouts[id].name = new_name
+        # update the loadout name in the list
+        loadout = self.loadouts[id]
+        loadout.name = new_name
+        # update the loadout name in its file
+        file_path = f"{self.folder_name}/{loadout.file_name}"
+        self.export_loadout_to_file(loadout, file_path)
     
     def remove_loadout(self, id):
-        self.loadouts.pop(id)
+        # remove loadout from list
+        loadout = self.loadouts.pop(id)
+        # delete the file that contains the loadout
+        file_path = f"{self.folder_name}/{loadout.file_name}"
+        deleteFile(file_path)
     
     def set_camera_display(self, camera):
         self.cam_display = camera
@@ -459,9 +475,9 @@ class LoadoutController():
         return loadout_dicts
     
     def load_loadouts_from_folder(self, folder_name):
-        contents, self.filenames = readFromFolder(folder_name)
+        contents, filenames = readFromFolder(folder_name)
         # loop through the content list and extract the data
-        for content in contents:
+        for i, content in enumerate(contents):
             lines = content.splitlines()
             # initialize the loadout
             loadout = Loadout()
@@ -476,12 +492,14 @@ class LoadoutController():
                     elif '-' in line:
                         gesture, key = line.split('-', 1)
                         loadout.add_pair(gesture, key)
+            # remember the filename of the loadout
+            loadout.file_name = filenames[i]
             # add the loadout to the list
             self.add_loadout(loadout)
     
     def import_loadout_from_file(self):
         # get data from a file
-        str = readFromFile()
+        str, filename = readFromFile()
         # if file is empty return False
         if str == "" or str is None: return False
         
@@ -500,13 +518,14 @@ class LoadoutController():
                 elif '-' in line:
                     gesture, key = line.split('-', 1)
                     loadout.add_pair(gesture, key)
-        
+        loadout.file_name = filename
         self.add_loadout(loadout)
         return True
 
-    def export_loadout_to_file(self, loadout):
+    def export_loadout_to_file(self, loadout, file_path=None):
         str = loadout.to_string()
-        writeToFile(str)
+        writeToFile(str, file_path)
+        return True
 
 # ====================================== ENTITY ======================================
 class Loadout():
@@ -526,6 +545,8 @@ class Loadout():
         # adding gesture key pair
         if gesture is not None and key is not None:
             self.add_pair(gesture, key)
+            
+        self.file_name = ""
         
     def add_pair(self, gesture, key):
         self.dictionary[gesture] = key
