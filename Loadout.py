@@ -253,7 +253,9 @@ class LoadoutDisplay():
         # key entry callback
         def key_entry_callback(id):
             def on_key_press():
+                # detect a key press
                 key = detect_key()
+                # edit the button text to the pressed key
                 key_entries[id]["text"] = key.upper()
             return on_key_press 
         # create the entry
@@ -277,6 +279,7 @@ class LoadoutDisplay():
             key_entry.destroy()
     
     def create_loadout(self, widget, name, gestures, keys):
+        if name == "": return
         # convert the data into dictionary
         gesture_map = {}
         for gesture, key in zip(gestures, keys):
