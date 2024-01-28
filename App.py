@@ -35,6 +35,7 @@ def new_window():
     def pop_up(title_text: str):
         top = tk.Toplevel(root)
         top.geometry("400x200")
+        top.geometry(f"+{root.winfo_x()+200}+{root.winfo_y()+200}")
         top.title(title_text)
         top.resizable(width=False, height=False)
         return top

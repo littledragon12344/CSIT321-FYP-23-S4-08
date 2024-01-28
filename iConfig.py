@@ -4,11 +4,14 @@ from PIL import Image, ImageTk
 
 class iConfig(object):
 
-    def __init__(self, target, picture, name, inp):
+    def __init__(self, target, picture, name, inp, pop):
         self.target = target
         self.picture = picture # image is already resized in config
         self.name = name
         self.inp = inp
+        
+        self.pop = pop
+        self.pop_win = None
 
         cleaned = self.name.replace("_", " ")
 

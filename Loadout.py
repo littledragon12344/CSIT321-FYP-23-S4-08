@@ -86,33 +86,21 @@ class LoadoutDisplay():
             # create a frame for the item
             item_frame = tk.Frame(self.frame, bd=0.5, relief=tk.SOLID)
             item_frame.pack(fill="x", expand=True, pady=2)
+
+            for i in range(2): item_frame.grid_columnconfigure(i, weight=1)
             
             # loadout name label
             loadout_name = tk.Label(item_frame, text=f"{name}", width=12, anchor="center")
-            loadout_name.grid(column=0, row=0, padx=1, sticky="news", columnspan=2)
+            loadout_name.grid(column=0, row=0, padx=1, sticky="news")
             self.loadout_name_labels.append(loadout_name)
-            
-            # gestures and their repective keys labels
-            # connect to iConfig object
-            for i, (gesture, key) in enumerate(sub_dict.items()):
-                # create a label for the gesture 
-                gesture_label = tk.Label(item_frame, text=f"{gesture}", width=14, anchor="center")
-                gesture_label.grid(column=2, row=i+1, padx=1, sticky="news", columnspan=2)
-                # create a label for the key 
-                key_label = tk.Label(item_frame, text=f"{key.upper()}", width=14, anchor="center")
-                key_label.grid(column=4, row=i+1, padx=1, sticky="news", columnspan=2)
-            
-            # create the new gesture key pair button to the current loadout
-            new_loadout_btn = tk.Button(item_frame, anchor="center", text="Edit")
-            new_loadout_btn.grid(column=5, row=0, sticky="ne", padx=6)
-            # create a frame to contain the buttons
-            hbox = tk.Frame(item_frame)
-            hbox.grid(column=0, row=i+1, sticky="news")
+            # button frame
+            button_frame = tk.Frame(item_frame)
+            button_frame.grid(column=1, row=0, padx=1, sticky="e")
             # create the edit name button
-            rename_btn = tk.Button(hbox, text="Rename", command=self.rename_selected)
+            rename_btn = tk.Button(button_frame, text="Rename", command=self.rename_selected)
             rename_btn.grid(column=0, row=0, sticky="news")
             # create the delete loadout button
-            delete_btn = tk.Button(hbox, text="Delete", bg="red", command=self.remove_selected)
+            delete_btn = tk.Button(button_frame, text="Delete", bg="red", command=self.remove_selected)
             delete_btn.grid(column=1, row=0, sticky="news")
             
             # bind mouse click event to the item frame and its children
