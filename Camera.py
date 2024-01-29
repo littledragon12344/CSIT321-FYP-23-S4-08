@@ -25,7 +25,6 @@ class Camera:
     url = "https://192.168.1.78:8080/shot.jpg"
 
     #For hand landmark recording
-    record_hotkey = keyboard.Key.f12
     build_hotkey = keyboard.Key.f11
     record = False                      
     start_time = ''
