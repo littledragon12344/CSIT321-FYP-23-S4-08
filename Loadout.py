@@ -93,9 +93,28 @@ class LoadoutDisplay():
             loadout_name = tk.Label(item_frame, text=f"{name}", width=12, anchor="center")
             loadout_name.grid(column=0, row=0, padx=1, sticky="news")
             self.loadout_name_labels.append(loadout_name)
+            
+            # gestures and their repective keys labels
+            # connect to iConfig object
+            """for i, (gesture, key) in enumerate(sub_dict.items()):
+                # create a label for the gesture 
+                gesture_label = tk.Label(item_frame, text=f"{gesture}", width=14, anchor="center")
+                gesture_label.grid(column=2, row=i+1, padx=1, sticky="news", columnspan=2)
+                # create a label for the key 
+                key_label = tk.Label(item_frame, text=f"{key.upper()}", width=14, anchor="center")
+                key_label.grid(column=4, row=i+1, padx=1, sticky="news", columnspan=2)
+            
+            # create the new gesture key pair button to the current loadout
+            edit_loadout_btn = tk.Button(item_frame, anchor="center", text="Edit", command=lambda id=id: self.update_loadout_popup(id))
+            edit_loadout_btn.grid(column=5, row=0, sticky="ne", padx=6)
+            # create a frame to contain the buttons
+            hbox = tk.Frame(item_frame)
+            hbox.grid(column=0, row=i+1, sticky="news")"""
+            
             # button frame
             button_frame = tk.Frame(item_frame)
             button_frame.grid(column=1, row=0, padx=1, sticky="e")
+            
             # create the edit name button
             rename_btn = tk.Button(button_frame, text="Rename", command=self.rename_selected)
             rename_btn.grid(column=0, row=0, sticky="news")
@@ -144,97 +163,6 @@ class LoadoutDisplay():
         frame_children = self.frame.winfo_children()
         if self.selected_id >= 0 and self.selected_id < len(frame_children):
             frame_children[self.selected_id].config(bg="orange")
-    
-    def update_loadout_popup(self, loadoutID=None):
-        if loadoutID is None: return
-        
-        # get the loadout information
-        loadout_name = self.controller.get_loadout_name(loadoutID)
-        loadout_data = self.controller.get_loadout_data(loadoutID)
-        
-        # create popup window
-        popup = tk.Toplevel(self.root)
-        popup.title("Update loadout")
-        popup.geometry("500x300")
-        
-        # title label
-        title_label = tk.Label(popup, text="Loadout information:", anchor="w", font=("",16,"bold"))
-        title_label.pack(fill="x")
-        # create container to contain the loadout name field
-        name_frame = tk.Frame(popup)
-        name_frame.pack(fill="x")
-        # configure the column weight
-        for i in range(2):
-            name_frame.columnconfigure(i, weight=1)
-        # loadout name field
-        name_label = tk.Label(name_frame, text="Name:", anchor="w")
-        name_label.grid(column=0, row=0, padx=10, sticky="news")
-        name_entry = tk.Entry(name_frame)
-        name_entry.grid(column=1, row=0, sticky="news")
-        # set the name of the loadout
-        name_entry.insert(0, loadout_name)
-        
-        # create container to contain the gesture key pairs
-        gesturekey_frame = tk.Frame(popup)
-        gesturekey_frame.pack(fill="x")
-        # configure the column weight
-        for i in range(3):
-            gesturekey_frame.columnconfigure(i, weight=1)
-        # gesture label
-        gesture_label = tk.Label(gesturekey_frame, text="Gestures")
-        gesture_label.grid(column=1, row=0, sticky="news")
-        # key label
-        key_label = tk.Label(gesturekey_frame, text="Keys")
-        key_label.grid(column=2, row=0, sticky="news")
-        
-        gesture_entries = []
-        key_entries = []
-            
-        # create a container to contain the buttons
-        btn_container = tk.Frame(gesturekey_frame)
-        btn_container.grid(column=0, row=1)
-        # create entry field button
-        create_btn = tk.Button(btn_container, anchor="ne", text="+", command=lambda: self.create_gesturekey_field(gesturekey_frame, gesture_entries, key_entries))
-        create_btn.grid(column=0, row=0, padx=5)
-        # remove entry field button
-        remove_btn = tk.Button(btn_container, anchor="nw", text="-", command=lambda: self.remove_gesturekey_field(gesture_entries, key_entries))
-        remove_btn.grid(column=1, row=0, padx=5)
-        
-        for i, (gesture, key) in enumerate(loadout_data.items()):    
-            # release gesture entry
-            entry = ttk.Combobox(gesturekey_frame, values=allowed_gestures, state="readonly")
-            # set the current gesture to the combobox
-            entry.set(gesture)
-            # place the widget
-            entry.grid(column=1, row=1, sticky="news")
-            # add to list
-            gesture_entries.append(entry)
-        
-            # release key entry
-            # key entry callback
-            def key_entry_callback(id):
-                def on_key_press():
-                    # detect a key press
-                    key = detect_key()
-                    # edit the button text to the pressed key
-                    key_entries[id]["text"] = key.upper()
-                return on_key_press 
-            entry = tk.Button(gesturekey_frame, text=key, command=key_entry_callback(i))
-            entry.grid(column=2, row=1, sticky="news")
-            key_entries.append(entry)
-        
-        # create container to contain the buttons
-        btn_frame = tk.Frame(popup)
-        btn_frame.pack(fill="x")
-        # configure the column weight
-        for i in range(2):
-            btn_frame.columnconfigure(i, weight=1)
-        # confirm button
-        confirmBtn = tk.Button(btn_frame, anchor="e", text="Confirm", bg="green", command=lambda: self.create_loadout(popup, name_entry.get(), gesture_entries, key_entries))
-        confirmBtn.grid(column=0, row=0)
-        # cancel button
-        cancelBtn = tk.Button(btn_frame, anchor="w", text="Cancel", bg="red", command=popup.destroy)
-        cancelBtn.grid(column=1, row=0)
     
     def create_loadout_popup(self):
         popup = tk.Toplevel(self.root)
@@ -308,6 +236,95 @@ class LoadoutDisplay():
         cancelBtn = tk.Button(btn_frame, anchor="w", text="Cancel", bg="red", command=popup.destroy)
         cancelBtn.grid(column=1, row=0)
     
+    def update_loadout_popup(self, loadoutID=None):
+        if loadoutID is None: return
+        
+        # get the loadout information
+        loadout_name = self.controller.get_loadout_name(loadoutID)
+        loadout_data = self.controller.get_loadout_data(loadoutID)
+        
+        # create popup window
+        popup = tk.Toplevel(self.root)
+        popup.title("Update loadout")
+        popup.geometry("500x300")
+        
+        # title label
+        title_label = tk.Label(popup, text="Loadout information:", anchor="w", font=("",16,"bold"))
+        title_label.pack(fill="x")
+        # create container to contain the loadout name field
+        name_frame = tk.Frame(popup)
+        name_frame.pack(fill="x")
+        # configure the column weight
+        for i in range(2):
+            name_frame.columnconfigure(i, weight=1)
+        # loadout name field
+        name_label = tk.Label(name_frame, text="Name:", anchor="w")
+        name_label.grid(column=0, row=0, padx=10, sticky="news")
+        name_entry = tk.Label(name_frame, text=loadout_name)
+        name_entry.grid(column=1, row=0, sticky="news")
+        
+        # create container to contain the gesture key pairs
+        gesturekey_frame = tk.Frame(popup)
+        gesturekey_frame.pack(fill="x")
+        # configure the column weight
+        for i in range(3):
+            gesturekey_frame.columnconfigure(i, weight=1)
+        # gesture label
+        gesture_label = tk.Label(gesturekey_frame, text="Gestures")
+        gesture_label.grid(column=1, row=0, sticky="news")
+        # key label
+        key_label = tk.Label(gesturekey_frame, text="Keys")
+        key_label.grid(column=2, row=0, sticky="news")
+        
+        gesture_entries = []
+        key_entries = []
+            
+        # create a container to contain the buttons
+        btn_container = tk.Frame(gesturekey_frame)
+        btn_container.grid(column=0, row=1)
+        # create entry field button
+        create_btn = tk.Button(btn_container, anchor="ne", text="+", command=lambda: self.create_gesturekey_field(gesturekey_frame, gesture_entries, key_entries))
+        create_btn.grid(column=0, row=0, padx=5)
+        # remove entry field button
+        remove_btn = tk.Button(btn_container, anchor="nw", text="-", command=lambda: self.remove_gesturekey_field(gesture_entries, key_entries))
+        remove_btn.grid(column=1, row=0, padx=5)
+        
+        for i, (gesture, key) in enumerate(loadout_data.items()):    
+            # release gesture entry
+            entry = ttk.Combobox(gesturekey_frame, values=allowed_gestures, state="readonly")
+            # set the current gesture to the combobox
+            entry.set(gesture)
+            # place the widget
+            entry.grid(column=1, row=i+1, sticky="news")
+            # add to list
+            gesture_entries.append(entry)
+        
+            # release key entry
+            # key entry callback
+            def key_entry_callback(id):
+                def on_key_press():
+                    # detect a key press
+                    key = detect_key()
+                    # edit the button text to the pressed key
+                    key_entries[id]["text"] = key.upper()
+                return on_key_press 
+            entry = tk.Button(gesturekey_frame, text=key.upper(), command=key_entry_callback(i))
+            entry.grid(column=2, row=i+1, sticky="news")
+            key_entries.append(entry)
+        
+        # create container to contain the buttons
+        btn_frame = tk.Frame(popup)
+        btn_frame.pack(fill="x")
+        # configure the column weight
+        for i in range(2):
+            btn_frame.columnconfigure(i, weight=1)
+        # confirm button
+        confirmBtn = tk.Button(btn_frame, anchor="e", text="Confirm", bg="green", command=lambda: self.update_loadout(widget=popup, id=loadoutID, gestures=gesture_entries, keys=key_entries))
+        confirmBtn.grid(column=0, row=0)
+        # cancel button
+        cancelBtn = tk.Button(btn_frame, anchor="w", text="Cancel", bg="red", command=popup.destroy)
+        cancelBtn.grid(column=1, row=0)
+    
     def create_gesturekey_field(self, base, gesture_entries, key_entries):
         gestures = allowed_gestures
         
@@ -359,7 +376,7 @@ class LoadoutDisplay():
         gesture_map = {}
         for gesture, key in zip(gestures, keys):
             gesture_name = gesture.get()
-            key_name = key["text"]
+            key_name = key["text"].lower()
             gesture_map[gesture_name] = key_name
         # clear the data
         gestures.clear()
@@ -370,13 +387,12 @@ class LoadoutDisplay():
         self.controller.create_loadout(name=name, data=gesture_map)
         self.update_display(self.controller.get_dictionaries())
     
-    def update_loadout(self, widget, name, gestures, keys):
-        if name == "": return
+    def update_loadout(self, widget, id, gestures, keys):
         # convert the data into dictionary
         gesture_map = {}
         for gesture, key in zip(gestures, keys):
             gesture_name = gesture.get()
-            key_name = key["text"]
+            key_name = key["text"].lower()
             gesture_map[gesture_name] = key_name
         # clear the data
         gestures.clear()
@@ -384,7 +400,7 @@ class LoadoutDisplay():
         # close the popup
         widget.destroy()
         # create a record of the new loadout in the controller
-        self.controller.create_loadout(name=name, data=gesture_map)
+        self.controller.update_loadout(id=id, data=gesture_map)
         self.update_display(self.controller.get_dictionaries())
     
     def rename_selected(self):
@@ -505,16 +521,15 @@ class LoadoutController():
         file_path = f"{self.folder_name}/{name}.txt"
         self.export_loadout_to_file(loadout=new_loadout, file_path=file_path)
     
-    def update_loadout(self, id, name, data):
+    def update_loadout(self, id, data):
         # prevent stack overflow
         if id < 0 or id >= len(self.loadouts): return
         
         # get loadout and update its values
         loadout = self.loadouts[id]
-        loadout.name = name
         loadout.dictionary = data
         # export the new loadout
-        file_path = f"{self.folder_name}/{name}.txt"
+        file_path = f"{self.folder_name}/{loadout.file_name}"
         self.export_loadout_to_file(loadout=loadout, file_path=file_path)
     
     # append a loadout obj
