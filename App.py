@@ -4,7 +4,6 @@ from pynput import keyboard
 import Camera as cam
 import Config as cfg
 import Loadout as lo
-import HandDetector as HD
 
 loadout_widget = None
 current_loadout = None

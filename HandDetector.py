@@ -4,16 +4,14 @@ import mediapipe as mp
 from mediapipe.tasks import python
 import Camera as cam
 import ModelTrainer as MT
+import ProgramSettings as PS
 
 #Current issues: 
 # - Inaccuracy (likely just due to the small dataset)
 #TO DO: 
-# - try adding the z-coordinates
 # - algo optimization
-# - Front end for gesture creation and model training
 
 #Setup
-timestamp = 0 
 current_gestures = []
 num_hands = 2 
 pred_threshold = 0.5
@@ -23,32 +21,17 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
 #For landmark extraction
-sample_frame_count = 100 #total number of frames to save during recording
-recorded_gesture_class = 'pointing_up' #current gesture being recorded
-X, y = [], [] 
-iteration_counter = 1
+recorded_frame_count = 100 # total number of frames to save during recording
+recorded_gesture_class = 'Open_Palm' # current gesture being recorded
+iteration_counter = 0
+X, y = [], []
 
-#For benchmarking prediction
+#For benchmarking predictions
 e_counter = 0
 total_e = 0.0
 
-gesture_map = {
-    'open_palm': 0,
-    'closed_fist': 1,
-    'pointing_up': 2,
-    'thumbs_down': 3
-}
-
-idx_to_string = {
-    0: 'Open_Palm',
-    1: 'Closed_Fist',
-    2: 'Pointing_Up',
-    3: 'Thumb_Down',
-}
-
 #Load ML model
-model_name_rf = 'model_rf__date_time_2024_01_17__16_11_06_acc_1.0.pkl'
-model = MT.joblib.load(model_name_rf)
+model = MT.joblib.load(PS.current_model_path)
 
 def detect(image):
     global recorded_gesture_class
@@ -83,7 +66,7 @@ def detect(image):
                     mp_drawing_styles.get_default_hand_connections_style())
                 #RF model gesture prediction      
                 for lm in res.landmark:
-                    hand_landmark_array.extend([lm.x, lm.y])         
+                    hand_landmark_array.extend([lm.x, lm.y, lm.z])         
 
                 predict(hand_landmark_array) 
  
@@ -91,73 +74,62 @@ def detect(image):
             if cam.Camera.record == True:
                 one_sample = []
                 global iteration_counter
-                if iteration_counter < sample_frame_count + 1:
+                if iteration_counter < recorded_frame_count:
+                    iteration_counter += 1
+                    print(iteration_counter)  
                     if results.multi_hand_landmarks:
                         for res in results.multi_hand_landmarks:  
                             for lm in res.landmark:    
-                                one_sample.extend([lm.x, lm.y])
+                                one_sample.extend([lm.x, lm.y, lm.z])
 
                             global X
                             global y
                             X.append(one_sample)
-                            y.append(gesture_map[recorded_gesture_class])
+                            y.append(recorded_gesture_class)
 
-                    if iteration_counter == sample_frame_count:
+                    if iteration_counter == recorded_frame_count:
                         X = cam.np.array(X)
                         y = cam.np.array(y)
                         print(X.shape)
                         print(y.shape)
-                        cam.np.savez(cam.os.path.join(cam.Camera.rec_folder_path, f'data_{recorded_gesture_class}_{cam.Camera.start_time}.npz'), X=X, y=y)
-                        print(f'Landmarks for category {recorded_gesture_class} saved.')
+                        cam.np.savez(PS.os.path.join(PS.data_folder_path, recorded_gesture_class, f'data_{recorded_gesture_class}_{PS.get_datetime()}.npz'), X=X, y=y)
+                        print(f'Landmark data for label {recorded_gesture_class} saved.')
                         cam.Camera.record = False
-
-                iteration_counter += 1
-                print(iteration_counter)               
+                        iteration_counter = 0                           
             #===============================================================#
-        #For LSTM: extract keypoints from results
-        # if cam.Camera.record == True:
-        #     global iteration_counter
-        #     iteration_counter += 1
-        #     for lm in res.landmark:
-        #         recorded_landmarks = cam.np.array([lm.x, lm.y, lm.z]).flatten()
-        #         npy_path = cam.os.path.join(cam.Camera.rec_folder_path, f"frame_{iteration_counter}")      
-        #         cam.np.save(npy_path, recorded_landmarks)
-        #         print(recorded_landmarks)
-
-
+        
     return image
 
 def predict(array):
-    #start = time.perf_counter() # For benchmarking execution time
+    #==Benchmark==
+    #start = time.perf_counter() 
+    #global e_counter, total_e
+    #==Benchmark==
 
     hand_landmark_array = MT.np.array(array) # 1D array of current landmark positions
     hand_landmark_array = hand_landmark_array[None, :]     # adds a new dimension to x to avoid input shape error
-    #global e_counter, total_e
 
-    #yhat = model.predict(hand_landmark_array)             # The estimated or predicted values in a regression or
+    yhat_preds = model.predict_proba(hand_landmark_array)  # The estimated or predicted values in a regression or
                                                            # other predictive model are termed the y-hat values  
-    yhat_preds = model.predict_proba(hand_landmark_array)
-    print(yhat_preds) 
-
     yhat_idx = -1
     yhat_prob = 0.0
     counter = 0
-    
+
     for pred_prob in yhat_preds[0]:  
         if pred_prob > pred_threshold and pred_prob > yhat_prob:
             yhat_idx = counter
             yhat_prob = pred_prob
         counter += 1
 
-
-    #yhat_idx = yhat[0]
     if yhat_idx >= 0:
-        gesture = idx_to_string[yhat_idx]                                                             
+        gesture = model.classes_[yhat_idx]                                                             
         current_gestures.append(gesture)    
 
+    #==Benchmark==
     #e_counter += 1
     #total_e += time.perf_counter() - start
     #print("Average prediction time:", (total_e / e_counter))
+    #==Benchmark==
 
 def GestureName_Record(NameChange):# change the Name
     global recorded_gesture_class

@@ -5,7 +5,6 @@ from PIL import Image, ImageTk
 import requests
 import numpy as np 
 import imutils 
-import os
 from pynput import keyboard
 from datetime import datetime
 
@@ -18,27 +17,23 @@ from queue import Queue
 import concurrent.futures
 
 class Camera:
-    timestamp = 0
-    gestures = list
     detected_gestures = []
 
     #For ip webcam - would be nice to have a toggle for this on the UI
     use_ip_webcam = False 
      #Replace the below URL with your own. Make sure to add "/shot.jpg" at last. 
-    url = "https://192.168.1.79:8080/shot.jpg"
+    url = "https://192.168.1.78:8080/shot.jpg"
 
     #For hand landmark recording
     record_hotkey = keyboard.Key.f12
     build_hotkey = keyboard.Key.f11
     record = False                      
     start_time = ''
-    rec_folder_path = ""     # specify which hand gesture directory to save the landmark arrays
-    #sub_dir = "test_gesture" 
 
     def __init__(self, window, _width, _height):
         # Initialize variables
         self.window = window
-
+        DT.PS.__init__()
         # Create a canvas to display the camera feed
         self.canvas = tk.Canvas(window, width=_width, height=_height)
         self.canvas.pack()
@@ -98,7 +93,7 @@ class Camera:
                 # Flip the frame horizontally (mirror effect)
                 mirrored_frame = cv.flip(frame, 1)
                 detection = DT.detect(mirrored_frame)
-                DT.timestamp += 1 # should be monotonically increasing, because in LIVE_STREAM mode
+                #DT.timestamp += 1 # should be monotonically increasing, because in LIVE_STREAM mode
                 # Convert the OpenCV frame to a Tkinter-compatible photo image
                 photo = ImageTk.PhotoImage(image=Image.fromarray(cv.cvtColor(detection, cv.COLOR_BGR2RGB)))
                 # Put the frame in the queue for processing
@@ -129,12 +124,8 @@ class Camera:
 
     def start_landmark_recording():
         if Camera.record == False:
-                now = datetime.now()
-                Camera.start_time = now.strftime("%d_%m_%Y_%H_%M_%S")
-                Camera.rec_folder_path = os.path.join(os.getcwd(), "Recorded_Data", f"recording_{Camera.start_time}")
-                os.mkdir(Camera.rec_folder_path)
                 Camera.record = True
-                print("Recording started")
+                print("Frame recording started")
 
     def process_frames(self):
         while True:
@@ -202,6 +193,7 @@ class GestureDetectionController:
      
     def set_loadout(self, loadout):
         self.loadout = loadout
+        print(loadout)
         
     def gesture_to_input(self, detected):
         # check if the loadout is empty
@@ -216,6 +208,6 @@ class GestureDetectionController:
                 # check if the key is release
                 if self.loadout[gesture].casefold() == "Release".casefold():
                     KeyInput.ReleaseAllKeys(self.loadout.values())                  
-                elif  self.loadout[gesture].casefold() == gesture.casefold():             
+                else:
                     KeyInput.PressKey(self.loadout[gesture])  # press all key detected otherwise
         
