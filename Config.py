@@ -5,6 +5,7 @@ import math
 import Camera as cam
 import ModelTrainer as MT
 import HandDetector as HD
+import ProgramSettings as PS
 
 from PIL import Image, ImageTk
 
@@ -89,37 +90,39 @@ class Config:
         print(f"Showing total of {len(self.cfglist)} results!")
 
     def set_loadout(self, load):
-        self.loadout_widget = load
-    
-            
+        self.loadout_widget = load         
 
     def create_gesture(self):
         self.btnText.set("Record")
         if self.pop:
-            def ChangeName():   
-                GestureName=NameText.get("1.0","end-1c")
-                GestureName.replace(" ", "_") #incase user enter a name with Space
-                HD.GestureName_Record(GestureName)
+            def ChangeName(x):   
+                gesture_name=menuText.get()
+                gesture_name.replace(" ", "_") # incase user enters a name with Space
+                PS.change_recorded_gesture(gesture_name)
             
+            def SetName():
+                return   
+
             self.pop_win = self.pop("Test")
             tFrame = tk.Frame(self.pop_win, width=400, height=200)
             tLabel = tk.Label(tFrame, text="Button closes this window")
             NameLabel = tk.Label(tFrame, text="Name:")
             NameText = tk.Text(tFrame, height = 1, width = 15)       
-            NameChangeBtn= tk.Button(tFrame,text="Change Name", command=ChangeName)
+            NameChangeBtn= tk.Button(tFrame,text="Change Name", command=ChangeName) #reuse this for adding new gesture lables
             tRecord = tk.Button(tFrame, textvariable=self.btnText, command=self.button_trigger)
             tClose = tk.Button(tFrame, text="Close", command=self.pop_win.destroy)
-
-
-            #HD.GestureName_Record(NameChange) #function to change name
-
+            menuText = tk.StringVar() 
+            menuText.set(PS.allowed_gestures[0]) 
+            dropDown = tk.OptionMenu(tFrame , menuText , *PS.allowed_gestures, command=ChangeName) 
+            #===============================================================#
             tFrame.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
             NameLabel.grid(column=0, row=0, columnspan=1, sticky=("N", "S", "E", "W"))
             NameText.grid(column=1, row=0, sticky=("N", "S", "E", "W"))
             NameChangeBtn.grid(column=2, row=0, sticky=("N", "S", "E", "W"))
             tLabel.grid(column=0, row=1, columnspan=2, sticky=("N", "S", "E", "W"))
             tRecord.grid(column=0, row=2, sticky=("N", "S", "E", "W"))
-            tClose.grid(column=1, row=2, sticky=("N", "S", "E", "W"))
+            tClose.grid(column=3, row=0, sticky=("N", "S", "E", "W"))
+            dropDown.grid(column=1, row=2, sticky=("N", "S", "E", "W"))
 
            
         

@@ -21,8 +21,6 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
 #For landmark extraction
-recorded_frame_count = 100 # total number of frames to save during recording
-recorded_gesture_class = 'Open_Palm' # current gesture being recorded
 iteration_counter = 0
 X, y = [], []
 
@@ -74,7 +72,7 @@ def detect(image):
             if cam.Camera.record == True:
                 one_sample = []
                 global iteration_counter
-                if iteration_counter < recorded_frame_count:
+                if iteration_counter < PS.recorded_frame_count:
                     iteration_counter += 1
                     print(iteration_counter)  
                     if results.multi_hand_landmarks:
@@ -87,13 +85,13 @@ def detect(image):
                             X.append(one_sample)
                             y.append(recorded_gesture_class)
 
-                    if iteration_counter == recorded_frame_count:
+                    if iteration_counter == PS.recorded_frame_count:
                         X = cam.np.array(X)
                         y = cam.np.array(y)
                         print(X.shape)
                         print(y.shape)
-                        cam.np.savez(PS.os.path.join(PS.data_folder_path, recorded_gesture_class, f'data_{recorded_gesture_class}_{PS.get_datetime()}.npz'), X=X, y=y)
-                        print(f'Landmark data for label {recorded_gesture_class} saved.')
+                        cam.np.savez(PS.os.path.join(PS.data_folder_path, PS.recorded_gesture_class, f'data_{PS.recorded_gesture_class}_{PS.get_datetime()}.npz'), X=X, y=y)
+                        print(f'Landmark data for label {PS.recorded_gesture_class} saved.')
                         cam.Camera.record = False
                         iteration_counter = 0                           
             #===============================================================#
@@ -131,8 +129,5 @@ def predict(array):
     #print("Average prediction time:", (total_e / e_counter))
     #==Benchmark==
 
-def GestureName_Record(NameChange):# change the Name
-    global recorded_gesture_class
-    print(f"Changed {recorded_gesture_class} to {NameChange}")
-    recorded_gesture_class = NameChange 
+
 
