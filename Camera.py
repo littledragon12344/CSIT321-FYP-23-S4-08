@@ -5,7 +5,6 @@ from PIL import Image, ImageTk
 import requests
 import numpy as np 
 import imutils 
-from pynput import keyboard
 from datetime import datetime
 
 import HandDetector as DT
@@ -22,10 +21,9 @@ class Camera:
     #For ip webcam - would be nice to have a toggle for this on the UI
     use_ip_webcam = False 
      #Replace the below URL with your own. Make sure to add "/shot.jpg" at last. 
-    url = "https://192.168.1.78:8080/shot.jpg"
+    url = "https://192.168.1.79:8080/shot.jpg"
 
     #For hand landmark recording
-    build_hotkey = keyboard.Key.f11
     record = False                      
     start_time = ''
 
@@ -47,11 +45,6 @@ class Camera:
         if Camera.use_ip_webcam == False :
             self.cap = cv.VideoCapture(0)  # 0 for default camera, adjust if needed
 
-        #Listener for keyboard input
-        keyboard_listener = keyboard.Listener(
-            on_press=Camera.keyboard_input_update)
-        keyboard_listener.start()
-
         # Call the update method to continuously update the canvas with new frames
         #self.update()
 
@@ -62,7 +55,6 @@ class Camera:
         self.video_thread = threading.Thread(target=self.update)
         self.video_thread.daemon = True
         self.video_thread.start()
-
 
         # Create multiple threads for frame processing
         self.processing_threads = []
@@ -101,12 +93,6 @@ class Camera:
             # Schedule the update method to be called after a delay (e.g., 10 milliseconds)
             #self.window.after(5, self.update) 
             self.window.after(5, self.gesture_input_update) 
-
-    def keyboard_input_update(key):
-        if key == Camera.record_hotkey:
-            Camera.start_landmark_recording()
-        elif key == Camera.build_hotkey:
-            MT.ModelTrainer.preprocess_data()
     
     def gesture_input_update(self):
         if Camera.record == True: return # so it doesnt press any keys during Recording
@@ -192,7 +178,6 @@ class GestureDetectionController:
      
     def set_loadout(self, loadout):
         self.loadout = loadout
-        print(loadout)
         
     def gesture_to_input(self, detected):
         # check if the loadout is empty

@@ -20,6 +20,7 @@ class Config:
         self.pop_win = None
 
         self.btnText = tk.StringVar()
+        self.buildText = tk.StringVar()
 
         self.window = window
         base = tk.Frame(self.window, highlightbackground="black", highlightthickness=2)
@@ -64,7 +65,13 @@ class Config:
 
         for i in range(len(controls.items())):
             # create test object
-            cfgobject = icfg.iConfig(self.frame, phi, f"{self.cfggestures[i]}", f"{self.cfgkeys[i]}", self.pop)
+            image_path = PS.os.path.join(PS.image_folder_path, f'{self.cfggestures[i]}.png')
+            if PS.os.path.exists(image_path):
+                img = Image.open(image_path)
+                phi2 = ImageTk.PhotoImage(img.resize(size))
+                cfgobject = icfg.iConfig(self.frame, phi2, f"{self.cfggestures[i]}", f"{self.cfgkeys[i]}", self.pop)
+            else:
+                cfgobject = icfg.iConfig(self.frame, phi, f"{self.cfggestures[i]}", f"{self.cfgkeys[i]}", self.pop)
             
             # Place test objects in vector
             self.cfglist.append(cfgobject)
@@ -94,12 +101,14 @@ class Config:
 
     def create_gesture(self):
         self.btnText.set("Record")
+        self.buildText.set("Ready to build")
+
         if self.pop:
             def ChangeName(x):   
                 gesture_name=menuText.get()
                 gesture_name.replace(" ", "_") # incase user enters a name with Space
                 PS.change_recorded_gesture(gesture_name)
-            
+
             def SetName():
                 return   
 
@@ -108,8 +117,10 @@ class Config:
             tLabel = tk.Label(tFrame, text="Button closes this window")
             NameLabel = tk.Label(tFrame, text="Name:")
             NameText = tk.Text(tFrame, height = 1, width = 15)       
-            NameChangeBtn= tk.Button(tFrame,text="Change Name", command=ChangeName) #reuse this for adding new gesture lables
+            NameChangeBtn= tk.Button(tFrame,text="Change Name", command=ChangeName) #can reuse this for adding new gesture lables
             tRecord = tk.Button(tFrame, textvariable=self.btnText, command=self.button_trigger)
+            buildLabel = tk.Label(tFrame, textvariable=self.buildText)
+            tBuild = tk.Button(tFrame, text="Build", command=self.build_model)
             tClose = tk.Button(tFrame, text="Close", command=self.pop_win.destroy)
             menuText = tk.StringVar() 
             menuText.set(PS.allowed_gestures[0]) 
@@ -121,10 +132,10 @@ class Config:
             NameChangeBtn.grid(column=2, row=0, sticky=("N", "S", "E", "W"))
             tLabel.grid(column=0, row=1, columnspan=2, sticky=("N", "S", "E", "W"))
             tRecord.grid(column=0, row=2, sticky=("N", "S", "E", "W"))
+            tBuild.grid(column=0, row=3, sticky=("N", "S", "E", "W"))
+            buildLabel.grid(column=1, row=3, sticky=("N", "S", "E", "W"))
             tClose.grid(column=3, row=0, sticky=("N", "S", "E", "W"))
-            dropDown.grid(column=1, row=2, sticky=("N", "S", "E", "W"))
-
-           
+            dropDown.grid(column=1, row=2, sticky=("N", "S", "E", "W")) 
         
     def button_trigger(self):
         self.change_button()
@@ -138,9 +149,7 @@ class Config:
     def record_gesture(self):
         self.change_button()
         cam.Camera.start_landmark_recording()
-        print(f"The record button is functioning.")
 
     def build_model(self):
-        self.change_button()
         MT.ModelTrainer.preprocess_data()
-        print(f"The build button is functioning.")
+        self.buildText.set("Build complete!")

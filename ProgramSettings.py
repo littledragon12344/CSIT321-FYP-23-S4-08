@@ -2,6 +2,10 @@
 import os
 from datetime import datetime
 
+#TO DO: 
+# - save/load from file
+# - gesture images
+
 #gesture recognition
 allowed_gestures = ["Open_Palm", 
                     "Closed_Fist", 
@@ -14,13 +18,13 @@ allowed_gestures = ["Open_Palm",
 # folder paths
 data_folder_path = os.path.join(os.getcwd(), "Datasets")
 model_folder_path = os.path.join(os.getcwd(), "Models")
-
+image_folder_path = os.path.join(os.getcwd(), "Gesture_Images")
 # landmark extraction settings
 recorded_frame_count = 100 # total number of frames to save during recording
 recorded_gesture_class = '' # current gesture being recorded
 
 # ML model settings
-model_name_rf = 'rf_model_2024_01_29__21_08_24.pkl'
+model_name_rf = 'rf_model_2024_01_30__03_25_18.pkl'
 current_model_path = os.path.join(model_folder_path, model_name_rf)
 
 #gesture label file

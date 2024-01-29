@@ -10,16 +10,13 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 from scipy.stats import randint
 import joblib
+
 import ProgramSettings as PS
 
 class ModelTrainer:
-    #gestures = ['open_palm', 'closed_fist', 'pointing_up', 'thumbs_down']
-
-    #data_folder_path = os.path.join(os.getcwd(), "Datasets")
-
     #Handles preprocessing of recorded landmark data
     def preprocess_data(): #process and label data points
-        #load gesture array from reading gesture class file
+        #load data from gesture dataset file
         loaded_data = np.load(os.path.join(PS.data_folder_path, 'data.npz'))
         X, y = loaded_data['X'], loaded_data['y']
         #iterate through all files in each sub directory in Datasets folder
@@ -76,8 +73,15 @@ class ModelTrainer:
             current_date_time_dt = dt.datetime.now()
             current_date_time_str = dt.datetime.strftime(current_date_time_dt, date_time_format)
 
+            #===For release============#
+            #model_name = 'rf_model.pkl'
+            #==========================#
             model_name = f'rf_model_{current_date_time_str}.pkl'
             joblib.dump(best_rf, os.path.join(PS.model_folder_path, model_name))
+
+            
+
+            
 
 
 

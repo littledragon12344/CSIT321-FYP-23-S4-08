@@ -6,11 +6,6 @@ import Camera as cam
 import ModelTrainer as MT
 import ProgramSettings as PS
 
-#Current issues: 
-# - Inaccuracy (likely just due to the small dataset)
-#TO DO: 
-# - algo optimization
-
 #Setup
 current_gestures = []
 num_hands = 2 
@@ -43,6 +38,7 @@ def detect(image):
         min_tracking_confidence=0.5) as hands:
         # To improve performance, optionally mark the image as 
         # not writeable to pass by reference.
+        og_image = image
         image.flags.writeable = False
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         results = hands.process(image)
@@ -83,7 +79,7 @@ def detect(image):
                             global X
                             global y
                             X.append(one_sample)
-                            y.append(recorded_gesture_class)
+                            y.append(PS.recorded_gesture_class)
 
                     if iteration_counter == PS.recorded_frame_count:
                         X = cam.np.array(X)
@@ -91,6 +87,7 @@ def detect(image):
                         print(X.shape)
                         print(y.shape)
                         cam.np.savez(PS.os.path.join(PS.data_folder_path, PS.recorded_gesture_class, f'data_{PS.recorded_gesture_class}_{PS.get_datetime()}.npz'), X=X, y=y)
+                        cv2.imwrite(PS.os.path.join(PS.image_folder_path, f'{PS.recorded_gesture_class}.png'), og_image)
                         print(f'Landmark data for label {PS.recorded_gesture_class} saved.')
                         cam.Camera.record = False
                         iteration_counter = 0                           
