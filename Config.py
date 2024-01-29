@@ -63,7 +63,7 @@ class Config:
 
         for i in range(len(controls.items())):
             # create test object
-            cfgobject = icfg.iConfig(self.frame, phi, f"{self.cfggestures[i]}", f"{self.cfgkeys[i]}")
+            cfgobject = icfg.iConfig(self.frame, phi, f"{self.cfggestures[i]}", f"{self.cfgkeys[i]}", self.pop)
             
             # Place test objects in vector
             self.cfglist.append(cfgobject)
