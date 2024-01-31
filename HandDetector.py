@@ -48,6 +48,9 @@ def detect(image):
         current_gestures.clear()
 
         if results.multi_hand_landmarks:
+            # for hand in results.multi_handedness:
+            #     print(hand.classification)
+
             counter = 0
             for res in results.multi_hand_landmarks:  
                 counter += 1
@@ -58,7 +61,8 @@ def detect(image):
                     mp_hands.HAND_CONNECTIONS,
                     mp_drawing_styles.get_default_hand_landmarks_style(),
                     mp_drawing_styles.get_default_hand_connections_style())
-                #RF model gesture prediction      
+                #RF model gesture prediction
+                      
                 for lm in res.landmark:
                     hand_landmark_array.extend([lm.x, lm.y, lm.z])         
 
@@ -66,6 +70,8 @@ def detect(image):
  
             #For RF model: extract keypoints from results
             if cam.Camera.record == True:
+                global X
+                global y
                 one_sample = []
                 global iteration_counter
                 if iteration_counter < PS.recorded_frame_count:
@@ -76,19 +82,20 @@ def detect(image):
                             for lm in res.landmark:    
                                 one_sample.extend([lm.x, lm.y, lm.z])
 
-                            global X
-                            global y
                             X.append(one_sample)
+                            print(one_sample)
                             y.append(PS.recorded_gesture_class)
 
                     if iteration_counter == PS.recorded_frame_count:
-                        X = cam.np.array(X)
-                        y = cam.np.array(y)
-                        print(X.shape)
-                        print(y.shape)
-                        cam.np.savez(PS.os.path.join(PS.data_folder_path, PS.recorded_gesture_class, f'data_{PS.recorded_gesture_class}_{PS.get_datetime()}.npz'), X=X, y=y)
+                        np_x = cam.np.array(X)
+                        np_y = cam.np.array(y)
+                        print(np_x.shape)
+                        print(np_y.shape)
+                        cam.np.savez(PS.os.path.join(PS.data_folder_path, PS.recorded_gesture_class, f'data_{PS.recorded_gesture_class}_{PS.get_datetime()}.npz'), X=np_x, y=np_y)
                         cv2.imwrite(PS.os.path.join(PS.image_folder_path, f'{PS.recorded_gesture_class}.png'), og_image)
                         print(f'Landmark data for label {PS.recorded_gesture_class} saved.')
+                        X = []
+                        y = []
                         cam.Camera.record = False
                         iteration_counter = 0                           
             #===============================================================#
@@ -109,7 +116,7 @@ def predict(array):
     yhat_idx = -1
     yhat_prob = 0.0
     counter = 0
-
+    print(yhat_preds)
     for pred_prob in yhat_preds[0]:  
         if pred_prob > pred_threshold and pred_prob > yhat_prob:
             yhat_idx = counter
