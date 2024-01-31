@@ -1,7 +1,7 @@
 import tkinter as tk
+import keyboard as kb
 from tkinter import messagebox, ttk
 from FileManager import *
-from KeyboardInput import detect_key
 from ProgramSettings import allowed_gestures
 
 # loadout display class
@@ -304,7 +304,7 @@ class LoadoutDisplay():
             def key_entry_callback(id):
                 def on_key_press():
                     # detect a key press
-                    key = detect_key()
+                    key = kb.read_event(suppress=True).name
                     # edit the button text to the pressed key
                     key_entries[id]["text"] = key.upper()
                 return on_key_press 
@@ -346,7 +346,7 @@ class LoadoutDisplay():
         def key_entry_callback(id):
             def on_key_press():
                 # detect a key press
-                key = detect_key()
+                key = kb.read_event(suppress=True).name
                 # edit the button text to the pressed key
                 key_entries[id]["text"] = key.upper()
             return on_key_press 

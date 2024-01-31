@@ -1,5 +1,6 @@
 ﻿import tkinter as tk
 from tkinter import font
+import keyboard as kb
 import cv2 as cv
 from PIL import Image, ImageTk
 import requests
@@ -9,7 +10,7 @@ from datetime import datetime
 
 import HandDetector as DT
 import ModelTrainer as MT
-import KeyboardInput as KeyInput
+"""import KeyboardInput as KeyInput"""
 
 import threading
 from queue import Queue
@@ -191,7 +192,10 @@ class GestureDetectionController:
             if gesture in self.loadout:
                 # check if the key is release
                 if self.loadout[gesture].casefold() == "Release".casefold():
-                    KeyInput.ReleaseAllKeys(self.loadout.values())                  
+                    """KeyInput.ReleaseAllKeys(self.loadout.values())"""   
+                    for k in self.loadout.values():
+                        kb.release(k)               
                 else:
-                    KeyInput.PressKey(self.loadout[gesture])  # press all key detected otherwise
+                    kb.press(self.loadout[gesture])
+                    """KeyInput.PressKey(self.loadout[gesture])"""  # press all key detected otherwise
         
