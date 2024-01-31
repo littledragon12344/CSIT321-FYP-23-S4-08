@@ -24,7 +24,7 @@ recorded_frame_count = 100 # total number of frames to save during recording
 recorded_gesture_class = '' # current gesture being recorded
 
 # ML model settings
-model_name_rf = 'rf_model_2024_01_31__19_40_16.pkl'
+model_name_rf = 'rf_model_2024_01_31__19_51_12.pkl'
 current_model_path = os.path.join(model_folder_path, model_name_rf)
 
 #gesture label file
