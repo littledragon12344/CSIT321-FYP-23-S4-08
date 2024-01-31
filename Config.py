@@ -113,11 +113,11 @@ class Config:
                 return   
 
             self.pop_win = self.pop("Test")
-            tFrame = tk.Frame(self.pop_win, width=400, height=200)
-            tLabel = tk.Label(tFrame, text="Button closes this window")
-            NameLabel = tk.Label(tFrame, text="Name:")
-            NameText = tk.Text(tFrame, height = 1, width = 15)       
-            NameChangeBtn= tk.Button(tFrame,text="Change Name", command=ChangeName) #can reuse this for adding new gesture lables
+            tFrame = tk.Frame(self.pop_win)
+            tLabel = tk.Label(tFrame, width=55, text="Click the button to record a new gesture")
+            NameLabel = tk.Label(tFrame, width=15, text="Name:")
+            NameText = tk.Text(tFrame, height = 1, width = 15)
+            NameChangeBtn= tk.Button(tFrame,text="Change Name", command=ChangeName)
             tRecord = tk.Button(tFrame, textvariable=self.btnText, command=self.button_trigger)
             buildLabel = tk.Label(tFrame, textvariable=self.buildText)
             tBuild = tk.Button(tFrame, text="Build", command=self.build_model)
@@ -127,15 +127,15 @@ class Config:
             dropDown = tk.OptionMenu(tFrame , menuText , *PS.allowed_gestures, command=ChangeName) 
             #===============================================================#
             tFrame.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
-            NameLabel.grid(column=0, row=0, columnspan=1, sticky=("N", "S", "E", "W"))
-            NameText.grid(column=1, row=0, sticky=("N", "S", "E", "W"))
-            NameChangeBtn.grid(column=2, row=0, sticky=("N", "S", "E", "W"))
-            tLabel.grid(column=0, row=1, columnspan=2, sticky=("N", "S", "E", "W"))
+            NameLabel.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
+            NameText.grid(column=1, row=0, columnspan=2, sticky=("N", "S", "E", "W"))
+            NameChangeBtn.grid(column=3, row=0, sticky=("N", "S", "E", "W"))
+            tLabel.grid(column=0, row=1, columnspan=4, sticky=("N", "S", "E", "W"))
             tRecord.grid(column=0, row=2, sticky=("N", "S", "E", "W"))
             tBuild.grid(column=0, row=3, sticky=("N", "S", "E", "W"))
             buildLabel.grid(column=1, row=3, sticky=("N", "S", "E", "W"))
-            tClose.grid(column=3, row=0, sticky=("N", "S", "E", "W"))
-            dropDown.grid(column=1, row=2, sticky=("N", "S", "E", "W")) 
+            tClose.grid(column=2, row=2, columnspan=2, sticky=("N", "S", "E", "W"))
+            dropDown.grid(column=1, row=2, sticky=("N", "S", "E", "W"))
         
     def button_trigger(self):
         self.change_button()

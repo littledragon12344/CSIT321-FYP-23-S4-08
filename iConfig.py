@@ -37,9 +37,39 @@ class iConfig(object):
         choice.grid(column=0, row=2, sticky=("N", "S", "E", "W"))
         
     def change_input(self):
-        # Create popup
-        
-        # Get input value
-        # val = kb.wait()
-        # self.inp = val
-        print("This button is working.")
+        global tButton
+        global tInput
+
+        print(self.inp)
+
+        if self.pop:
+            self.pop_win = self.pop("Change Keys")
+            tFrame = tk.Frame(self.pop_win)
+            tLabel = tk.Label(tFrame, width=40, text="Click on the button to change the key")
+            tInput = tk.Text(tFrame, height=1, width=5)
+            tInput.insert(tk.INSERT, self.inp.upper())
+            tInput.config(state="disabled")
+            tButton = tk.Button(tFrame, text="Change", command=self.button_trigger)
+            tConfirm = tk.Button(tFrame, text="Confirm", command=self.pop_win.destroy)
+            tFrame.grid(column=0, row=0, sticky="news")
+            tLabel.grid(column=0, row=0, sticky="news")
+            tInput.grid(column=0, row=1, sticky="news")
+            tButton.grid(column=0, row=2, sticky="news")
+            tConfirm.grid(column=0, row=3, sticky="news")
+    
+    def button_trigger(self):
+        self.change_key()
+        self.read_input()
+    
+    def change_key(self):
+        tButton.config(text="Input your desired key")
+        if self.pop_win:
+            self.pop_win.update_idletasks()
+    
+    def read_input(self):
+        val = kb.read_key()
+        tInput.config(state="normal")
+        tInput.delete('1.0', tk.END)
+        tInput.insert(tk.INSERT, val.upper())
+        tInput.config(state="disabled")
+        tButton.config(text="Change")
