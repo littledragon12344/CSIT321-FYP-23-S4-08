@@ -20,7 +20,7 @@ class Camera:
     detected_gestures = []
 
     #For ip webcam - would be nice to have a toggle for this on the UI
-    use_ip_webcam = True 
+    use_ip_webcam = False 
      #Replace the below URL with your own. Make sure to add "/shot.jpg" at last. 
     url = "https://192.168.1.79:8080/shot.jpg"
 
