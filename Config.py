@@ -1,6 +1,5 @@
 import tkinter as tk
 import iConfig as icfg
-import Loadout as ld
 import math
 import Camera as cam
 import ModelTrainer as MT
@@ -10,38 +9,39 @@ import ProgramSettings as PS
 from PIL import Image, ImageTk
 
 class Config:
-    def __init__(self, window, widget, pop):
+    def __init__(self, window, widget, pop, update):
         self.cfglist = []
         self.cfggestures = []
         self.cfgkeys = []
 
+        self.gui_update = update
         self.loadout_widget = widget
         self.pop = pop
         self.pop_win = None
+        self.this_id = -1
 
         self.btnText = tk.StringVar()
         self.buildText = tk.StringVar()
 
         self.window = window
         base = tk.Frame(self.window, highlightbackground="black", highlightthickness=2)
-        base.pack(side="left", fill="both", expand=True, padx=10)
-        
+        base.grid(row=0, column=0, columnspan=2, sticky="nsew", padx=10)
+
         # create a canvas for list display
-        self.canvas = tk.Canvas(base)
-        self.canvas.pack(side="left", fill="both", expand=True)
+        self.canvas = tk.Canvas(base, width=750, height=455)
+        self.canvas.grid(row=0, column=0, sticky="nsew")
 
         # create a vertical scrollbar and attach it to the display frame
         self.scrollbar = tk.Scrollbar(base, width=20, orient="vertical", command=self.canvas.yview)
-        self.scrollbar.pack(side="right", fill="y")
-        
+        self.scrollbar.grid(row=0, column=1, sticky="ns")
+
         # config the canvas
         self.canvas.config(yscrollcommand=self.scrollbar.set)
 
         # create a frame to contain the widgets within the canvas
         self.frame = tk.Frame(self.canvas)
-        #self.frame.grid_propagate(False)
         self.canvas.create_window((0, 0), window=self.frame, anchor="nw")
-        
+
         # Read loadout information
         self.get_config()
 
@@ -55,27 +55,32 @@ class Config:
         img = Image.open("TestImage.jpg")
         img.thumbnail(size)
         phi = ImageTk.PhotoImage(img)
+
+        # Empty old data
+        if len(self.cfggestures) > 0:
+            self.cfggestures.clear()
+            self.cfgkeys.clear()
         
+        self.this_id = self.loadout_widget.selected_id
         currentload = self.loadout_widget.controller.get_currently_enabled()
         controls = currentload.get_all_pairs()
 
         for (gesture, key) in controls.items():
             self.cfggestures.append(gesture)
             self.cfgkeys.append(key)
-
+        
+        # Insert objects using loadout data
         for i in range(len(controls.items())):
-            # create test object
             image_path = PS.os.path.join(PS.image_folder_path, f'{self.cfggestures[i]}.png')
             if PS.os.path.exists(image_path):
                 img = Image.open(image_path)
                 phi2 = ImageTk.PhotoImage(img.resize(size))
-                cfgobject = icfg.iConfig(self.frame, phi2, f"{self.cfggestures[i]}", f"{self.cfgkeys[i]}", self.pop)
+                cfgobject = icfg.iConfig(self.frame, phi2, f"{self.cfggestures[i]}", f"{self.cfgkeys[i]}", self, self.pop)
             else:
-                cfgobject = icfg.iConfig(self.frame, phi, f"{self.cfggestures[i]}", f"{self.cfgkeys[i]}", self.pop)
+                cfgobject = icfg.iConfig(self.frame, phi, f"{self.cfggestures[i]}", f"{self.cfgkeys[i]}", self, self.pop)
             
-            # Place test objects in vector
             self.cfglist.append(cfgobject)
-            
+
         for ind, x in enumerate(self.cfglist):
             last = ind + 1
             z = ind % 5
@@ -112,7 +117,7 @@ class Config:
             def SetName():
                 return   
 
-            self.pop_win = self.pop("Test")
+            self.pop_win = self.pop("Create New Gesture")
             tFrame = tk.Frame(self.pop_win)
             tLabel = tk.Label(tFrame, width=55, text="Click the button to record a new gesture")
             NameLabel = tk.Label(tFrame, width=15, text="Name:")
@@ -121,7 +126,7 @@ class Config:
             tRecord = tk.Button(tFrame, textvariable=self.btnText, command=self.button_trigger)
             buildLabel = tk.Label(tFrame, textvariable=self.buildText)
             tBuild = tk.Button(tFrame, text="Build", command=self.build_model)
-            tClose = tk.Button(tFrame, text="Close", command=self.pop_win.destroy)
+            tConfirm = tk.Button(tFrame, text="Confirm", command=self.pop_win.destroy)
             menuText = tk.StringVar() 
             menuText.set(PS.allowed_gestures[0]) 
             dropDown = tk.OptionMenu(tFrame , menuText , *PS.allowed_gestures, command=ChangeName) 
@@ -134,12 +139,17 @@ class Config:
             tRecord.grid(column=0, row=2, sticky=("N", "S", "E", "W"))
             tBuild.grid(column=0, row=3, sticky=("N", "S", "E", "W"))
             buildLabel.grid(column=1, row=3, sticky=("N", "S", "E", "W"))
-            tClose.grid(column=2, row=2, columnspan=2, sticky=("N", "S", "E", "W"))
+            tConfirm.grid(column=2, row=2, columnspan=2, sticky=("N", "S", "E", "W"))
             dropDown.grid(column=1, row=2, sticky=("N", "S", "E", "W"))
         
     def button_trigger(self):
         self.change_button()
         self.record_gesture()
+    
+    def confirm_trigger(self):
+        self.update_key()
+        if self.pop_win:
+            self.pop_win.destroy()
     
     def change_button(self):
         if self.pop_win:
@@ -153,3 +163,25 @@ class Config:
     def build_model(self):
         MT.ModelTrainer.preprocess_data()
         self.buildText.set("Build complete!")
+    
+    def update_key(self, gest, key, newkey=None):
+        # Add created gesture into loadout, or update gesture to new key
+        if newkey == None:
+            self.cfggestures.append(gest)
+            self.cfgkeys.append(key)
+        else: 
+            keypos = self.cfggestures.index(gest)
+            if self.cfgkeys[keypos] == key:
+                self.cfgkeys[keypos] = newkey
+        # Create new dictionary to hold updated gesture-key information
+        gesturedata = {}
+        for gesture, key in zip(self.cfggestures, self.cfgkeys):
+            gest_name = gesture
+            gest_name.replace(" ", "_")
+            key_name = key.lower()
+            gesturedata[gest_name] = key_name
+        # Update loadout
+        self.loadout_widget.controller.update_loadout(self.this_id, gesturedata)
+        # Refresh config
+        self.gui_update()
+        return

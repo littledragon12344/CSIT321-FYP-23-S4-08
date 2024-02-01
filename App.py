@@ -26,7 +26,7 @@ def new_window():
         if config:
             config.destroy()  # Destroy the existing Config frame
         config = tk.Frame(base, width=800, height=275, bg="blue")  # Recreate the Config frame
-        cfgwidget = cfg.Config(config, loadout_widget, pop_up)  # Pass the update_gui function
+        cfgwidget = cfg.Config(config, loadout_widget, pop_up, update_gui)  # Pass the update_gui function
         cfgwidget.set_loadout(loadout_widget)  # Pass the LoadoutDisplay instance directly
         config.grid(column=0, row=2, columnspan=5, rowspan=2, sticky="news")  # Grid the new Config frame
 
@@ -40,7 +40,7 @@ def new_window():
 
     root = tk.Tk()
     root.title("Gesture Detection Prototype")
-    root.geometry("800x600")    
+    root.geometry("800x800")    
     root.resizable(width=False, height=False)
     
     #label = tk.Label(root, text="Created by group CSIT321-FYP-23-S4-08")
@@ -84,20 +84,20 @@ def new_window():
 
     # create a frame for the loadout display
     loadout_display = tk.Frame(base, borderwidth=1, relief="solid", bg="red")
-    loadout_widget = lo.LoadoutDisplay(loadout_display, 300, 280, update_gui)
+    loadout_widget = lo.LoadoutDisplay(loadout_display, 302, 280, update_gui)
     # set the reference of the camera to the loadout
     loadout_widget.set_camera_display(cam_display)
     
     # create a frame for the gesture list display
-    config = tk.Frame(base, width=800, height=275, bg="blue")
-    cfgwidget = cfg.Config(config, loadout_widget, pop_up)
+    config = tk.Frame(base, width=800, height=475, bg="blue")
+    cfgwidget = cfg.Config(config, loadout_widget, pop_up, update_gui)
     cfgwidget.set_loadout(loadout_widget)
     
     # placing the frames onto a grid for the UI layout
     base.grid(column=0, row=0, sticky="news")
     camera.grid(column=0, row=0, columnspan=3, rowspan=2, sticky="news")
     loadout_display.grid(column=3, row=0, columnspan=2, rowspan=2, sticky="news")
-    config.grid(column=0, row=2, columnspan=5, rowspan=2, sticky="news")
+    config.grid(column=0, row=2, columnspan=5, rowspan=4, sticky="news")
     #===========================================================
 
     # start the window

@@ -4,14 +4,16 @@ from PIL import Image, ImageTk
 
 class iConfig(object):
 
-    def __init__(self, target, picture, name, inp, pop):
+    def __init__(self, target, picture, name, inp, config, pop):
         self.target = target
         self.picture = picture # image is already resized in config
         self.name = name
         self.inp = inp
         
+        self.config = config
         self.pop = pop
         self.pop_win = None
+        self.val = None
 
         cleaned = self.name.replace("_", " ")
 
@@ -50,7 +52,7 @@ class iConfig(object):
             tInput.insert(tk.INSERT, self.inp.upper())
             tInput.config(state="disabled")
             tButton = tk.Button(tFrame, text="Change", command=self.button_trigger)
-            tConfirm = tk.Button(tFrame, text="Confirm", command=self.pop_win.destroy)
+            tConfirm = tk.Button(tFrame, text="Confirm", command=self.confirm_trigger)
             tFrame.grid(column=0, row=0, sticky="news")
             tLabel.grid(column=0, row=0, sticky="news")
             tInput.grid(column=0, row=1, sticky="news")
@@ -61,15 +63,20 @@ class iConfig(object):
         self.change_key()
         self.read_input()
     
+    def confirm_trigger(self):
+        self.config.update_key(self.name, self.inp, self.val)
+        if self.pop_win:
+            self.pop_win.destroy()
+    
     def change_key(self):
         tButton.config(text="Input your desired key")
         if self.pop_win:
             self.pop_win.update_idletasks()
     
     def read_input(self):
-        val = kb.read_key()
+        self.val = kb.read_key()
         tInput.config(state="normal")
         tInput.delete('1.0', tk.END)
-        tInput.insert(tk.INSERT, val.upper())
+        tInput.insert(tk.INSERT, self.val.upper())
         tInput.config(state="disabled")
         tButton.config(text="Change")
