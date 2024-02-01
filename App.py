@@ -7,6 +7,7 @@ import Loadout as lo
 loadout_widget = None
 current_loadout = None
 config = None
+cfgwidget = None
 
 def new_window():     
     def export_loadout():
@@ -29,6 +30,23 @@ def new_window():
         cfgwidget = cfg.Config(config, loadout_widget, pop_up, update_gui)  # Pass the update_gui function
         cfgwidget.set_loadout(loadout_widget)  # Pass the LoadoutDisplay instance directly
         config.grid(column=0, row=2, columnspan=5, rowspan=2, sticky="news")  # Grid the new Config frame
+
+    def start_build_model():
+        if cfgwidget is None: return
+        # create popup
+        popup = tk.Toplevel(root)
+        popup.title("Build model")
+        popup.geometry("300x50")
+        popup.resizable(width=False, height=False)
+        # add a label
+        msg = tk.Label(popup, text="Building your model...\nPlease wait...")
+        msg.pack(expand=True, fill="both", anchor="center")
+        # force gui to update
+        root.update()
+        # start build model after a delay
+        popup.after(2000, cfgwidget.build_model())
+        # destroy popup after finish
+        popup.after(3000, popup.destroy)
 
     def pop_up(title_text: str):
         top = tk.Toplevel(root)
@@ -66,6 +84,8 @@ def new_window():
     options_menu = tk.Menu(menubar, tearoff=0)
     # tutorial
     options_menu.add_command(label="Start tutorial...")
+    # build model 
+    options_menu.add_command(label="Build a model", command=start_build_model)
 
     # display the options on the menu bar
     menubar.add_cascade(label="File", menu=file_menu)
