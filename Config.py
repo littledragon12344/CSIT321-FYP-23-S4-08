@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 import iConfig as icfg
 import math
 import Camera as cam
@@ -123,7 +124,7 @@ class Config:
             NameLabel = tk.Label(tFrame, width=15, text="New Gesture Name:")
             NameText = tk.Text(tFrame, height = 1, width = 15)
             AddGesture= tk.Button(tFrame,text="Add Gesture", command=SetName)
-            tRecord = tk.Button(tFrame, textvariable=self.btnText, command=self.button_trigger)
+            tRecord = tk.Button(tFrame, textvariable=self.btnText, command= lambda : self.button_trigger(tFrame))
             buildLabel = tk.Label(tFrame, textvariable=self.buildText)
             tBuild = tk.Button(tFrame, text="Build", command=self.build_model)
             tConfirm = tk.Button(tFrame, text="Confirm", command=self.pop_win.destroy)
@@ -145,10 +146,20 @@ class Config:
             saveGesture.grid(column=2, row=3, sticky=("N", "S", "E", "W"))
             loadGesture.grid(column=3, row=3, sticky=("N", "S", "E", "W"))
             dropDown.grid(column=1, row=2, sticky=("N", "S", "E", "W"))
+            
+            # progress bar
+            self.progress_var = tk.IntVar()
+            self.recordProgressBar = ttk.Progressbar(tFrame, variable=self.progress_var, orient="horizontal", mode="determinate")
+            self.recordProgressBar.grid(column=0, row=5, sticky="news", columnspan=4)
+            # hide progress bar
+            self.recordProgressBar.grid_remove()
         
-    def button_trigger(self):
+    def button_trigger(self, widget):
         self.change_button()
         self.record_gesture()
+        # show the progress bar
+        self.recordProgressBar.grid()
+        widget.after(100, self.update_progress_var, widget)
     
     def confirm_trigger(self):
         self.update_key()
@@ -163,6 +174,19 @@ class Config:
     def record_gesture(self):
         self.change_button()
         cam.Camera.start_landmark_recording()
+        
+    def update_progress_var(self, widget):
+        counter = HD.iteration_counter
+        
+        self.progress_var.set(counter)
+        self.recordProgressBar.update_idletasks()
+        
+        if counter > 99:
+            # hide the progress bar
+            self.recordProgressBar.grid_remove()
+        else:
+            widget.after(100, self.update_progress_var, widget)
+            
 
     def build_model(self):
         MT.ModelTrainer.preprocess_data()
