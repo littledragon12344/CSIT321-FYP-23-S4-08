@@ -194,6 +194,7 @@ class GestureDetectionController:
                 if self.loadout[gesture].casefold() == "Release".casefold():
                     """KeyInput.ReleaseAllKeys(self.loadout.values())"""   
                     for k in self.loadout.values():
+                        if(k.casefold() == "Release".casefold()): continue
                         kb.release(k)               
                 else:
                     kb.press(self.loadout[gesture])
