@@ -1,5 +1,4 @@
 ﻿import tkinter as tk
-from tkinter import simpledialog
 from pynput import keyboard
 import Camera as cam
 import Config as cfg
