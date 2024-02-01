@@ -41,34 +41,38 @@ def detect(image):
         og_image = image
         image.flags.writeable = False
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        flipped_image = cv2.flip(image, 1)
         results = hands.process(image)
+        results2 = hands.process(flipped_image)
         # Draw the hand annotations on the image.
         image.flags.writeable = True
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         current_gestures.clear()
 
         if results.multi_hand_landmarks:
-            # for hand in results.multi_handedness:
-            #     print(hand.classification)
-
+            #for hand in results.multi_handedness:
+            #    print(hand.classification[0].label)
             counter = 0
-            for res in results.multi_hand_landmarks:  
-                counter += 1
-                hand_landmark_array = []        
+            for res in results.multi_hand_landmarks:       
+                hand_landmark_array = []
                 mp_drawing.draw_landmarks(
                     image,
                     res,
                     mp_hands.HAND_CONNECTIONS,
                     mp_drawing_styles.get_default_hand_landmarks_style(),
                     mp_drawing_styles.get_default_hand_connections_style())
-                #RF model gesture prediction
-                      
+                
+                #RF model gesture prediction      
                 for lm in res.landmark:
                     hand_landmark_array.extend([lm.x, lm.y, lm.z])         
 
-                predict(hand_landmark_array) 
+                predict(hand_landmark_array)
+                #print(results.multi_hand_landmarks[0].landmark[20])
+                #if results.multi_handedness[0].classification[0].label == 'Right':
+                #    print(results2.multi_hand_landmarks[0].landmark[20])
+                counter += 1 
  
-            #For RF model: extract keypoints from results
+            #RF model: extract keypoints from results
             if cam.Camera.record == True:
                 global X
                 global y
@@ -83,7 +87,6 @@ def detect(image):
                                 one_sample.extend([lm.x, lm.y, lm.z])
 
                             X.append(one_sample)
-                            print(one_sample)
                             y.append(PS.recorded_gesture_class)
 
                     if iteration_counter == PS.recorded_frame_count:
@@ -116,7 +119,7 @@ def predict(array):
     yhat_idx = -1
     yhat_prob = 0.0
     counter = 0
-    print(yhat_preds)
+    #print(yhat_preds)
     for pred_prob in yhat_preds[0]:  
         if pred_prob > pred_threshold and pred_prob > yhat_prob:
             yhat_idx = counter

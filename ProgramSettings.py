@@ -1,20 +1,17 @@
 
 import os
 from datetime import datetime
+import pickle
+import FileManager as FM
 
 #TO DO: 
 # - save/load from file
 # - gesture images
 
 #gesture recognition
-allowed_gestures = ["Open_Palm", 
-                    "Closed_Fist", 
-                    "Victory", 
-                    "Pointing_Up",
-                    "Thumbs_Up",
-                    "Thumbs_Down",
-                    ]
-
+#'Open_Palm', 'Closed_Fist', 'Victory', 'Pointing_Up', 'Thumbs_Up', 'Thumbs_Down'
+allowed_gestures = []
+                    
 # folder paths
 data_folder_path = os.path.join(os.getcwd(), "Datasets")
 model_folder_path = os.path.join(os.getcwd(), "Models")
@@ -24,18 +21,16 @@ recorded_frame_count = 100 # total number of frames to save during recording
 recorded_gesture_class = '' # current gesture being recorded
 
 # ML model settings
-model_name_rf = 'rf_model_2024_02_01__14_18_12.pkl'
+model_name_rf = 'rf_model_2024_01_31__23_17_03.pkl'
 current_model_path = os.path.join(model_folder_path, model_name_rf)
-
-#gesture label file
-gesture_file_path = ''
 
 def __init__():
     print("Initalize program settings")
-    # need to read from gesture file and fill array here
-    counter = 0
-    
+    #save_gesture_file()
+    load_gesture_file()
+    print(allowed_gestures)
     global recorded_gesture_class
+    
     recorded_gesture_class = allowed_gestures[0]
 
     #incase the dataset folder doesn't exist
@@ -58,9 +53,27 @@ def change_recorded_gesture(name):# change the Name
     recorded_gesture_class = name 
 
 def add_new_gesture(name):
-     # placeholder
-     return
+    global allowed_gestures
+    allowed_gestures.append(name)
+    save_gesture_file()
+    return
 
-def update_gesture_labels():
-     # placeholder
-     return
+def delete_gesture(name):
+    # global allowed_gestures
+    # allowed_gestures.append(name)
+    # save_gesture_file()
+    return
+
+def load_gesture_file():
+    with open('gestures.pkl', 'rb') as f:
+        global allowed_gestures
+        allowed_gestures = pickle.load(f)
+
+def save_gesture_file():
+    with open('gestures.pkl', 'wb') as f: 
+        print(allowed_gestures)
+        pickle.dump(allowed_gestures, f)
+        f.close()
+
+
+     
