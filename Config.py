@@ -168,9 +168,13 @@ class Config:
         MT.ModelTrainer.preprocess_data()
         self.buildText.set("Build complete!")
     
-    def update_key(self, gest, key, newkey=None):
-        # Add created gesture into loadout, or update gesture to new key
-        if newkey == None:
+    def update_key(self, gest, key=None, newkey=None):
+        # Delete, Add or Update gesture-key configuration
+        if key==None and newkey==None:
+            keypos = self.cfggestures.index(gest)
+            self.cfggestures.remove(gest)
+            self.cfgkeys.remove(self.cfgkeys[keypos])
+        elif (key!=None and newkey==None):
             self.cfggestures.append(gest)
             self.cfgkeys.append(key)
         else: 
@@ -188,4 +192,3 @@ class Config:
         self.loadout_widget.controller.update_loadout(self.this_id, gesturedata)
         # Refresh config
         self.gui_update()
-        return
