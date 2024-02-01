@@ -87,7 +87,8 @@ class LoadoutDisplay():
             item_frame = tk.Frame(self.frame, bd=0.5, relief=tk.SOLID)
             item_frame.pack(fill="x", expand=True, pady=2)
 
-            for i in range(2): item_frame.grid_columnconfigure(i, weight=1)
+            for i in range(2): 
+                item_frame.grid_columnconfigure(i, weight=1)
             
             # loadout name label
             loadout_name = tk.Label(item_frame, text=f"{name}", width=12, anchor="center")
@@ -419,7 +420,7 @@ class LoadoutDisplay():
             name_label.grid_forget()
             self.entry = tk.Entry(selected_frame)
             self.entry.insert(0, name_label.cget("text"))
-            self.entry.grid(column=0, row=0, padx=1, sticky="news", columnspan=2)
+            self.entry.grid(column=0, row=0, padx=1, sticky="news")
             # bind the enter key to the entry
             self.entry.bind("<Return>", lambda _: self.rename_loadout())
         else: 
@@ -427,7 +428,7 @@ class LoadoutDisplay():
             self.controller.rename_loadout(self.selected_id, self.entry.get())
             # map the label with the updated text
             name_label.config(text=self.entry.get())
-            name_label.grid(column=0, row=0, padx=1, sticky="news", columnspan=2)
+            name_label.grid(column=0, row=0, padx=1, sticky="news")
             # destroy the entry widget
             if hasattr(self, 'entry') and self.entry.winfo_exists():
                 self.entry.unbind_all(None)
