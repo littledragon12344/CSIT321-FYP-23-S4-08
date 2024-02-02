@@ -21,7 +21,7 @@ recorded_frame_count = 100 # total number of frames to save during recording
 recorded_gesture_class = '' # current gesture being recorded
 
 # ML model settings
-model_name_rf = 'rf_model_2024_02_02__22_10_26.pkl'
+model_name_rf = 'rf_model.pkl'
 current_model_path = os.path.join(model_folder_path, model_name_rf)
 
 def __init__():

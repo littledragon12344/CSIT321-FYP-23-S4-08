@@ -8,6 +8,7 @@ import ProgramSettings as PS
 
 #Setup
 current_gestures = []
+hand_array = []
 num_hands = 2 
 pred_threshold = 0.5
     
@@ -41,9 +42,7 @@ def detect(image):
         og_image = image
         image.flags.writeable = False
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        flipped_image = cv2.flip(image, 1)
         results = hands.process(image)
-        results2 = hands.process(flipped_image)
         # Draw the hand annotations on the image.
         image.flags.writeable = True
         image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
@@ -67,9 +66,10 @@ def detect(image):
                     hand_landmark_array.extend([lm.x, lm.y, lm.z])         
 
                 predict(hand_landmark_array)
-                #print(results.multi_hand_landmarks[0].landmark[20])
-                #if results.multi_handedness[0].classification[0].label == 'Right':
-                #    print(results2.multi_hand_landmarks[0].landmark[20])
+
+                print(results.multi_handedness[counter].classification[0].label)   
+                hand_array[counter] = results.multi_handedness[counter].classification[0].label     
+
                 counter += 1 
  
             #RF model: extract keypoints from results

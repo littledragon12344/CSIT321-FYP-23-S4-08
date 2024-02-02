@@ -69,14 +69,13 @@ class ModelTrainer:
             print(f'Precision: {precision}')
             print(f'Recall: {recall}')
             
-            date_time_format = '%Y_%m_%d__%H_%M_%S'
-            current_date_time_dt = dt.datetime.now()
-            current_date_time_str = dt.datetime.strftime(current_date_time_dt, date_time_format)
-
-            #===For release============#
-            #model_name = 'rf_model.pkl'
+            #===For testing============#
+            #date_time_format = '%Y_%m_%d__%H_%M_%S'
+            #current_date_time_dt = dt.datetime.now()
+            #current_date_time_str = dt.datetime.strftime(current_date_time_dt, date_time_format)
+            #model_name = f'rf_model_{current_date_time_str}.pkl'
             #==========================#
-            model_name = f'rf_model_{current_date_time_str}.pkl'
+            model_name = 'rf_model.pkl'
             joblib.dump(best_rf, os.path.join(PS.model_folder_path, model_name))
 
             
