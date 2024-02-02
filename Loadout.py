@@ -536,6 +536,9 @@ class LoadoutController():
         # export the new loadout
         file_path = f"{self.folder_name}/{loadout.file_name}"
         self.export_loadout_to_file(loadout=loadout, file_path=file_path)
+        
+        if (self.enabled_id == id and self.cam_display is not None):
+            self.cam_display.set_loadout(data)
     
     # append a loadout obj
     def add_loadout(self, loadout):
