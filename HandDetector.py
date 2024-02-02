@@ -8,7 +8,7 @@ import ProgramSettings as PS
 
 #Setup
 current_gestures = []
-hand_array = []
+hand_array = [None] * 2
 num_hands = 2 
 pred_threshold = 0.5
     
@@ -66,9 +66,9 @@ def detect(image):
                     hand_landmark_array.extend([lm.x, lm.y, lm.z])         
 
                 predict(hand_landmark_array)
-
-                print(results.multi_handedness[counter].classification[0].label)   
-                hand_array[counter] = results.multi_handedness[counter].classification[0].label     
+ 
+                hand_array[counter] = results.multi_handedness[counter].classification[0].label  
+                print(hand_array[counter])     
 
                 counter += 1 
  
