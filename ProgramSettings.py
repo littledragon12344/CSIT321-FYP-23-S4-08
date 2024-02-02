@@ -54,9 +54,16 @@ def change_recorded_gesture(name):# change the Name
 
 def add_new_gesture(name):
     global allowed_gestures
+
+    for Check in allowed_gestures:
+        if Check == name:
+            print("Cannot Add Dupplicate gesture")
+            #maybe make a pop up
+            return False;
+
     allowed_gestures.append(name)
     save_gesture_file()
-    return
+    return true
 
 def delete_gesture(name):
     # global allowed_gestures
