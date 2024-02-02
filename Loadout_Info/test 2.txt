@@ -1,3 +1,4 @@
 test *:
-Open_Palm-S
+Open_Palm-s
 Victory-3
+Thumbs_Up-Release

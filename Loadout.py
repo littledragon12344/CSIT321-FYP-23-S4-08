@@ -2,7 +2,7 @@ import tkinter as tk
 import keyboard as kb
 from tkinter import messagebox, ttk
 from FileManager import *
-from ProgramSettings import allowed_gestures
+import ProgramSettings as PS
 
 # loadout display class
 class LoadoutDisplay():
@@ -166,6 +166,8 @@ class LoadoutDisplay():
             frame_children[self.selected_id].config(bg="orange")
     
     def create_loadout_popup(self):
+        gestures = PS.allowed_gestures
+        
         popup = tk.Toplevel(self.root)
         popup.title("Create new loadout")
         popup.geometry("500x300")
@@ -211,7 +213,7 @@ class LoadoutDisplay():
         remove_btn.grid(column=1, row=0, padx=5)
         
         # release gesture entry
-        entry = ttk.Combobox(gesturekey_frame, values=allowed_gestures, state="readonly")
+        entry = ttk.Combobox(gesturekey_frame, values=gestures, state="readonly")
         # select the 1st option in
         entry.current(0)
         entry.grid(column=1, row=1, sticky="news")
@@ -239,6 +241,8 @@ class LoadoutDisplay():
     
     def update_loadout_popup(self, loadoutID=None):
         if loadoutID is None: return
+        
+        gesture_list = PS.allowed_gestures
         
         # get the loadout information
         loadout_name = self.controller.get_loadout_name(loadoutID)
@@ -292,7 +296,7 @@ class LoadoutDisplay():
         
         for i, (gesture, key) in enumerate(loadout_data.items()):    
             # release gesture entry
-            entry = ttk.Combobox(gesturekey_frame, values=allowed_gestures, state="readonly")
+            entry = ttk.Combobox(gesturekey_frame, values=gesture_list, state="readonly")
             # set the current gesture to the combobox
             entry.set(gesture)
             # place the widget
@@ -327,7 +331,7 @@ class LoadoutDisplay():
         cancelBtn.grid(column=1, row=0)
     
     def create_gesturekey_field(self, base, gesture_entries, key_entries):
-        gestures = allowed_gestures
+        gestures = PS.allowed_gestures
         
         # get the current number of gestures
         gesture_count = len(gesture_entries)
