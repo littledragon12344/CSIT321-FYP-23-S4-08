@@ -9,7 +9,8 @@ current_loadout = None
 config = None
 cfgwidget = None
 
-def new_window():     
+def new_window():
+    global tutorial_label
     def export_loadout():
         if loadout_widget is None: return
         loadout_widget.export_loadout()
@@ -21,6 +22,58 @@ def new_window():
     def create_loadout():
         if loadout_widget is None: return
         loadout_widget.create_loadout_popup()
+        
+    tutorial_steps = [
+        {"message": "Welcome to the Tutorial!", "highlight": None},
+        {"message": "At the left is the loadout panel \nwhere you can view all your loadouts! -->", "highlight": None},
+        {"message": "Press the search button --> \nto search for the loadout you want", "highlight": None},
+        {"message": "Press the enable button ----------------> \nto enable and start using the selected loadout!", "highlight":None},
+        {"message": "At the bottom is the configuration panel \nwhere you can add new gestures to your loadout! \nv", "highlight": None},
+        {"message": "^ For creating a loadout:\nClick on file --> New loadout", "highlight": None},
+        {"message": "^ For importing or exporting a loadout:\nClick on file --> Import or Export a loadout", "highlight": None},
+        {"message": "Try doing an open palm hand gesture!", "highlight": None},
+        {"message": "Tutorial complete! You're ready to use the application.", "highlight": None},
+        {"message": "", "highlight": None}
+    ]
+    
+    current_step = 0
+    
+    def start_tutorial():
+        global tutorial_label, current_step
+        current_step = 0
+        tutorial_label = tk.Label(root, text="", font=("Helvetica", 14), fg="white", bg="grey")
+        tutorial_label.place(x=450, y=100, anchor="center")
+        
+        root.bind("<Button-1>", show_tutorial_step)
+    
+    def show_tutorial_step(event):
+        global current_step
+        print(current_step)
+        message = tutorial_steps[current_step]["message"]
+        highlight_element = tutorial_steps[current_step]["highlight"]
+
+        if current_step == 1:  # Check if it's the second message
+            tutorial_label.place(x=250, y=100, anchor="center") 
+        elif current_step == 2:
+            tutorial_label.place(x=510, y=30, anchor="center")
+        elif current_step == 3:
+            tutorial_label.place(x=520, y=30, anchor="center")
+        elif current_step == 4:
+            tutorial_label.place(x=250, y=300, anchor="center")
+        elif current_step == 5:
+            tutorial_label.place(x=122, y=25, anchor="center")
+        elif current_step == 6:
+            tutorial_label.place(x=175, y=25, anchor="center")
+        elif current_step == 7:
+            tutorial_label.place(x=450, y=100, anchor="center")
+        
+        tutorial_label.config(text=message)
+        current_step += 1
+        if current_step < len(tutorial_steps):
+            show_tutorial_step
+        else:
+            tutorial_label.destroy()
+            root.unbind("<Button-1>")
 
     def update_gui():
         global config
@@ -83,7 +136,7 @@ def new_window():
     # options menu items
     options_menu = tk.Menu(menubar, tearoff=0)
     # tutorial
-    options_menu.add_command(label="Start tutorial...")
+    options_menu.add_command(label="Start tutorial...", command=start_tutorial)
     # build model 
     options_menu.add_command(label="Build a model", command=start_build_model)
 
