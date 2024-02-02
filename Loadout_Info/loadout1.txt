@@ -1,3 +1,4 @@
 Loadout 1:
-Open_Palm-Space
-Victory-W
+Open_Palm-space
+Victory-w
+Thumbs_Down-Release

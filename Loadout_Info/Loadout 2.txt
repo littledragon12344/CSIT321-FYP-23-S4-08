@@ -1,4 +1,4 @@
 Loadout 2:
 Closed_Fist-Release
-Open_Palm-H
-Pointing_Up-ENTER
+Open_Palm-h
+Pointing_Up-enter
