@@ -59,11 +59,11 @@ def add_new_gesture(name):
         if Check == name:
             print("Cannot Add Dupplicate gesture")
             #maybe make a pop up
-            return False;
+            return
 
     allowed_gestures.append(name)
     save_gesture_file()
-    return true
+    return
 
 def delete_gesture(name):
     # global allowed_gestures
