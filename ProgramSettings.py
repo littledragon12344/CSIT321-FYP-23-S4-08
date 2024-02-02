@@ -82,5 +82,7 @@ def save_gesture_file():
         pickle.dump(allowed_gestures, f)
         f.close()
 
-
+def get_allowed_gestures():
+    global allowed_gestures
+    return allowed_gestures
      

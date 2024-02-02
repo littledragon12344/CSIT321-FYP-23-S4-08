@@ -2,7 +2,7 @@ import tkinter as tk
 import keyboard as kb
 from tkinter import messagebox, ttk
 from FileManager import *
-import ProgramSettings as PS
+from ProgramSettings import get_allowed_gestures
 
 # loadout display class
 class LoadoutDisplay():
@@ -166,7 +166,7 @@ class LoadoutDisplay():
             frame_children[self.selected_id].config(bg="orange")
     
     def create_loadout_popup(self):
-        gestures = PS.allowed_gestures
+        gestures = get_allowed_gestures()
         
         popup = tk.Toplevel(self.root)
         popup.title("Create new loadout")
@@ -242,7 +242,7 @@ class LoadoutDisplay():
     def update_loadout_popup(self, loadoutID=None):
         if loadoutID is None: return
         
-        gesture_list = PS.allowed_gestures
+        gesture_list = get_allowed_gestures()
         
         # get the loadout information
         loadout_name = self.controller.get_loadout_name(loadoutID)
@@ -331,7 +331,7 @@ class LoadoutDisplay():
         cancelBtn.grid(column=1, row=0)
     
     def create_gesturekey_field(self, base, gesture_entries, key_entries):
-        gestures = PS.allowed_gestures
+        gestures = get_allowed_gestures()
         
         # get the current number of gestures
         gesture_count = len(gesture_entries)
