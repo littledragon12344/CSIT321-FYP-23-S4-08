@@ -18,6 +18,7 @@ import concurrent.futures
 
 class Camera:
     detected_gestures = []
+    detected_gestures_hands = []
 
     #For ip webcam - would be nice to have a toggle for this on the UI
     use_ip_webcam = False 
@@ -132,13 +133,14 @@ class Camera:
 
             # Update the label text with the detected hand gestures
             self.detected_gestures = DT.current_gestures
+            self.detected_gestures_hands = DT.hand_array
             label_txt = "No gestures detected."
             
             if (dark == False):
                 if len(self.detected_gestures) == 1:
-                    label_txt = f"{self.detected_gestures[0]}"
+                    label_txt = f"{self.detected_gestures_hands[0]}: {self.detected_gestures[0]}"
                 elif len(self.detected_gestures) > 1:
-                    label_txt = ", ".join(self.detected_gestures)
+                    label_txt = f"{self.detected_gestures_hands[0]}: {self.detected_gestures[0]}, {self.detected_gestures_hands[1]}: {self.detected_gestures[1]}"
                 elif len(self.detected_gestures) < 1:
                     label_txt = "No gestures detected."
             else:

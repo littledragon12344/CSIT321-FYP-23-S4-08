@@ -67,8 +67,7 @@ def detect(image):
 
                 predict(hand_landmark_array)
  
-                hand_array[counter] = results.multi_handedness[counter].classification[0].label  
-                print(hand_array[counter])     
+                hand_array[counter] = results.multi_handedness[counter].classification[0].label    
 
                 counter += 1 
  
@@ -119,7 +118,7 @@ def predict(array):
     yhat_idx = -1
     yhat_prob = 0.0
     counter = 0
-    #print(yhat_preds)
+    print(yhat_preds)
     for pred_prob in yhat_preds[0]:  
         if pred_prob > pred_threshold and pred_prob > yhat_prob:
             yhat_idx = counter
