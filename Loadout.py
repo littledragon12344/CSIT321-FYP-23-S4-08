@@ -426,7 +426,7 @@ class LoadoutDisplay():
             self.entry.insert(0, name_label.cget("text"))
             self.entry.grid(column=0, row=0, padx=1, sticky="news")
             # bind the enter key to the entry
-            self.entry.bind("<Return>", lambda _: self.rename_loadout())
+            self.entry.bind("<Return>", lambda _: self.rename_selected())
         else: 
             # update the new name of the loadout
             self.controller.rename_loadout(self.selected_id, self.entry.get())
