@@ -18,16 +18,16 @@ class iConfig(object):
         cleaned = self.name.replace("_", " ")
 
         # Create frame for each configuration object
-        self.base = tk.Frame(self.target, width=130, height=200, bg="green")
+        self.base = tk.Frame(self.target, width=130, height=200, highlightbackground="black", highlightthickness=1)
 
         imgfr = tk.Frame(self.base, width=120, height=120)
         img = tk.Label(imgfr, image=self.picture)
         img.image=self.picture
 
-        textfr = tk.Frame(self.base, width=130, height=40)
-        text = tk.Label(self.base, text=cleaned.upper(), bg="white")
+        textfr = tk.Frame(self.base, width=120, height=40)
+        text = tk.Label(self.base, text=cleaned.upper(), bg="#d3d3d3")
 
-        buttonfr=tk.Frame(self.base, width=130, height=40)
+        buttonfr=tk.Frame(self.base, width=120, height=40)
         b_input = tk.Button(buttonfr, text=self.inp.upper(), command=self.change_input, bg="grey")
         b_delete = tk.Button(buttonfr, text="DEL", command=self.delete_prompt, bg="grey")
 
@@ -37,8 +37,8 @@ class iConfig(object):
         textfr.grid(column=0, row=1, columnspan=2)
         text.grid(column=0, row=1, columnspan=2, sticky="news")
         buttonfr.grid(column=0, row=2, columnspan=2)
-        buttonfr.columnconfigure(0, weight=1, minsize=65)
-        buttonfr.columnconfigure(1, weight=1, minsize=65)
+        buttonfr.columnconfigure(0, weight=1, minsize=67)
+        buttonfr.columnconfigure(1, weight=1, minsize=67)
         b_input.grid(column=0, row=2, sticky="news")
         b_delete.grid(column=1, row=2, sticky="news")
         

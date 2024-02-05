@@ -28,7 +28,7 @@ class Config:
         base.grid(row=0, column=0, columnspan=2, sticky="nsew", padx=10)
 
         # create a canvas for list display
-        self.canvas = tk.Canvas(base, width=750, height=455)
+        self.canvas = tk.Canvas(base, width=750, height=450)
         self.canvas.grid(row=0, column=0, sticky="nsew")
 
         # create a vertical scrollbar and attach it to the display frame
@@ -85,13 +85,13 @@ class Config:
             last = ind + 1
             z = ind % 5
             y = math.floor(ind/5)
-            x.base.grid(column=z, row=y, padx=8, pady=8)
+            x.base.grid(column=z, row=y, padx=7, pady=7)
         
         # Create Gesture button
         cImg = Image.open("AddSlot.png")
         cImage = ImageTk.PhotoImage(cImg)
-        cFrame = tk.Frame(self.frame, width=150, height=210)
-        cButton = tk.Button(cFrame, width=150, height=210, image=cImage, command=self.create_gesture)
+        cFrame = tk.Frame(self.frame, width=145, height=210)
+        cButton = tk.Button(cFrame, width=145, height=210, image=cImage, command=self.create_gesture)
         cButton.image = cImage
         
         nextZ = last % 5

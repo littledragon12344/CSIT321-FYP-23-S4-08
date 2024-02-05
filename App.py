@@ -151,18 +151,18 @@ def new_window():
     # create a base frame for the layout
     base = tk.Frame(root)
     # create a frame to contain the camera
-    camera = tk.Frame(base, width=480, height=280, bg="green")
+    camera = tk.Frame(base, width=480, height=280)
     # get the camera feed for the frame 
     cam_display = cam.Camera(camera, 466, 305)
 
     # create a frame for the loadout display
-    loadout_display = tk.Frame(base, borderwidth=1, relief="solid", bg="red")
+    loadout_display = tk.Frame(base, borderwidth=1, relief="solid")
     loadout_widget = lo.LoadoutDisplay(loadout_display, 302, 280, update_gui)
     # set the reference of the camera to the loadout
     loadout_widget.set_camera_display(cam_display)
     
     # create a frame for the gesture list display
-    config = tk.Frame(base, width=800, height=475, bg="blue")
+    config = tk.Frame(base, width=800, height=475)
     cfgwidget = cfg.Config(config, loadout_widget, pop_up, update_gui)
     cfgwidget.set_loadout(loadout_widget)
     
