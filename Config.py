@@ -22,7 +22,6 @@ class Config:
         self.this_id = -1
 
         self.btnText = tk.StringVar()
-        self.buildText = tk.StringVar()
 
         self.window = window
         base = tk.Frame(self.window, highlightbackground="black", highlightthickness=2)
@@ -107,13 +106,12 @@ class Config:
 
     def create_gesture(self):
         self.btnText.set("Record")
-        self.buildText.set("Ready to build")
 
         if self.pop:
-            def ChangeName(x):   
+            """def ChangeName(x):   
                 gesture_name=menuText.get()
                 gesture_name.replace(" ", "_") # incase user enters a name with Space
-                PS.change_recorded_gesture(gesture_name)
+                PS.change_recorded_gesture(gesture_name)"""
 
             def SetName():
                 PS.add_new_gesture(NameText.get("1.0", "end-1c"))
@@ -125,14 +123,10 @@ class Config:
             NameText = tk.Text(tFrame, height = 1, width = 15)
             AddGesture= tk.Button(tFrame,text="Add Gesture", command=SetName)
             tRecord = tk.Button(tFrame, textvariable=self.btnText, command= lambda : self.button_trigger(tFrame))
-            buildLabel = tk.Label(tFrame, textvariable=self.buildText)
-            tBuild = tk.Button(tFrame, text="Build", command=self.build_model)
             tConfirm = tk.Button(tFrame, text="Confirm", command=self.pop_win.destroy)
-            saveGesture = tk.Button(tFrame, text="Save", command=PS.save_gesture_file)
-            loadGesture = tk.Button(tFrame, text="Load", command=PS.load_gesture_file)
-            menuText = tk.StringVar() 
+            """menuText = tk.StringVar() 
             menuText.set(PS.allowed_gestures[0]) 
-            dropDown = tk.OptionMenu(tFrame , menuText , *PS.allowed_gestures, command=ChangeName) 
+            dropDown = tk.OptionMenu(tFrame , menuText , *PS.allowed_gestures, command=ChangeName) """
             #===============================================================#
             tFrame.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
             NameLabel.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
@@ -140,12 +134,8 @@ class Config:
             AddGesture.grid(column=3, row=0, sticky=("N", "S", "E", "W"))
             tLabel.grid(column=0, row=1, columnspan=4, sticky=("N", "S", "E", "W"))
             tRecord.grid(column=0, row=2, sticky=("N", "S", "E", "W"))
-            tBuild.grid(column=0, row=3, sticky=("N", "S", "E", "W"))
-            buildLabel.grid(column=1, row=3, sticky=("N", "S", "E", "W"))
             tConfirm.grid(column=2, row=2, columnspan=2, sticky=("N", "S", "E", "W"))
-            saveGesture.grid(column=2, row=3, sticky=("N", "S", "E", "W"))
-            loadGesture.grid(column=3, row=3, sticky=("N", "S", "E", "W"))
-            dropDown.grid(column=1, row=2, sticky=("N", "S", "E", "W"))
+            """dropDown.grid(column=1, row=2, sticky=("N", "S", "E", "W"))"""
             
             # progress bar
             self.progress_var = tk.IntVar()
