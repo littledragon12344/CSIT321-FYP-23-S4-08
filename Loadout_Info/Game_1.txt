@@ -1,4 +1,4 @@
-Cammel:
+Game_1:
 Open_Palm-x
 Victory-z
 Thumbs_Up-left

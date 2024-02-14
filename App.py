@@ -110,7 +110,7 @@ def new_window():
         return top
 
     root = tk.Tk()
-    root.title("Gesture Detection Prototype")
+    root.title("Hand-Tracking-Nator")
     root.geometry("800x800")    
     root.resizable(width=False, height=False)
     

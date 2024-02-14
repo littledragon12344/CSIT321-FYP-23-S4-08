@@ -49,8 +49,6 @@ def detect(image):
         current_gestures.clear()
 
         if results.multi_hand_landmarks:
-            #for hand in results.multi_handedness:
-            #    print(hand.classification[0].label)
             counter = 0
             for res in results.multi_hand_landmarks:       
                 hand_landmark_array = []

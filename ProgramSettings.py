@@ -4,12 +4,8 @@ from datetime import datetime
 import pickle
 import FileManager as FM
 
-#TO DO: 
-# - save/load from file
-# - gesture images
-
 #gesture recognition
-#'Open_Palm', 'Closed_Fist', 'Victory', 'Pointing_Up', 'Thumbs_Up', 'Thumbs_Down'
+#Default: 'Open_Palm', 'Closed_Fist', 'Victory', 'Pointing_Up', 'Thumbs_Up', 'Thumbs_Down'
 allowed_gestures = []
                     
 # folder paths
@@ -63,12 +59,6 @@ def add_new_gesture(name):
 
     allowed_gestures.append(name)
     save_gesture_file()
-    return
-
-def delete_gesture(name):
-    # global allowed_gestures
-    # allowed_gestures.append(name)
-    # save_gesture_file()
     return
 
 def load_gesture_file():

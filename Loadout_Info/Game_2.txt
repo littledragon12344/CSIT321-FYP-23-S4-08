@@ -1,6 +1,6 @@
-Hollow Knight:
+Game_2:
 Open_Palm-d
-Thumb_Up-a
-Thumb_Down-s
+Thumbs_Up-a
+Thumbs_Down-s
 Pointing_Up-w
 Closed_Fist-Release

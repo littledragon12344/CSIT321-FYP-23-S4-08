@@ -1,7 +1,7 @@
-Loadouttest:
+Game_3:
 Victory-space
 Open_Palm-w
-Thumb_Up-a
-Thumb_Down-d
+Thumbs_Up-a
+Thumbs_Down-d
 Pointing_Up-s
 Closed_Fist-Release

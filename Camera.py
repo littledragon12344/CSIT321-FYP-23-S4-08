@@ -20,11 +20,6 @@ class Camera:
     detected_gestures = []
     detected_gestures_hands = []
 
-    #For ip webcam - would be nice to have a toggle for this on the UI
-    use_ip_webcam = False 
-     #Replace the below URL with your own. Make sure to add "/shot.jpg" at last. 
-    url = "https://192.168.1.79:8080/shot.jpg"
-
     #For hand landmark recording
     record = False                      
     start_time = ''
@@ -44,12 +39,8 @@ class Camera:
         self.controller = GestureDetectionController()
 
         # Open the camera
-        if Camera.use_ip_webcam == False :
-            self.cap = cv.VideoCapture(0)  # 0 for default camera, adjust if needed
-
-        # Call the update method to continuously update the canvas with new frames
-        #self.update()
-
+        self.cap = cv.VideoCapture(0)  # 0 for default camera, adjust if needed
+            
         # Create a thread-safe queue for frames
         self.frame_queue = Queue()
 
@@ -72,21 +63,12 @@ class Camera:
     def update(self):
         while True:
             # Read a frame from the camera
-            if Camera.use_ip_webcam == False:
-                ret, frame = self.cap.read()
-            else:
-                requests.packages.urllib3.disable_warnings() 
-                img_resp = requests.get(Camera.url, verify=False) 
-                img_arr = np.array(bytearray(img_resp.content), dtype=np.uint8) 
-                frame = cv.imdecode(img_arr, -1) 
-                frame = imutils.resize(frame, width=480, height=280)
-                ret = True
+            ret, frame = self.cap.read()
              
             if ret:
                 # Flip the frame horizontally (mirror effect)
                 mirrored_frame = cv.flip(frame, 1)
                 detection = DT.detect(mirrored_frame)
-                #DT.timestamp += 1 # should be monotonically increasing, because in LIVE_STREAM mode
                 # Convert the OpenCV frame to a Tkinter-compatible photo image
                 photo = ImageTk.PhotoImage(image=Image.fromarray(cv.cvtColor(detection, cv.COLOR_BGR2RGB)))
                 # Put the frame in the queue for processing
@@ -194,11 +176,9 @@ class GestureDetectionController:
             if gesture in self.loadout:
                 # check if the key is release
                 if self.loadout[gesture].casefold() == "Release".casefold():
-                    """KeyInput.ReleaseAllKeys(self.loadout.values())"""   
                     for k in self.loadout.values():
                         if(k.casefold() == "Release".casefold()): continue
                         kb.release(k)               
                 else:
-                    kb.press(self.loadout[gesture])
-                    """KeyInput.PressKey(self.loadout[gesture])"""  # press all key detected otherwise
+                    kb.press(self.loadout[gesture]) # press all key detected otherwise
         
