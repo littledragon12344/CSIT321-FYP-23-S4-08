@@ -132,6 +132,10 @@ def predict(array):
     #total_e += time.perf_counter() - start
     #print("Average prediction time:", (total_e / e_counter))
     #==Benchmark==
+        
+def reload_model():
+    global model
+    model = MT.joblib.load(PS.current_model_path) 
 
 
 

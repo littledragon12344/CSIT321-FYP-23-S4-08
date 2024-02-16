@@ -180,6 +180,7 @@ class Config:
 
     def build_model(self):
         MT.ModelTrainer.preprocess_data()
+        HD.reload_model()
     
     def update_key(self, gest, key=None, newkey=None):
         # Delete, Add or Update gesture-key configuration
