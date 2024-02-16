@@ -6,6 +6,7 @@ import Camera as cam
 import ModelTrainer as MT
 import HandDetector as HD
 import ProgramSettings as PS
+import keyboard as kb
 
 from PIL import Image, ImageTk
 
@@ -19,6 +20,7 @@ class Config:
         self.loadout_widget = widget
         self.pop = pop
         self.pop_win = None
+        self.val = None
         self.this_id = -1
 
         self.btnText = tk.StringVar()
@@ -97,7 +99,7 @@ class Config:
         nextZ = last % 5
         nextY = math.floor(last/5)
         cFrame.grid(column=nextZ, row=nextY)
-        cButton.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
+        cButton.grid(column=0, row=0, sticky="news")
         
         print(f"Showing total of {len(self.cfglist)} results!")
 
@@ -106,53 +108,77 @@ class Config:
 
     def create_gesture(self):
         self.btnText.set("Record")
+        global nameText
+        global menuText
+        global tInput
+        global tButton
 
         if self.pop:
-            def ChangeName(x):   
+            def change_name(x):   
                 gesture_name=menuText.get()
                 gesture_name.replace(" ", "_") # incase user enters a name with Space
                 PS.change_recorded_gesture(gesture_name)
-
-            def SetName():
-                PS.add_new_gesture(NameText.get("1.0", "end-1c"))
             
             self.pop_win = self.pop("Create New Gesture")
             tFrame = tk.Frame(self.pop_win)
-            tLabel = tk.Label(tFrame, width=55, text="Click the button to record a new gesture")
-            NameLabel = tk.Label(tFrame, width=15, text="New Gesture Name:")
-            NameText = tk.Text(tFrame, height = 1, width = 15)
-            AddGesture= tk.Button(tFrame,text="Add Gesture", command=SetName)
+            eLabel = tk.Label(tFrame)
+            tLabel = tk.Label(tFrame, width=39, text="Click Record to record and add the new gesture")
+            iLabel = tk.Label(tFrame, width=13, text="New Input:")
+            cLabel = tk.Label(tFrame, width=52, text="Click Confirm to add gesture with the above input")
+            nameLabel = tk.Label(tFrame, text="New Gesture Name:")
+            nameText = tk.Text(tFrame, height=1, width=32)
             tRecord = tk.Button(tFrame, textvariable=self.btnText, command= lambda : self.button_trigger(tFrame))
-            tConfirm = tk.Button(tFrame, text="Confirm", command=self.pop_win.destroy)
+            tConfirm = tk.Button(tFrame, text="Confirm", command=self.confirm_trigger)
             menuText = tk.StringVar() 
             menuText.set(PS.allowed_gestures[0]) 
-            dropDown = tk.OptionMenu(tFrame , menuText , *PS.allowed_gestures, command=ChangeName) 
+            dropDown = tk.OptionMenu(tFrame , menuText , *PS.allowed_gestures, command=change_name)
+            tInput = tk.Text(tFrame, height=1, width=24)
+            tInput.config(state="disabled")
+            tChange = tk.Button(tFrame, text="Change Input", command=self.change_key)
             #===============================================================#
-            tFrame.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
-            NameLabel.grid(column=0, row=0, sticky=("N", "S", "E", "W"))
-            NameText.grid(column=1, row=0, columnspan=2, sticky=("N", "S", "E", "W"))
-            AddGesture.grid(column=3, row=0, sticky=("N", "S", "E", "W"))
-            tLabel.grid(column=0, row=1, columnspan=4, sticky=("N", "S", "E", "W"))
-            tRecord.grid(column=0, row=2, sticky=("N", "S", "E", "W"))
-            tConfirm.grid(column=2, row=2, columnspan=2, sticky=("N", "S", "E", "W"))
-            dropDown.grid(column=1, row=2, sticky=("N", "S", "E", "W"))
+            tFrame.grid(column=0, row=0, sticky="news")
+            iLabel.grid(column=0, row=0, sticky="news")
+            tInput.grid(column=1, row=0, columnspan=2, sticky="news")
+            tChange.grid(column=3, row=0, sticky="news")
+            nameLabel.grid(column=0, row=1, sticky="news")
+            nameText.grid(column=1, row=1, columnspan=3, sticky="news")
+            tLabel.grid(column=0, row=2, columnspan=3, sticky="news")
+            tRecord.grid(column=3, row=2, sticky="news")
+            eLabel.grid(column=0, row=3, columnspan=4, sticky="news")
+            cLabel.grid(column=0, row=4, columnspan=4, sticky="news")
+            tConfirm.grid(column=2, row=5, columnspan=2, sticky="news")
+            dropDown.grid(column=0, row=5, columnspan=2, sticky="news")
             
             # progress bar
             self.progress_var = tk.IntVar()
             self.recordProgressBar = ttk.Progressbar(tFrame, variable=self.progress_var, orient="horizontal", mode="determinate")
-            self.recordProgressBar.grid(column=0, row=5, sticky="news", columnspan=4)
+            self.recordProgressBar.grid(column=0, row=7, sticky="news", columnspan=4)
             # hide progress bar
             self.recordProgressBar.grid_remove()
         
+    def empty_alert(self):
+        alert = self.pop("Alert")
+        aLabel = tk.Label(alert, text="No Input detected")
+        aClose = tk.Button(alert, text="Close", command=alert.destroy)
+        aLabel.grid(column=0, row=0, sticky="news")
+        aClose.grid(column=0, row=1, sticky="news")
+        
     def button_trigger(self, widget):
+        if tInput.compare("end-1c", "==", "1.0"):
+            self.empty_alert()
+            return
         self.change_button()
         self.record_gesture()
         # show the progress bar
         self.recordProgressBar.grid()
         widget.after(100, self.update_progress_var, widget)
+        self.set_name()
     
     def confirm_trigger(self):
-        self.update_key()
+        if tInput.compare("end-1c", "==", "1.0"):
+            self.empty_alert()
+            return
+        self.update_key(menuText.get("1.0", "end-1c"), self.val)
         if self.pop_win:
             self.pop_win.destroy()
     
@@ -164,6 +190,21 @@ class Config:
     def record_gesture(self):
         self.change_button()
         cam.Camera.start_landmark_recording()
+    
+    def set_name(self):
+        PS.add_new_gesture(nameText.get("1.0", "end-1c"))
+        self.update_key(nameText.get("1.0", "end-1c"), self.val)
+    
+    def change_key(self):
+        tButton.config(text="Input your desired key")
+        if self.pop_win:
+            self.pop_win.update_idletasks()
+        self.val = kb.read_key()
+        tInput.config(state="normal")
+        tInput.delete('1.0', tk.END)
+        tInput.insert(tk.INSERT, self.val.upper())
+        tInput.config(state="disabled")
+        tButton.config(text="Change")
         
     def update_progress_var(self, widget):
         counter = HD.iteration_counter
@@ -176,7 +217,11 @@ class Config:
             self.recordProgressBar.grid_remove()
         else:
             widget.after(100, self.update_progress_var, widget)
-            
+    
+    def complete_key(self, gest):
+        self.update_key(gest, self.val)
+        if self.pop_win:
+            self.pop_win.destroy()
 
     def build_model(self):
         MT.ModelTrainer.preprocess_data()
