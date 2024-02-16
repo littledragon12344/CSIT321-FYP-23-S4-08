@@ -122,9 +122,10 @@ class Config:
             self.pop_win = self.pop("Create New Gesture")
             tFrame = tk.Frame(self.pop_win)
             eLabel = tk.Label(tFrame)
-            tLabel = tk.Label(tFrame, width=39, text="Click Record to record and add the new gesture")
+            tLabel = tk.Label(tFrame, width=39, text="Click Record to record and add new gesture data")
             iLabel = tk.Label(tFrame, width=13, text="New Input:")
-            cLabel = tk.Label(tFrame, width=52, text="Click Confirm to add gesture with the above input")
+            cLabel = tk.Label(tFrame, width=52, text="Click Confirm to add gesture from the")
+            cLabel2 = tk.Label(tFrame, width=52, text="drop down list with the above input")
             nameLabel = tk.Label(tFrame, text="New Gesture Name:")
             nameText = tk.Text(tFrame, height=1, width=32)
             tRecord = tk.Button(tFrame, textvariable=self.btnText, command= lambda : self.button_trigger(tFrame))
@@ -135,19 +136,22 @@ class Config:
             tInput = tk.Text(tFrame, height=1, width=24)
             tInput.config(state="disabled")
             tChange = tk.Button(tFrame, width=11, text="Change Input", command=self.change_key)
+            tAddGesture = tk.Button(tFrame, width=11, text="Add Gesture", command=self.set_name)
             #===============================================================#
             tFrame.grid(column=0, row=0, sticky="news")
             iLabel.grid(column=0, row=0, sticky="news")
             tInput.grid(column=1, row=0, columnspan=2, sticky="news")
             tChange.grid(column=3, row=0, sticky="news")
             nameLabel.grid(column=0, row=1, sticky="news")
-            nameText.grid(column=1, row=1, columnspan=3, sticky="news")
+            nameText.grid(column=1, row=1, columnspan=4, sticky="news")
+            tAddGesture.grid(column=3, row=1, sticky="news")
             tLabel.grid(column=0, row=2, columnspan=3, sticky="news")
             tRecord.grid(column=3, row=2, sticky="news")
             eLabel.grid(column=0, row=3, columnspan=4, sticky="news")
             cLabel.grid(column=0, row=4, columnspan=4, sticky="news")
-            tConfirm.grid(column=2, row=5, columnspan=2, sticky="news")
-            dropDown.grid(column=0, row=5, columnspan=2, sticky="news")
+            cLabel2.grid(column=0, row=5, columnspan=4, sticky="news")
+            tConfirm.grid(column=2, row=6, columnspan=2, sticky="news")
+            dropDown.grid(column=0, row=6, columnspan=2, sticky="news")
             
             # progress bar
             self.progress_var = tk.IntVar()
@@ -171,8 +175,7 @@ class Config:
         self.record_gesture()
         # show the progress bar
         self.recordProgressBar.grid()
-        widget.after(100, self.update_progress_var, widget)
-        self.set_name()
+        widget.after(100, self.update_progress_var, widget)  
     
     def confirm_trigger(self):
         if tInput.compare("end-1c", "==", "1.0"):
@@ -193,7 +196,8 @@ class Config:
     
     def set_name(self):
         PS.add_new_gesture(nameText.get("1.0", "end-1c"))
-        self.update_key(nameText.get("1.0", "end-1c"), self.val)
+        self.pop_win.destroy()
+        self.create_gesture()
     
     def change_key(self):
         tChange.config(text="Input Key")
