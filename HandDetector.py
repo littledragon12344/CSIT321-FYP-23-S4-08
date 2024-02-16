@@ -75,7 +75,7 @@ def detect(image):
                 global y
                 one_sample = []
                 global iteration_counter
-                if iteration_counter < PS.recorded_frame_count:
+                if iteration_counter < PS.recorded_frame_count and len(results.multi_hand_landmarks) < 2:
                     iteration_counter += 1
                     print(iteration_counter)  
                     if results.multi_hand_landmarks:
@@ -116,7 +116,7 @@ def predict(array):
     yhat_idx = -1
     yhat_prob = 0.0
     counter = 0
-    print(yhat_preds)
+    #print(yhat_preds)
     for pred_prob in yhat_preds[0]:  
         if pred_prob > pred_threshold and pred_prob > yhat_prob:
             yhat_idx = counter

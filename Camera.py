@@ -10,7 +10,6 @@ from datetime import datetime
 
 import HandDetector as DT
 import ModelTrainer as MT
-"""import KeyboardInput as KeyInput"""
 
 import threading
 from queue import Queue
