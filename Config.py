@@ -111,7 +111,7 @@ class Config:
         global nameText
         global menuText
         global tInput
-        global tButton
+        global tChange
 
         if self.pop:
             def change_name(x):   
@@ -134,7 +134,7 @@ class Config:
             dropDown = tk.OptionMenu(tFrame , menuText , *PS.allowed_gestures, command=change_name)
             tInput = tk.Text(tFrame, height=1, width=24)
             tInput.config(state="disabled")
-            tChange = tk.Button(tFrame, text="Change Input", command=self.change_key)
+            tChange = tk.Button(tFrame, width=11, text="Change Input", command=self.change_key)
             #===============================================================#
             tFrame.grid(column=0, row=0, sticky="news")
             iLabel.grid(column=0, row=0, sticky="news")
@@ -178,7 +178,7 @@ class Config:
         if tInput.compare("end-1c", "==", "1.0"):
             self.empty_alert()
             return
-        self.update_key(menuText.get("1.0", "end-1c"), self.val)
+        self.update_key(menuText.get(), self.val)
         if self.pop_win:
             self.pop_win.destroy()
     
@@ -196,7 +196,7 @@ class Config:
         self.update_key(nameText.get("1.0", "end-1c"), self.val)
     
     def change_key(self):
-        tButton.config(text="Input your desired key")
+        tChange.config(text="Input Key")
         if self.pop_win:
             self.pop_win.update_idletasks()
         self.val = kb.read_key()
@@ -204,7 +204,7 @@ class Config:
         tInput.delete('1.0', tk.END)
         tInput.insert(tk.INSERT, self.val.upper())
         tInput.config(state="disabled")
-        tButton.config(text="Change")
+        tChange.config(text="Change Input")
         
     def update_progress_var(self, widget):
         counter = HD.iteration_counter

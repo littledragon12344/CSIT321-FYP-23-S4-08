@@ -3,4 +3,4 @@ Open_Palm-d
 Thumbs_Up-a
 Thumbs_Down-s
 Pointing_Up-w
-Closed_Fist-Release
+Closed_Fist-release
