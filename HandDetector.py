@@ -91,8 +91,15 @@ def detect(image):
                         np_y = cam.np.array(y)
                         print(np_x.shape)
                         print(np_y.shape)
-                        cam.np.savez(PS.os.path.join(PS.data_folder_path, PS.recorded_gesture_class, f'data_{PS.recorded_gesture_class}_{PS.get_datetime()}.npz'), X=np_x, y=np_y)
+                        
+                        folder_path = PS.os.path.join(PS.data_folder_path, PS.recorded_gesture_class)
+
+                        if PS.os.path.exists(folder_path) == False:
+                            PS.os.makedirs(folder_path)
+
+                        cam.np.savez(PS.os.path.join(folder_path, f'data_{PS.recorded_gesture_class}_{PS.get_datetime()}.npz'), X=np_x, y=np_y)
                         cv2.imwrite(PS.os.path.join(PS.image_folder_path, f'{PS.recorded_gesture_class}.png'), og_image)
+                        
                         print(f'Landmark data for label {PS.recorded_gesture_class} saved.')
                         X = []
                         y = []

@@ -168,9 +168,6 @@ class Config:
         aClose.grid(column=0, row=1, sticky="news")
         
     def button_trigger(self, widget):
-        if tInput.compare("end-1c", "==", "1.0"):
-            self.empty_alert()
-            return
         self.change_button()
         self.record_gesture()
         # show the progress bar
