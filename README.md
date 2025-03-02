@@ -2,6 +2,8 @@
 
 Python Version 3.10.11
 
+https://youtu.be/UvmJK81-dFM (demo vid)
+
 
 
 # Instruction ( will be updated) <br />
